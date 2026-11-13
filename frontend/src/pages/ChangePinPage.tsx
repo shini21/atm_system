@@ -209,7 +209,7 @@ export const ChangePinPage: React.FC = () => {
             /* PIN Input Form */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               {/* Left Column: 3 PIN Fields */}
-              <div className="space-y-3">
+              <div className="space-y-3 min-w-0 w-full">
                 {/* Field 1: Current PIN */}
                 <div
                   onClick={() => setActiveField('CURRENT')}
@@ -306,17 +306,17 @@ export const ChangePinPage: React.FC = () => {
                       initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-3 rounded-xl bg-danger-subtle border border-danger/20 text-danger text-xs flex items-start gap-2"
+                      className="p-3 rounded-xl bg-danger-subtle border border-danger/20 text-danger text-xs flex items-start gap-2 max-w-full overflow-hidden"
                     >
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <p>{error}</p>
+                      <p className="break-words break-all text-xs leading-relaxed">{error}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {/* Right Column: Keypad */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center min-w-0 w-full">
                 <Keypad
                   onKeyPress={handleKeyPress}
                   onBackspace={handleBackspace}

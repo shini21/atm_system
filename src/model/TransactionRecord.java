@@ -19,12 +19,9 @@ public class TransactionRecord implements Printable {
     private static final DateTimeFormatter TIMESTAMP_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    /** First generated transaction number, giving IDs such as {@code TXN-1001}. */
-    private static final int FIRST_TRANSACTION_NUMBER = 1001;
-
-    /** Shared counter so every record created by {@link #create} gets a unique ID. */
-    private static final AtomicInteger NEXT_TRANSACTION_NUMBER =
-            new AtomicInteger(FIRST_TRANSACTION_NUMBER);
+    /** First generated transaction timestamp seed to guarantee unique IDs across restarts. */
+    private static final java.util.concurrent.atomic.AtomicLong NEXT_TRANSACTION_NUMBER =
+            new java.util.concurrent.atomic.AtomicLong(System.currentTimeMillis());
 
     private final String transactionId;
     private final TransactionType type;

@@ -286,7 +286,7 @@ export const TransferPage: React.FC = () => {
             /* Transfer Input Grid */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               {/* Left Column: Recipient Selection & Presets */}
-              <div className="space-y-4">
+              <div className="space-y-4 min-w-0 w-full">
                 {/* Recipient Account Input Box */}
                 <div className="p-4 rounded-2xl bg-surface-subdued border border-border-subtle space-y-3">
                   <div className="flex items-center justify-between">
@@ -347,17 +347,17 @@ export const TransferPage: React.FC = () => {
                       initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="p-3 rounded-xl bg-danger-subtle border border-danger/20 text-danger text-xs flex items-start gap-2"
+                      className="p-3 rounded-xl bg-danger-subtle border border-danger/20 text-danger text-xs flex items-start gap-2 max-w-full overflow-hidden"
                     >
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <p>{error}</p>
+                      <p className="break-words break-all text-xs leading-relaxed">{error}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {/* Right Column: Amount Display & Touch Keypad */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center min-w-0 w-full">
                 {/* Display Amount Box */}
                 <div className="w-full max-w-[280px] p-3.5 mb-4 rounded-2xl bg-surface-subdued border border-border-subtle text-center">
                   <span className="text-[10px] uppercase text-tertiary block font-medium">

@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 public class AtmPersistenceService {
 
-    private static final AtomicLong TXN_COUNTER = new AtomicLong(1000);
+    private static final AtomicLong TXN_COUNTER = new AtomicLong(System.currentTimeMillis());
 
     private final AccountRepository accountRepository;
     private final CardRepository cardRepository;
@@ -126,14 +126,15 @@ public class AtmPersistenceService {
         cashDispenserService.acceptDeposit(amount);
 
         String txnId = generateTxnId();
+        LocalDateTime now = LocalDateTime.now();
         TransactionEntity txnEntity = new TransactionEntity(
-                txnId, accountNumber, LocalDateTime.now(),
+                txnId, accountNumber, now,
                 TransactionType.DEPOSIT.name(), "CREDIT",
                 amount, newBalance, "Cash Deposit", null, null
         );
         transactionRepository.save(txnEntity);
 
-        return TransactionRecord.create(TransactionType.DEPOSIT, amount, "Cash Deposit", newBalance);
+        return new TransactionRecord(txnId, TransactionType.DEPOSIT, amount, now, "Cash Deposit", newBalance);
     }
 
     @Transactional
@@ -161,15 +162,16 @@ public class AtmPersistenceService {
         accountRepository.save(entity);
 
         String txnId = generateTxnId();
+        LocalDateTime now = LocalDateTime.now();
         String breakdownStr = breakdown.toString();
         TransactionEntity txnEntity = new TransactionEntity(
-                txnId, accountNumber, LocalDateTime.now(),
+                txnId, accountNumber, now,
                 TransactionType.WITHDRAWAL.name(), "DEBIT",
                 amount, newBalance, "Cash Withdrawal", null, breakdownStr
         );
         transactionRepository.save(txnEntity);
 
-        TransactionRecord record = TransactionRecord.create(TransactionType.WITHDRAWAL, amount, "Cash Withdrawal", newBalance);
+        TransactionRecord record = new TransactionRecord(txnId, TransactionType.WITHDRAWAL, amount, now, "Cash Withdrawal", newBalance);
         return new WithdrawalResult(record, breakdown, txnId);
     }
 
@@ -201,21 +203,22 @@ public class AtmPersistenceService {
         accountRepository.save(receiver);
 
         String txnId = generateTxnId();
+        LocalDateTime now = LocalDateTime.now();
         TransactionEntity senderTxn = new TransactionEntity(
-                txnId, senderAccountNumber, LocalDateTime.now(),
+                txnId, senderAccountNumber, now,
                 TransactionType.TRANSFER_OUT.name(), "DEBIT",
                 amount, senderNewBalance, "Transfer to " + recipientAccountNumber, null, null
         );
         transactionRepository.save(senderTxn);
 
         TransactionEntity receiverTxn = new TransactionEntity(
-                generateTxnId(), recipientAccountNumber, LocalDateTime.now(),
+                generateTxnId(), recipientAccountNumber, now,
                 TransactionType.TRANSFER_IN.name(), "CREDIT",
                 amount, receiver.getBalance(), "Transfer from " + senderAccountNumber, null, null
         );
         transactionRepository.save(receiverTxn);
 
-        return TransactionRecord.create(TransactionType.TRANSFER_OUT, amount, "Transfer to " + recipientAccountNumber, senderNewBalance);
+        return new TransactionRecord(txnId, TransactionType.TRANSFER_OUT, amount, now, "Transfer to " + recipientAccountNumber, senderNewBalance);
     }
 
     @Transactional
@@ -256,7 +259,7 @@ public class AtmPersistenceService {
         List<TransactionRecord> records = new ArrayList<>();
         for (TransactionEntity e : entities) {
             TransactionType type = TransactionType.valueOf(e.getType());
-            records.add(TransactionRecord.create(type, e.getAmount(), e.getRemarks(), e.getBalanceAfter()));
+            records.add(new TransactionRecord(e.getTransactionId(), type, e.getAmount(), e.getTimestamp(), e.getRemarks(), e.getBalanceAfter()));
         }
         return records;
     }
