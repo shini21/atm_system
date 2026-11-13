@@ -20,8 +20,62 @@ export const TransferPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account, refreshBalance } = useAuth();
-  const { printReceipt, registerKeypadListener } = useHardware();
+  const { printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  const maskAccountNumber = (accNum?: string) => {
+    if (!accNum) return '•••• ••••';
+    if (accNum.length <= 4) return `•••• ${accNum}`;
+    return `${accNum.slice(0, 3)}••••${accNum.slice(-4)}`;
+  };
+
+  useEffect(() => {
+    if (completedTx) {
+      return registerSideKeys({
+        R1: {
+          id: 'R1',
+          label: 'Print Receipt',
+          onClick: () => {
+            printReceipt({
+              transactionId: completedTx.transactionId,
+              type: 'FUNDS TRANSFER (COPY)',
+              amount: completedTx.amount,
+              balanceAfter: completedTx.balanceAfterTransaction,
+              timestamp: completedTx.timestamp,
+              accountNumber: account?.accountNumber || 'ACC1001',
+              cardHolderName: account?.fullName,
+            });
+          },
+        },
+        R4: {
+          id: 'R4',
+          label: 'Return to Dashboard',
+          onClick: () => navigate('/dashboard'),
+        },
+      });
+    }
+
+    return registerSideKeys({
+      L4: {
+        id: 'L4',
+        label: 'Back to Menu',
+        onClick: () => navigate('/dashboard'),
+      },
+      R3: recipient && amountStr && parseFloat(amountStr) > 0 ? {
+        id: 'R3',
+        label: 'Initiate Transfer',
+        onClick: () => handleInitiateTransfer(),
+      } : null,
+      R4: amountStr || recipient ? {
+        id: 'R4',
+        label: 'Clear Form',
+        onClick: () => {
+          setAmountStr('');
+          setRecipient('');
+        },
+      } : null,
+    });
+  }, [registerSideKeys, completedTx, recipient, amountStr, account, printReceipt, navigate]);
 
   // Hardware keypad listener
   useEffect(() => {
@@ -146,7 +200,7 @@ export const TransferPage: React.FC = () => {
             Transfer Funds
           </h1>
           <p className="text-xs text-secondary mt-1 font-mono">
-            Sender: {account?.fullName} ({account?.accountNumber})
+            Sender: {account?.fullName} ({maskAccountNumber(account?.accountNumber)}) • Available: ₹{(account?.availableBalance ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
           </p>
         </div>
 

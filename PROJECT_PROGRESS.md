@@ -33,9 +33,9 @@
 | **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | `244f897` |
 | **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | `7744dc7` |
 | **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | `7417231` |
-| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | Pending |
-| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **IN PROGRESS** | - | - |
-| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **PLANNED** | - | - |
+| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | `f34b944` |
+| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | Pending |
+| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **IN PROGRESS** | - | - |
 | **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
 | **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
 
@@ -89,6 +89,28 @@
   - Added live circular session countdown progress ring (60s timer with pulsing warning state in the last 15s).
   - Prominent high-contrast balance display with tabular numerals (`font-mono`).
 - Verified compilation: `npm run build` passes cleanly in 1.30s with 0 errors.
+
+---
+
+## 2.5 Phase Details: Phase U4 (Transaction Screens: Withdrawal, Deposit, Transfer)
+
+### Completed Tasks:
+- Updated `WithdrawPage.tsx`:
+  - Quick amount presets directly bound to side function keys: `L1` (₹500), `L2` (₹1,000), `L3` (₹2,000), `R1` (₹5,000), `R2` (₹10,000).
+  - Navigation bound to `L4` (Back to Menu), confirm bound to `R3`, clear bound to `R4`.
+  - Driven by the Spring Boot backend's `record.denominations` map, rendering realistic note breakdown (₹500, ₹200, ₹100 count badges) and triggering the motorized cash dispenser tray.
+  - Receipt printing options and post-transaction side key bindings (`R1` Print Receipt, `R4` Dashboard).
+  - Account numbers masked in screen headers (`ACC••••1001`).
+- Updated `DepositPage.tsx`:
+  - Quick deposit presets bound to side keys `L1`, `L2`, `L3`, `R1`.
+  - Cash intake feeder animation and count-up number ticker.
+  - Return to menu on `L4`, confirm on `R3`, clear on `R4`.
+  - Account numbers masked in screen headers.
+- Updated `TransferPage.tsx`:
+  - Beneficiary lookup and validation against Spring Boot API.
+  - Masked sender account number (`ACC••••1001`).
+  - Physical side key mappings for back (`L4`), initiate transfer (`R3`), clear (`R4`), print receipt (`R1`).
+- Verified compilation and tests: `npm run build` passes in 1.30s; backend unit tests pass 8/8.
 
 ---
 

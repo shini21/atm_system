@@ -21,11 +21,88 @@ export const WithdrawPage: React.FC = () => {
 
   const { account, refreshBalance } = useAuth();
   const { t } = useLanguage();
-  const { triggerDispense, printReceipt, registerKeypadListener } = useHardware();
+  const { triggerDispense, printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
 
   const quickAmounts = [500, 1000, 2000, 5000, 10000];
   const availableBalance = account?.availableBalance ?? 0;
+
+  const maskAccountNumber = (accNum?: string) => {
+    if (!accNum) return '•••• ••••';
+    if (accNum.length <= 4) return `•••• ${accNum}`;
+    return `${accNum.slice(0, 3)}••••${accNum.slice(-4)}`;
+  };
+
+  // Register physical side function keys on ATM chassis
+  useEffect(() => {
+    if (completedTx) {
+      return registerSideKeys({
+        R1: {
+          id: 'R1',
+          label: 'Print Receipt',
+          onClick: () => {
+            printReceipt({
+              transactionId: completedTx.transactionId,
+              type: 'CASH WITHDRAWAL (COPY)',
+              amount: completedTx.amount,
+              balanceAfter: completedTx.balanceAfterTransaction,
+              timestamp: completedTx.timestamp,
+              accountNumber: account?.accountNumber || 'ACC1001',
+              cardHolderName: account?.fullName,
+            });
+          },
+        },
+        R4: {
+          id: 'R4',
+          label: 'Return to Dashboard',
+          onClick: () => navigate('/dashboard'),
+        },
+      });
+    }
+
+    return registerSideKeys({
+      L1: {
+        id: 'L1',
+        label: '₹500',
+        onClick: () => handleQuickSelect(500),
+      },
+      L2: {
+        id: 'L2',
+        label: '₹1,000',
+        onClick: () => handleQuickSelect(1000),
+      },
+      L3: {
+        id: 'L3',
+        label: '₹2,000',
+        onClick: () => handleQuickSelect(2000),
+      },
+      L4: {
+        id: 'L4',
+        label: 'Back to Menu',
+        onClick: () => navigate('/dashboard'),
+      },
+      R1: {
+        id: 'R1',
+        label: '₹5,000',
+        onClick: () => handleQuickSelect(5000),
+      },
+      R2: {
+        id: 'R2',
+        label: '₹10,000',
+        onClick: () => handleQuickSelect(10000),
+      },
+      R3: amountStr && parseFloat(amountStr) > 0 ? {
+        id: 'R3',
+        label: 'Confirm Withdraw',
+        onClick: () => handleOpenConfirm(),
+      } : null,
+      R4: amountStr ? {
+        id: 'R4',
+        label: 'Clear Amount',
+        onClick: () => handleClear(),
+      } : null,
+    });
+  }, [registerSideKeys, completedTx, amountStr, account, printReceipt, navigate]);
 
   const handleKeyPress = (num: string) => {
     setError(null);
@@ -147,8 +224,10 @@ export const WithdrawPage: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary mt-1">
             Cash Withdrawal
           </h1>
-          <p className="text-xs text-secondary mt-1 font-mono">
-            Available: ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (Min Balance Enforced)
+          <p className="text-xs text-secondary mt-1 font-mono flex items-center justify-center gap-2">
+            <span>Account: {maskAccountNumber(account?.accountNumber)}</span>
+            <span>•</span>
+            <span>Available: ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </p>
         </div>
 
