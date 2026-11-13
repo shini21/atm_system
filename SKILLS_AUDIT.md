@@ -32,16 +32,14 @@ This document tracks all agent skills discovered, configured, and actively utili
 - **Taste-Skill (`design-taste-frontend`)**:
   - Enforced anti-slop rules: No floating random cards, strict equal border margins, physical hardware grounding.
 
-### Phase 4, 5, 6 & 8: Hardware Simulation & Terminal Design
+### Phase U0: Frontend Redesign Audit & Token Architecture
 - **UI/UX Pro Max (`ui-ux-pro-max`)**:
-  - Selected authentic banknote color profiles: ₹500 stone green (`#435343`), ₹200 ochre orange (`#B45309`), ₹100 lavender blue (`#4338CA`).
-  - Implemented 44px+ tactile touch targets for all ATM interactive buttons.
-  - Implemented dual-theme contrast ratios exceeding WCAG AA 4.5:1.
-- **Taste-Skill (`design-taste-frontend`)**:
-  - Replaced generic AI card containers with a genuine industrial ATM chassis (`Apex Prime X-9000`), anti-glare screen surround, and physical hardware bay.
-- **Web Audio API (`modern-web-guidance`)**:
-  - Created zero-dependency synthesized audio engine (`sound.ts`) for mechanical button click transients, note dispenser flutter, card reader ingestion/ejection, and thermal printer stepper motor sound.
-- **Language Localization (`brand` / `design`)**:
-  - Created bilingual context (`LanguageContext.tsx`) with authentic Reserve Bank of India terminology in both English and Hindi (हिन्दी).
+  - Re-queried design engine: `fintech atm terminal luxury`.
+  - Selected Trust & Authority pattern with Deep Emerald (`#065F46` / `#10B981`) brand accent and warm brushed brass metallic accents (`#D97706`).
+  - Drafted comprehensive [DESIGN_SYSTEM.md](file:///d:/College/CP/atm_system/DESIGN_SYSTEM.md) defining strict 4px spacing, 2-tier radius scale (8px, 16px), elevation inner shadows, and classical ATM side-function key mappings.
+- **Borrowed Component & Animation Registry**:
+  - `Motion for React`: Motion layout springs, AnimatePresence transitions (Free / MIT).
+  - Web Audio API Sound Synthesizer: Zero external asset dependency, procedural transients (Custom / Open).
+
 
 

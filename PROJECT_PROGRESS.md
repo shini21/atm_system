@@ -26,6 +26,21 @@
 
 ---
 
+## 2.1 UI Redesign Execution Matrix (`ATM_UI_REDESIGN_PROMPT.md`)
+
+| UI Phase | Description | Status | Verification | Commit |
+| :--- | :--- | :--- | :--- | :--- |
+| **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | Pending |
+| **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **IN PROGRESS** | - | - |
+| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **PLANNED** | - | - |
+| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **PLANNED** | - | - |
+| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **PLANNED** | - | - |
+| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **PLANNED** | - | - |
+| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
+| **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
+
+---
+
 ## 3. Decisions Log
 
 1. **Working Branch**:
