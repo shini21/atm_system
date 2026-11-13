@@ -37,7 +37,7 @@
 | **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | `466fd55` |
 | **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **COMPLETED** | Vite build pass (1.40s) | `b13f960` |
 | **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **COMPLETED** | Vite build pass (1.40s) + WCAG AA | `d69e9b1` |
-| **Phase U7** | Full-Stack Verification & Final Documentation | **COMPLETED** | 34/34 Java Tests Pass + Vite Build Pass | `9e28e71` |
+| **Phase U7** | Full-Stack Verification & Final Documentation | **COMPLETED** | 34/34 Java + 6/6 Vitest Tests Pass | `9e28e71` |
 
 ---
 
