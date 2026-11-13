@@ -50,8 +50,8 @@ export const EjectPage: React.FC = () => {
         {/* Animated Card Ejection Physical Slot */}
         <div className="relative mb-8 w-full flex flex-col items-center">
           {/* Physical Bezel & Slot Opening */}
-          <div className="w-72 sm:w-80 h-3 rounded-full bg-surface-subdued border border-border-subtle shadow-inner mx-auto relative z-20 flex items-center justify-center">
-            <div className="w-48 h-1 bg-border-strong rounded-full opacity-60" />
+          <div className="w-full max-w-[270px] xs:max-w-[290px] sm:max-w-xs h-3 rounded-full bg-surface-subdued border border-border-subtle shadow-inner mx-auto relative z-20 flex items-center justify-center">
+            <div className="w-3/4 h-1 bg-border-strong rounded-full opacity-60" />
           </div>
 
           {/* Card Emerging from Slot */}

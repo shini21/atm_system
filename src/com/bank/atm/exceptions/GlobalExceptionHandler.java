@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class).error("Unhandled exception caught in GlobalExceptionHandler", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An unexpected error occurred during processing: " + ex.getMessage()));
+                .body(ApiResponse.error("An unexpected error occurred during processing. Please try again or contact customer support."));
     }
 }
 

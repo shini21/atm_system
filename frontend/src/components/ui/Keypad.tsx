@@ -27,7 +27,7 @@ export const Keypad: React.FC<KeypadProps> = ({
 
   return (
     <div className="w-full max-w-[280px] mx-auto select-none">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-2 xs:gap-3">
         {keys.map((num) => (
           <motion.button
             key={num}
@@ -37,7 +37,7 @@ export const Keypad: React.FC<KeypadProps> = ({
             whileTap={{ scale: disabled ? 1 : 0.94 }}
             transition={{ type: 'spring', stiffness: 450, damping: 25 }}
             onClick={() => onKeyPress(num)}
-            className="w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-xl sm:text-2xl font-medium text-primary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
+            className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-xl sm:text-2xl font-medium text-primary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
           >
             {num}
           </motion.button>
@@ -51,7 +51,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           whileTap={{ scale: disabled ? 1 : 0.94 }}
           transition={{ type: 'spring', stiffness: 450, damping: 25 }}
           onClick={onClear}
-          className="w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-xs font-medium text-secondary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-xs font-medium text-secondary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
           title="Clear PIN"
         >
           <RotateCcw className="w-4 h-4" />
@@ -65,7 +65,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           whileTap={{ scale: disabled ? 1 : 0.94 }}
           transition={{ type: 'spring', stiffness: 450, damping: 25 }}
           onClick={() => onKeyPress('0')}
-          className="w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-xl sm:text-2xl font-medium text-primary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-xl sm:text-2xl font-medium text-primary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
         >
           0
         </motion.button>
@@ -78,7 +78,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           whileTap={{ scale: disabled ? 1 : 0.94 }}
           transition={{ type: 'spring', stiffness: 450, damping: 25 }}
           onClick={onBackspace}
-          className="w-16 h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-xs font-medium text-secondary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-full bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-xs font-medium text-secondary shadow-sm flex items-center justify-center transition-colors cursor-pointer"
           title="Backspace"
         >
           <Delete className="w-5 h-5" />

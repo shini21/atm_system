@@ -170,10 +170,10 @@ export const WelcomePage: React.FC = () => {
       </AnimatePresence>
 
       {/* Physical-Style Card Slot with Mechanical LED & Tilted Card */}
-      <div className="flex flex-col items-center mb-8 relative">
+      <div className="flex flex-col items-center mb-8 relative w-full px-2">
         {/* Card Reader Slot Bezel */}
-        <div className="w-72 sm:w-80 h-3 bg-surface-subdued rounded-full border border-border-subtle mb-5 flex items-center justify-between px-3 shadow-inner relative">
-          <div className="w-56 h-1 bg-border-strong rounded-full opacity-60 mx-auto" />
+        <div className="w-full max-w-[270px] xs:max-w-[290px] sm:max-w-xs h-3 bg-surface-subdued rounded-full border border-border-subtle mb-5 flex items-center justify-between px-3 shadow-inner relative">
+          <div className="w-3/4 h-1 bg-border-strong rounded-full opacity-60 mx-auto" />
           {/* Status LED Indicator */}
           <div
             className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${
@@ -244,7 +244,7 @@ export const WelcomePage: React.FC = () => {
           Select Classroom Demo Profile to Test
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 xs:grid-cols-2 gap-2">
           {DEMO_CARDS.map((card) => {
             const isSelected = selectedCardId === card.cardNumber;
             return (

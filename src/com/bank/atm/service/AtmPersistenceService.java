@@ -283,7 +283,7 @@ public class AtmPersistenceService {
     }
 
     private String generateTxnId() {
-        return "TXN-" + TXN_COUNTER.incrementAndGet();
+        return "TXN-" + System.currentTimeMillis() + "-" + (int)(Math.random() * 9000 + 1000);
     }
 
     private Account mapToDomainAccount(AccountEntity entity) {

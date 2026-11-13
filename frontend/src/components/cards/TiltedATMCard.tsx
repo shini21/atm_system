@@ -123,7 +123,7 @@ export const TiltedATMCard: React.FC<TiltedATMCardProps> = ({
   return (
     <div
       style={{ perspective: '1100px' }}
-      className={`relative inline-block select-none ${className}`}
+      className={`relative inline-flex justify-center w-full max-w-xs select-none ${className}`}
     >
       <motion.div
         ref={cardRef}
@@ -151,7 +151,7 @@ export const TiltedATMCard: React.FC<TiltedATMCardProps> = ({
                 transition: { duration: 0.3 },
               }
         }
-        className={`relative w-76 h-46 sm:w-84 sm:h-52 rounded-2xl p-6 cursor-pointer transition-shadow duration-300 flex flex-col justify-between overflow-hidden border ${
+        className={`relative w-full max-w-[270px] xs:max-w-[290px] sm:max-w-xs h-42 xs:h-46 sm:h-52 rounded-2xl p-4 sm:p-6 cursor-pointer transition-shadow duration-300 flex flex-col justify-between overflow-hidden border ${
           isDark
             ? 'bg-gradient-to-br from-[#1B1D22] via-[#14161A] to-[#0D0E11] text-white border-white/10 shadow-[0_18px_42px_rgba(0,0,0,0.65)]'
             : 'bg-gradient-to-br from-[#FFFFFF] via-[#F8F9FA] to-[#EDEDF2] text-gray-900 border-gray-200/90 shadow-[0_14px_34px_rgba(0,0,0,0.08)]'

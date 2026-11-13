@@ -42,6 +42,16 @@ public class AtmHardwareController {
         return ResponseEntity.ok(ApiResponse.ok("ATM terminal status retrieved", status));
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> getHealth() {
+        Map<String, Object> health = new LinkedHashMap<>();
+        health.put("status", "UP");
+        health.put("service", "apex-atm-backend");
+        health.put("timestamp", java.time.Instant.now().toString());
+        health.put("version", "1.0.0");
+        return ResponseEntity.ok(health);
+    }
+
     @PostMapping("/unblock")
     public ResponseEntity<ApiResponse<String>> unblockCard(@RequestParam String cardNumber)
             throws AccountNotFoundException {

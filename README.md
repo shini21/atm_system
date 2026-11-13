@@ -403,8 +403,11 @@ atm_system/
 ├── pom.xml                                   # Maven configuration (Java 17, Spring Boot 3.3.4)
 ├── mvnw.cmd / mvnw                           # Maven wrapper executable
 ├── start-atm.bat                             # 1-Click launcher for both backend & frontend
+├── Dockerfile                                # Multi-stage production container for Render
+├── DEPLOYMENT_GUIDE.md                       # Complete Vercel & Render cloud deployment guide
 ├── ARCHITECTURE.md                           # Comprehensive Architecture & Engineering Guide
 ├── PHASES.md                                 # Phased development & bug resolution log
+├── SKILLS_AUDIT.md                           # Catalog of installed skills utilized
 ├── LICENSE                                   # MIT License
 ├── OOP_CONCEPTS.md                           # Object-Oriented Programming principles mapping
 ├── API_DOCUMENTATION.md                      # Complete REST API specification

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -18,6 +18,7 @@ import { TransferPage } from './pages/TransferPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { ChangePinPage } from './pages/ChangePinPage';
 import { EjectPage } from './pages/EjectPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 // Route Guard Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -41,7 +42,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return <>{children}</>;
 };
 
-// Layout Container that adapts title and back navigation based on route
+// Layout Container that adapts title, back navigation, and document metadata based on route
 const AppRoutes: React.FC = () => {
   const location = useLocation();
   const { t } = useLanguage();
@@ -49,31 +50,80 @@ const AppRoutes: React.FC = () => {
   const getScreenDetails = (pathname: string) => {
     switch (pathname) {
       case '/':
-        return { title: t('title.welcome'), showBack: false };
+        return {
+          title: t('title.welcome'),
+          showBack: false,
+          pageTitle: 'Apex Touch Banking | Next-Gen ATM Simulation System',
+        };
       case '/pin':
-        return { title: t('title.auth'), showBack: false };
+        return {
+          title: t('title.auth'),
+          showBack: false,
+          pageTitle: 'Security Authentication | Apex ATM',
+        };
       case '/dashboard':
-        return { title: t('title.dashboard'), showBack: false };
+        return {
+          title: t('title.dashboard'),
+          showBack: false,
+          pageTitle: 'Banking Dashboard | Apex ATM',
+        };
       case '/balance':
-        return { title: t('title.balance'), showBack: true };
+        return {
+          title: t('title.balance'),
+          showBack: true,
+          pageTitle: 'Ledger Balance Inquiry | Apex ATM',
+        };
       case '/deposit':
-        return { title: t('title.deposit'), showBack: true };
+        return {
+          title: t('title.deposit'),
+          showBack: true,
+          pageTitle: 'Cash Deposit Terminal | Apex ATM',
+        };
       case '/withdraw':
-        return { title: t('title.withdraw'), showBack: true };
+        return {
+          title: t('title.withdraw'),
+          showBack: true,
+          pageTitle: 'Cash Dispenser | Apex ATM',
+        };
       case '/transfer':
-        return { title: t('title.transfer'), showBack: true };
+        return {
+          title: t('title.transfer'),
+          showBack: true,
+          pageTitle: 'Electronic Funds Transfer | Apex ATM',
+        };
       case '/history':
-        return { title: t('title.history'), showBack: true };
+        return {
+          title: t('title.history'),
+          showBack: true,
+          pageTitle: 'Audit Statement & History | Apex ATM',
+        };
       case '/change-pin':
-        return { title: t('title.changePin'), showBack: true };
+        return {
+          title: t('title.changePin'),
+          showBack: true,
+          pageTitle: 'Card PIN Management | Apex ATM',
+        };
       case '/eject':
-        return { title: t('title.eject'), showBack: false };
+        return {
+          title: t('title.eject'),
+          showBack: false,
+          pageTitle: 'Card Ejected | Apex ATM',
+        };
       default:
-        return { title: '', showBack: false };
+        return {
+          title: 'Terminal Fault // 404',
+          showBack: true,
+          pageTitle: '404 Route Not Found | Apex ATM Terminal',
+        };
     }
   };
 
-  const { title, showBack } = getScreenDetails(location.pathname);
+  const { title, showBack, pageTitle } = getScreenDetails(location.pathname);
+
+  // Synchronize browser tab document.title dynamically
+  useEffect(() => {
+    document.title = pageTitle;
+  }, [pageTitle]);
 
   return (
     <AtmKiosk activeScreenTitle={title} showBack={showBack}>
@@ -137,7 +187,7 @@ const AppRoutes: React.FC = () => {
           }
         />
         <Route path="/eject" element={<EjectPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AtmKiosk>
   );
