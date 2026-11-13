@@ -58,6 +58,7 @@ export interface HardwareContextType {
   toggleSound: () => boolean;
 
   // Physical Keypad Event Broadcaster
+  activeKeypadKey: string | null;
   pressKeypad: (key: string) => void;
   registerKeypadListener: (listener: (key: string) => void) => () => void;
 }
@@ -88,7 +89,8 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Physical Side Function Keys registry (L1-L4, R1-R4)
   const [sideKeys, setSideKeys] = useState<Record<string, SideKeyAction | null>>({});
 
-  // Keypad listener registry
+  // Keypad listener registry & active pressed key state
+  const [activeKeypadKey, setActiveKeypadKey] = useState<string | null>(null);
   const keypadListenersRef = useRef<Set<(key: string) => void>>(new Set());
 
   // Synchronize card slot state with session
@@ -217,10 +219,15 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [sideKeys, resetInactivity]);
 
-  // Keypad broadcaster
-  const pressKeypad = (key: string) => {
+  // Keypad broadcaster with tactile key state simulation
+  const pressKeypad = useCallback((key: string) => {
     sound.playKeyClick();
     resetInactivity();
+    setActiveKeypadKey(key);
+    setTimeout(() => {
+      setActiveKeypadKey((prev) => (prev === key ? null : prev));
+    }, 150);
+
     keypadListenersRef.current.forEach((listener) => {
       try {
         listener(key);
@@ -228,7 +235,54 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         // Safe listener error catch
       }
     });
-  };
+  }, [resetInactivity]);
+
+  // Comprehensive physical keyboard listener (supports top-row numbers, laptop Numpad with NumLock ON/OFF, Enter, Bksp, Esc, Clear)
+  useEffect(() => {
+    const handlePhysicalKeyDown = (e: KeyboardEvent) => {
+      // Do not hijack keystrokes if the user is typing inside an <input> or <textarea>
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      let key = '';
+
+      // 1. Detect Digits (0-9):
+      // - Standard e.key (e.g. '0'-'9')
+      // - e.code 'Numpad0'-'Numpad9' (works regardless of NumLock state on Windows laptops)
+      // - e.code 'Digit0'-'Digit9'
+      if (/^[0-9]$/.test(e.key)) {
+        key = e.key;
+      } else if (e.code && /^Numpad([0-9])$/.test(e.code)) {
+        key = e.code.replace('Numpad', '');
+      } else if (e.code && /^Digit([0-9])$/.test(e.code)) {
+        key = e.code.replace('Digit', '');
+      }
+
+      // 2. Navigation & Control Keys
+      if (e.key === 'Backspace' || e.code === 'Backspace') {
+        key = 'BACKSPACE';
+        e.preventDefault();
+      } else if (e.key === 'Enter' || e.code === 'NumpadEnter') {
+        key = 'ENTER';
+        e.preventDefault();
+      } else if (e.key === 'Escape') {
+        key = 'CANCEL';
+        e.preventDefault();
+      } else if (e.key === 'Delete' || e.key === 'c' || e.key === 'C' || e.code === 'NumpadDecimal') {
+        key = 'CLEAR';
+        e.preventDefault();
+      }
+
+      if (key) {
+        pressKeypad(key);
+      }
+    };
+
+    window.addEventListener('keydown', handlePhysicalKeyDown);
+    return () => window.removeEventListener('keydown', handlePhysicalKeyDown);
+  }, [pressKeypad]);
 
   const registerKeypadListener = (listener: (key: string) => void) => {
     keypadListenersRef.current.add(listener);
@@ -258,6 +312,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         resetInactivity,
         isMuted,
         toggleSound,
+        activeKeypadKey,
         pressKeypad,
         registerKeypadListener,
       }}

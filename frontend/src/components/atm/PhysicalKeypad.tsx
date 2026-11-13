@@ -1,43 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'motion/react';
 import { useHardware } from '../../context/HardwareContext';
 import { Delete, Check, X, RotateCcw } from 'lucide-react';
 
 export const PhysicalKeypad: React.FC = () => {
-  const { pressKeypad } = useHardware();
-  const [activeKey, setActiveKey] = useState<string | null>(null);
-
-  // Listen for physical keyboard events to mirror physical keypad presses
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      let key = '';
-      if (/^[0-9]$/.test(e.key)) {
-        key = e.key;
-      } else if (e.key === 'Backspace') {
-        key = 'BACKSPACE';
-      } else if (e.key === 'Escape') {
-        key = 'CANCEL';
-      } else if (e.key === 'Enter') {
-        key = 'ENTER';
-      } else if (e.key === 'Delete' || e.key === 'c' || e.key === 'C') {
-        key = 'CLEAR';
-      }
-
-      if (key) {
-        setActiveKey(key);
-        pressKeypad(key);
-        setTimeout(() => setActiveKey(null), 150);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pressKeypad]);
+  const { pressKeypad, activeKeypadKey } = useHardware();
 
   const handlePress = (key: string) => {
-    setActiveKey(key);
     pressKeypad(key);
-    setTimeout(() => setActiveKey(null), 150);
   };
 
   const keys = [
@@ -71,7 +41,7 @@ export const PhysicalKeypad: React.FC = () => {
               whileTap={{ scale: 0.92, y: 1 }}
               onClick={() => handlePress(k.value)}
               className={`h-11 rounded-lg bg-gradient-to-b from-surface to-surface-subdued border border-border-subtle hover:border-accent/40 shadow-sm flex flex-col items-center justify-center relative cursor-pointer transition-all ${
-                activeKey === k.value ? 'ring-2 ring-accent scale-95' : ''
+                activeKeypadKey === k.value ? 'ring-2 ring-accent scale-95' : ''
               }`}
             >
               <span className="text-sm font-bold font-mono text-primary leading-none">
@@ -93,7 +63,7 @@ export const PhysicalKeypad: React.FC = () => {
             whileTap={{ scale: 0.92, y: 1 }}
             onClick={() => handlePress('CANCEL')}
             className={`h-11 rounded-lg bg-gradient-to-b from-rose-950/40 to-rose-900/60 border border-rose-500/40 hover:border-rose-400 text-rose-300 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKey === 'CANCEL' ? 'ring-2 ring-rose-500 scale-95' : ''
+              activeKeypadKey === 'CANCEL' ? 'ring-2 ring-rose-500 scale-95' : ''
             }`}
             title="Cancel Transaction (Esc)"
           >
@@ -108,7 +78,7 @@ export const PhysicalKeypad: React.FC = () => {
             whileTap={{ scale: 0.92, y: 1 }}
             onClick={() => handlePress('0')}
             className={`h-11 rounded-lg bg-gradient-to-b from-surface to-surface-subdued border border-border-subtle hover:border-accent/40 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKey === '0' ? 'ring-2 ring-accent scale-95' : ''
+              activeKeypadKey === '0' ? 'ring-2 ring-accent scale-95' : ''
             }`}
           >
             <span className="text-sm font-bold font-mono text-primary leading-none">0</span>
@@ -120,7 +90,7 @@ export const PhysicalKeypad: React.FC = () => {
             whileTap={{ scale: 0.92, y: 1 }}
             onClick={() => handlePress('CLEAR')}
             className={`h-11 rounded-lg bg-gradient-to-b from-amber-950/40 to-amber-900/60 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKey === 'CLEAR' ? 'ring-2 ring-amber-500 scale-95' : ''
+              activeKeypadKey === 'CLEAR' ? 'ring-2 ring-amber-500 scale-95' : ''
             }`}
             title="Clear Input (Del)"
           >
@@ -138,7 +108,7 @@ export const PhysicalKeypad: React.FC = () => {
             whileTap={{ scale: 0.94 }}
             onClick={() => handlePress('BACKSPACE')}
             className={`h-9 rounded-lg bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-secondary shadow-sm flex items-center justify-center gap-1 cursor-pointer text-xs font-mono ${
-              activeKey === 'BACKSPACE' ? 'ring-2 ring-accent scale-95' : ''
+              activeKeypadKey === 'BACKSPACE' ? 'ring-2 ring-accent scale-95' : ''
             }`}
           >
             <Delete className="w-3.5 h-3.5" />
@@ -150,7 +120,7 @@ export const PhysicalKeypad: React.FC = () => {
             whileTap={{ scale: 0.94 }}
             onClick={() => handlePress('ENTER')}
             className={`h-9 rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 border border-emerald-400/50 text-white shadow-sm flex items-center justify-center gap-1 cursor-pointer text-xs font-mono font-semibold ${
-              activeKey === 'ENTER' ? 'ring-2 ring-emerald-300 scale-95' : ''
+              activeKeypadKey === 'ENTER' ? 'ring-2 ring-emerald-300 scale-95' : ''
             }`}
             title="Enter / Confirm (Enter)"
           >

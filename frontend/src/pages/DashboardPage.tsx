@@ -23,12 +23,26 @@ import {
 export const DashboardPage: React.FC = () => {
   const { session, account, refreshBalance } = useAuth();
   const { t } = useLanguage();
-  const { inactivitySeconds, registerSideKeys } = useHardware();
+  const { inactivitySeconds, registerSideKeys, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
 
   useEffect(() => {
     refreshBalance();
   }, [refreshBalance]);
+
+  // Physical Keypad numeric shortcuts from laptop keypad
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (key === '1') navigate('/withdraw');
+      else if (key === '2') navigate('/deposit');
+      else if (key === '3') navigate('/balance');
+      else if (key === '4') navigate('/transfer');
+      else if (key === '5') navigate('/history');
+      else if (key === '6') navigate('/change-pin');
+      else if (key === 'CANCEL') navigate('/eject');
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, navigate]);
 
   // Register physical side function keys on ATM chassis (L1-L4 and R1-R4)
   useEffect(() => {

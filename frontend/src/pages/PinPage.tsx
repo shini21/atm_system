@@ -106,23 +106,6 @@ export const PinPage: React.FC = () => {
     return unsubscribe;
   }, [registerKeypadListener, isLoading, pin, handleSubmitPin, clearCard, navigate]);
 
-  // Keyboard navigation listener (support physical number keys)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (isLoading) return;
-      if (e.key >= '0' && e.key <= '9') {
-        handleKeyPress(e.key);
-      } else if (e.key === 'Backspace') {
-        handleBackspace();
-      } else if (e.key === 'Escape') {
-        handleClear();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [pin, isLoading]);
-
   if (!cardStatus) {
     return null;
   }

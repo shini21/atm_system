@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHardware } from '../context/HardwareContext';
@@ -16,8 +16,29 @@ export const WelcomePage: React.FC = () => {
   const [isInserting, setIsInserting] = useState<boolean>(false);
   const [unblockSuccess, setUnblockSuccess] = useState<string | null>(null);
   const { checkCard, isLoading, error, clearError } = useAuth();
-  const { setCardSlotState } = useHardware();
+  const { setCardSlotState, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
+
+  // Listen to physical keypad / laptop numpad events (1-5 to select demo card, Enter to insert)
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isInserting || isLoading) return;
+      if (key === 'ENTER') {
+        handleInsert(manualCardNumber || selectedCardId);
+      } else if (key === '1') {
+        handleSelectDemo('CARD1001');
+      } else if (key === '2') {
+        handleSelectDemo('CARD1002');
+      } else if (key === '3') {
+        handleSelectDemo('CARD1003');
+      } else if (key === '4') {
+        handleSelectDemo('CARD1004');
+      } else if (key === '5') {
+        handleSelectDemo('CARD1005');
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isInserting, isLoading, manualCardNumber, selectedCardId]);
 
   // Selected demo profile metadata
   const currentDemo = DEMO_CARDS.find((c) => c.cardNumber === selectedCardId) || {
