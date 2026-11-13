@@ -401,8 +401,12 @@ OOP-CP/
 │   └── vite.config.ts
 ├── pom.xml                                    # Maven configuration (Java 17, Spring Boot 3.3.4)
 ├── mvnw.cmd / mvnw                            # Maven wrapper executable
-├── FRONTEND_RESOURCES.md                      # UI and animation component attribution
-├── PROJECT_STATUS.md                          # Phase tracking and Git commit registry
+├── start-atm.bat                              # 1-Click launcher for both backend & frontend
+├── BACKEND_ARCHITECTURE_GUIDE.md              # In-depth Backend Engineering & Viva Defense Guide
+├── API_DOCUMENTATION.md                       # Complete REST API specification
+├── OOP_CONCEPTS.md                            # Object-Oriented Programming principles mapping
+├── DESIGN_SYSTEM.md                           # UI tokens, color palettes, and chassis specs
+├── PROJECT_PROGRESS.md                        # Phase-by-phase implementation & test audit log
 └── README.md                                  # Complete project documentation
 ```
 
@@ -411,5 +415,5 @@ OOP-CP/
 ## Academic Verification & Integrity
 
 - **Original Console Project**: Fully functional and compilable via `javac` without Spring or Node dependencies.
-- **Academic Source of Truth**: All business rules (3 PIN attempts, card blocking, minimum balance calculations, transfers) originate strictly in the Java domain layer.
-- **Git Branching Strategy**: Built entirely on branch `feature/atm-web-application` with phase-wise commits following standard conventional commits format.
+- **Academic Source of Truth**: All business rules (3 PIN attempts, card blocking, minimum balance calculations, transfers, greedy cash dispensing) originate strictly in the Java domain layer.
+- **Git Branching Strategy**: Built cleanly on branch `feature/premium-atm` with phase-wise conventional commits.

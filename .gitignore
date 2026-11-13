@@ -11,6 +11,8 @@ sources.txt
 *.iml
 
 # Eclipse
+.classpath
+.project
 .settings/
 
 # VS Code
@@ -35,6 +37,7 @@ buildNumber.properties
 .mvn/timing.properties
 
 # Database (H2 file database)
+data/
 *.db
 *.mv.db
 *.trace.db
