@@ -19,8 +19,14 @@ export const HistoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account } = useAuth();
-  const { printReceipt } = useHardware();
+  const { printReceipt, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  const maskAccountNumber = (accNum?: string) => {
+    if (!accNum) return '•••• ••••';
+    if (accNum.length <= 4) return `•••• ${accNum}`;
+    return `${accNum.slice(0, 3)}••••${accNum.slice(-4)}`;
+  };
 
   const fetchHistory = async () => {
     setIsLoading(true);
@@ -39,6 +45,43 @@ export const HistoryPage: React.FC = () => {
   useEffect(() => {
     fetchHistory();
   }, []);
+
+  // Register physical side function keys on ATM chassis
+  useEffect(() => {
+    return registerSideKeys({
+      L4: {
+        id: 'L4',
+        label: 'Back to Menu',
+        onClick: () => navigate('/dashboard'),
+      },
+      R1: {
+        id: 'R1',
+        label: 'Print Slip',
+        onClick: () => {
+          const latest = transactions[0];
+          printReceipt({
+            transactionId: `STMT-${Date.now().toString().slice(-6)}`,
+            type: 'MINI STATEMENT',
+            amount: latest ? latest.amount : 0,
+            balanceAfter: account?.availableBalance || 0,
+            timestamp: new Date().toISOString(),
+            accountNumber: account?.accountNumber || 'ACC1001',
+            cardHolderName: account?.fullName,
+          });
+        },
+      },
+      R2: {
+        id: 'R2',
+        label: 'Refresh',
+        onClick: fetchHistory,
+      },
+      R3: {
+        id: 'R3',
+        label: 'Filter All',
+        onClick: () => setFilter('ALL'),
+      },
+    });
+  }, [registerSideKeys, transactions, account, printReceipt, navigate]);
 
   const filteredTransactions = transactions.filter((tx) => {
     if (filter === 'ALL') return true;
@@ -68,7 +111,7 @@ export const HistoryPage: React.FC = () => {
               Transaction History
             </h1>
             <p className="text-xs text-secondary mt-1 font-mono">
-              Account: {account?.accountNumber} ({account?.accountType})
+              Account: {maskAccountNumber(account?.accountNumber)} ({account?.accountType})
             </p>
           </div>
 

@@ -98,10 +98,14 @@ export const EjectPage: React.FC = () => {
 
           <div className="pt-3">
             <Button
-              variant="secondary"
-              size="md"
-              onClick={() => navigate('/')}
-              icon={<ArrowRight className="w-3.5 h-3.5" />}
+              variant="primary"
+              size="lg"
+              onClick={() => {
+                setCardSlotState('empty');
+                navigate('/');
+              }}
+              icon={<ArrowRight className="w-4 h-4" />}
+              className="px-6 py-2.5 font-semibold shadow-md"
             >
               Start New Session
             </Button>

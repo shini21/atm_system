@@ -18,14 +18,14 @@ import {
 export const BalancePage: React.FC = () => {
   const { account, balanceInfo, refreshBalance } = useAuth();
   const { t } = useLanguage();
-  const { printReceipt } = useHardware();
+  const { printReceipt, registerSideKeys } = useHardware();
   const navigate = useNavigate();
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isReceiptOpen, setIsReceiptOpen] = useState<boolean>(false);
 
   useEffect(() => {
     refreshBalance();
-  }, []);
+  }, [refreshBalance]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -36,6 +36,48 @@ export const BalancePage: React.FC = () => {
   const totalBalance = balanceInfo?.currentBalance ?? account?.balance ?? 0;
   const availableBalance = balanceInfo?.availableBalance ?? account?.availableBalance ?? 0;
   const minimumBalance = balanceInfo?.minimumBalance ?? account?.minimumBalance ?? 0;
+
+  const maskAccountNumber = (accNum?: string) => {
+    if (!accNum) return '•••• ••••';
+    if (accNum.length <= 4) return `•••• ${accNum}`;
+    return `${accNum.slice(0, 3)}••••${accNum.slice(-4)}`;
+  };
+
+  // Register physical side keys on ATM chassis
+  useEffect(() => {
+    return registerSideKeys({
+      L1: {
+        id: 'L1',
+        label: 'Fast Withdraw',
+        onClick: () => navigate('/withdraw'),
+      },
+      L4: {
+        id: 'L4',
+        label: 'Back to Menu',
+        onClick: () => navigate('/dashboard'),
+      },
+      R1: {
+        id: 'R1',
+        label: 'Print Slip',
+        onClick: () => {
+          printReceipt({
+            transactionId: `BAL-${Date.now().toString().slice(-6)}`,
+            type: 'BALANCE INQUIRY',
+            amount: availableBalance,
+            balanceAfter: availableBalance,
+            timestamp: new Date().toISOString(),
+            accountNumber: account?.accountNumber || 'ACC1001',
+            cardHolderName: account?.fullName,
+          });
+        },
+      },
+      R2: {
+        id: 'R2',
+        label: 'Refresh',
+        onClick: handleRefresh,
+      },
+    });
+  }, [registerSideKeys, availableBalance, account, printReceipt, navigate]);
 
   return (
     <ATMTransition>
@@ -53,7 +95,7 @@ export const BalancePage: React.FC = () => {
           Account Balance
         </h1>
         <p className="text-xs text-secondary mt-1 font-mono">
-          {account?.accountNumber} • {account?.accountType}
+          {maskAccountNumber(account?.accountNumber)} • {account?.accountType}
         </p>
       </motion.div>
 

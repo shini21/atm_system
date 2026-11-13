@@ -34,9 +34,9 @@
 | **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | `7744dc7` |
 | **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | `7417231` |
 | **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | `f34b944` |
-| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | Pending |
-| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **IN PROGRESS** | - | - |
-| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
+| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | `466fd55` |
+| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **COMPLETED** | Vite build pass (1.40s) | Pending |
+| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **IN PROGRESS** | - | - |
 | **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
 
 ---
@@ -111,6 +111,24 @@
   - Masked sender account number (`ACC••••1001`).
   - Physical side key mappings for back (`L4`), initiate transfer (`R3`), clear (`R4`), print receipt (`R1`).
 - Verified compilation and tests: `npm run build` passes in 1.30s; backend unit tests pass 8/8.
+
+---
+
+## 2.6 Phase Details: Phase U5 (Thermal Receipt, History Ledger Table, Mini Statement)
+
+### Completed Tasks:
+- Updated `HistoryPage.tsx`:
+  - Added clean activity ledger rows with date, type, credit/debit badges, tabular numerals, reference ID, and balance after transaction.
+  - Interactive operation filters (All, Deposits, Withdrawals, Transfers).
+  - Masked account numbers (`ACC••••1001`).
+  - Physical side key mappings: `L4` (Back to Menu), `R1` (Print Mini Statement Slip), `R2` (Refresh Ledger), `R3` (Filter All).
+- Updated `BalancePage.tsx`:
+  - Masked account number in header (`ACC••••1001`).
+  - Added side key mappings: `L1` (Fast Withdraw), `L4` (Back to Menu), `R1` (Print Balance Slip), `R2` (Refresh Balance).
+- Updated `EjectPage.tsx`:
+  - Added primary emphasis styling to "Start New Session" button (`variant="primary"` with Deep Emerald styling).
+  - Preserved centered spring card emergence animation and auto-countdown to welcome screen.
+- Verified compilation: `npm run build` passes cleanly in 1.40s with 0 errors.
 
 ---
 
