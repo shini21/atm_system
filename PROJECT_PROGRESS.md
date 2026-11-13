@@ -14,10 +14,10 @@
 | Phase | Description | Status | Test Result | Git Commit | Push Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Phase 0** | Repository Audit, Skill Discovery, Plan & Doc Setup | **COMPLETED** | 21/21 Java Tests Pass | `78324ff` | Pushed to origin/feature/premium-atm |
-| **Phase 1** | Backend Architecture & Persistence (H2, Entities, Seed Data) | **COMPLETED** | 21/21 Java Tests Pass | Pending | Ready to commit & push |
-| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **IN PROGRESS** | - | - | - |
-| **Phase 3** | Backend Tests & Security Hardening (BCrypt, Idempotency, Limits) | **PLANNED** | - | - | - |
-| **Phase 4** | Frontend Foundation & Physical Kiosk Chassis | **PLANNED** | - | - | - |
+| **Phase 1** | Backend Architecture & Persistence (H2, Entities, Seed Data) | **COMPLETED** | 21/21 Java Tests Pass | `ca9851a` | Pushed to origin/feature/premium-atm |
+| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **COMPLETED** | 34/34 Java Tests Pass | Pending | Ready to commit & push |
+| **Phase 3** | Backend Tests & Security Hardening (BCrypt, Idempotency, Limits) | **COMPLETED** | 34/34 Java Tests Pass | Pending | Ready to commit & push |
+| **Phase 4** | Frontend Foundation & Physical Kiosk Chassis | **IN PROGRESS** | - | - | - |
 | **Phase 5** | ATM Interface & Tactile Hardware Elements (Keypad, Slots) | **PLANNED** | - | - | - |
 | **Phase 6** | ATM Transaction Simulation (Dispensing, Counting, Receipts) | **PLANNED** | - | - | - |
 | **Phase 7** | Full-Stack Integration & End-to-End Operation Verification | **PLANNED** | - | - | - |
@@ -50,7 +50,6 @@
 ### Completed Tasks:
 - Updated `pom.xml`: Added `spring-boot-starter-data-jpa`, `com.h2database:h2`, and `spring-security-crypto`.
 - Configured embedded H2 file database (`jdbc:h2:file:./data/atm_db`) in `resources/application.properties` and MySQL profile in `resources/application-mysql.properties`.
-- Configured isolated H2 in-memory test database in `test-resources/application.properties`.
 - Created JPA Entities under `src/com/bank/atm/entity/`: `CustomerEntity`, `AccountEntity`, `CardEntity`, `TransactionEntity`, `AtmInventoryEntity`.
 - Created Spring Data JPA Repositories under `src/com/bank/atm/repository/`.
 - Implemented `PinSecurityService` with BCrypt password hashing and verification.
@@ -59,9 +58,33 @@
 - Implemented `AtmPersistenceService` bridging OOP domain entities with JPA database persistence.
 - Added note breakdown support to `TransactionItemResponse` and `TransactionController`.
 - Added `AtmHardwareController` for ATM inventory status and card unblock support.
-- All 21 Maven tests passing cleanly (`mvnw.cmd test`).
+- Commit: `ca9851a` (`refactor: organize Java backend architecture with JPA persistence and H2`).
+
+---
+
+## 5. Phase Details: Phase 2 & 3 (Core ATM Services & Security Hardening)
+
+### Completed Tasks:
+- Implemented and verified comprehensive unit tests for `CashDispenserServiceTest`:
+  - Standard greedy breakdown for ₹2,800 into ₹500, ₹200, ₹100 notes.
+  - Graceful fallback when higher denominations are depleted.
+  - Strict rejection of non-multiples of ₹100.
+  - Strict rejection of negative and zero amounts.
+  - Enforcement of maximum withdrawal limit per transaction (INR 20,000.00).
+  - Out-of-cash detection when inventory cannot satisfy exact amount.
+  - Note decrement on cash dispense.
+  - Total cash inventory valuation.
+- Implemented and verified unit tests for `PinSecurityServiceTest`:
+  - 4-digit PIN BCrypt hashing and secure validation.
+  - Format rejection for non-4-digit PINs.
+  - Backward-compatible plain text migration support.
+- Implemented and verified integration tests for `AtmHardwareTest`:
+  - `GET /api/atm/status` returning terminal model, online status, supported denominations, and cash availability.
+  - `POST /api/atm/unblock` unlocking demo cards (e.g. `CARD1004`) back to `ACTIVE` state.
+- Configured isolated in-memory H2 database under `src/test/resources/application.properties` with clean context refresh between test suites.
+- Full test suite verified: **34 tests passing cleanly** (0 failures, 0 errors).
 
 ### Commit:
-- Message: `refactor: organize Java backend architecture with JPA persistence and H2`
+- Message: `feat: implement withdrawal and deposit operations with denomination handling`
 
 
