@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 import { NumberTicker } from '../components/ui/NumberTicker';
 import { SpotlightCard } from '../components/cards/SpotlightCard';
 import { TransactionItem } from '../components/transactions/TransactionItem';
@@ -19,6 +20,7 @@ import {
 
 export const DashboardPage: React.FC = () => {
   const { session, account, refreshBalance } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [recentTransactions, setRecentTransactions] = useState<TransactionItemType[]>([]);
 
@@ -39,43 +41,43 @@ export const DashboardPage: React.FC = () => {
 
   const actionItems = [
     {
-      title: 'Withdraw',
-      desc: 'Fast cash or custom amount',
+      title: t('dash.withdraw'),
+      desc: t('dash.withdrawDesc'),
       icon: <ArrowUpRight className="w-5 h-5" />,
       path: '/withdraw',
       spotlightColor: '#FF5C5C', // Coral/Amber accent
     },
     {
-      title: 'Deposit',
-      desc: 'Instant currency deposit',
+      title: t('dash.deposit'),
+      desc: t('dash.depositDesc'),
       icon: <ArrowDownLeft className="w-5 h-5" />,
       path: '/deposit',
       spotlightColor: '#10B981', // Emerald/Mint accent
     },
     {
-      title: 'Transfer',
-      desc: 'Account-to-account funds',
+      title: t('dash.transfer'),
+      desc: t('dash.transferDesc'),
       icon: <ArrowLeftRight className="w-5 h-5" />,
       path: '/transfer',
       spotlightColor: '#0EA5E9', // Cobalt/Cyan accent
     },
     {
-      title: 'Balance Details',
-      desc: 'Account limits & statements',
+      title: t('dash.balance'),
+      desc: t('dash.balanceDesc'),
       icon: <Eye className="w-5 h-5" />,
       path: '/balance',
       spotlightColor: '#818CF8', // Ice Blue / Platinum accent
     },
     {
-      title: 'Activity Ledger',
-      desc: 'Full transaction statement',
+      title: t('dash.history'),
+      desc: t('dash.historyDesc'),
       icon: <Receipt className="w-5 h-5" />,
       path: '/history',
       spotlightColor: '#64748B', // Muted Blue / Silver accent
     },
     {
-      title: 'Security & PIN',
-      desc: 'Change your card PIN',
+      title: t('dash.pin'),
+      desc: t('dash.pinDesc'),
       icon: <KeyRound className="w-5 h-5" />,
       path: '/change-pin',
       spotlightColor: '#8B5CF6', // Violet/Indigo accent

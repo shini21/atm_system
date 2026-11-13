@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHardware } from '../context/HardwareContext';
+import { sound } from '../utils/sound';
 import { TiltedATMCard } from '../components/cards/TiltedATMCard';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import { Button } from '../components/ui/Button';
@@ -9,6 +11,7 @@ import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export const EjectPage: React.FC = () => {
   const { session, cardStatus, account, logout } = useAuth();
+  const { setCardSlotState } = useHardware();
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState<number>(6);
 
@@ -17,14 +20,17 @@ export const EjectPage: React.FC = () => {
   const accountType = account?.accountType || 'Savings Account';
 
   useEffect(() => {
-    // Perform server-side session logout
+    // Perform server-side session logout and trigger hardware ejection
     logout();
+    setCardSlotState('ejected');
+    sound.playCardEject();
 
     // 6-second countdown to return to welcome screen
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
+          setCardSlotState('empty');
           navigate('/');
           return 0;
         }
@@ -32,7 +38,10 @@ export const EjectPage: React.FC = () => {
       });
     }, 1000);
 
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      setCardSlotState('empty');
+    };
   }, []);
 
   return (

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHardware } from '../context/HardwareContext';
 import { api, getErrorMessage } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
@@ -19,7 +20,35 @@ export const TransferPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account, refreshBalance } = useAuth();
+  const { printReceipt, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
+
+  // Hardware keypad listener
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isLoading || completedTx) return;
+      if (/^[0-9]$/.test(key)) {
+        handleKeyPress(key);
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key === 'CLEAR') {
+        handleClear();
+      } else if (key === 'CANCEL') {
+        if (isConfirmOpen) {
+          setIsConfirmOpen(false);
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (key === 'ENTER') {
+        if (isConfirmOpen) {
+          handleExecuteTransfer();
+        } else if (recipient && amountStr && parseFloat(amountStr) > 0) {
+          handleInitiateTransfer();
+        }
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, recipient, amountStr]);
 
   const demoRecipients = [
     { acc: 'ACC1001', name: 'Aarav Sharma' },
@@ -86,6 +115,17 @@ export const TransferPage: React.FC = () => {
       await refreshBalance();
       setIsConfirmOpen(false);
       setCompletedTx(record);
+
+      // Trigger thermal receipt generation
+      printReceipt({
+        transactionId: record.transactionId,
+        type: `TRANSFER TO ${recipient.trim().toUpperCase()}`,
+        amount: record.amount,
+        balanceAfter: record.balanceAfterTransaction,
+        timestamp: record.timestamp || new Date().toISOString(),
+        accountNumber: account?.accountNumber || 'ACC1001',
+        cardHolderName: account?.fullName,
+      });
     } catch (err) {
       setIsConfirmOpen(false);
       setError(getErrorMessage(err));

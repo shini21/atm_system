@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHardware } from '../context/HardwareContext';
+import { sound } from '../utils/sound';
+import { api } from '../services/api';
 import { DEMO_CARDS } from '../utils/demoCards';
 import { TiltedATMCard } from '../components/cards/TiltedATMCard';
 import { Button } from '../components/ui/Button';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, AlertCircle, CreditCard, Sparkles } from 'lucide-react';
+import { ArrowRight, AlertCircle, CreditCard, Sparkles, Unlock } from 'lucide-react';
 
 export const WelcomePage: React.FC = () => {
   const [selectedCardId, setSelectedCardId] = useState<string>('CARD1001');
   const [manualCardNumber, setManualCardNumber] = useState<string>('CARD1001');
   const [isInserting, setIsInserting] = useState<boolean>(false);
+  const [unblockSuccess, setUnblockSuccess] = useState<string | null>(null);
   const { checkCard, isLoading, error, clearError } = useAuth();
+  const { setCardSlotState } = useHardware();
   const navigate = useNavigate();
 
   // Selected demo profile metadata
@@ -33,19 +38,38 @@ export const WelcomePage: React.FC = () => {
   const handleInsert = async (cardNumToInsert: string) => {
     if (isInserting || isLoading) return;
     clearError();
+    setUnblockSuccess(null);
     const cleanNum = cardNumToInsert.trim().toUpperCase();
     if (!cleanNum) return;
 
     setIsInserting(true);
+    setCardSlotState('reading');
+    sound.playCardInsert();
 
     // Mechanical insertion sequence timing: 650ms smooth intake animation
     setTimeout(async () => {
       const success = await checkCard(cleanNum);
       setIsInserting(false);
       if (success) {
+        setCardSlotState('inserted');
         navigate('/pin');
+      } else {
+        setCardSlotState('blocked');
+        sound.playAlert();
       }
     }, 650);
+  };
+
+  const handleUnblockCard = async (cardNum: string) => {
+    try {
+      await api.unblockCard(cardNum);
+      sound.playSuccess();
+      setUnblockSuccess(`Card ${cardNum} has been unblocked. You may now insert it.`);
+      clearError();
+    } catch (err) {
+      sound.playAlert();
+      setUnblockSuccess(null);
+    }
   };
 
   return (
@@ -69,7 +93,29 @@ export const WelcomePage: React.FC = () => {
         </p>
       </motion.div>
 
-      {/* Error Alert Box */}
+      {/* Success Alert for Unblock */}
+      <AnimatePresence>
+        {unblockSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            className="w-full max-w-sm mb-6 p-3.5 rounded-2xl bg-success-subtle border border-success/25 text-success text-xs flex items-center justify-between shadow-sm"
+          >
+            <span>{unblockSuccess}</span>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => handleInsert(selectedCardId)}
+              className="ml-2 text-[10px] py-1"
+            >
+              Insert
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Error Alert Box with Optional Unblock Trigger */}
       <AnimatePresence>
         {error && (
           <motion.div
@@ -77,13 +123,27 @@ export const WelcomePage: React.FC = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.2 }}
-            className="w-full max-w-sm mb-6 p-3.5 rounded-2xl bg-danger-subtle border border-danger/25 text-danger text-xs flex items-start gap-2.5 shadow-sm"
+            className="w-full max-w-sm mb-6 p-3.5 rounded-2xl bg-danger-subtle border border-danger/25 text-danger text-xs flex flex-col gap-2 shadow-sm"
           >
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium">Card Notice</p>
-              <p className="opacity-90 mt-0.5">{error}</p>
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="font-medium">Card Notice</p>
+                <p className="opacity-90 mt-0.5">{error}</p>
+              </div>
             </div>
+            {error.toLowerCase().includes('blocked') && (
+              <div className="pt-2 border-t border-danger/20 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => handleUnblockCard(manualCardNumber)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface text-primary border border-border-subtle hover:bg-surface-hover text-[11px] font-medium transition-colors cursor-pointer"
+                >
+                  <Unlock className="w-3.5 h-3.5 text-accent" />
+                  <span>Unblock Card (Demo Action)</span>
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

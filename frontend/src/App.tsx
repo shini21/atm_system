@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { HardwareProvider } from './context/HardwareContext';
 import { AnimatedBackground } from './components/layout/AnimatedBackground';
 import { AtmKiosk } from './components/layout/AtmKiosk';
 
@@ -42,29 +44,30 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 // Layout Container that adapts title and back navigation based on route
 const AppRoutes: React.FC = () => {
   const location = useLocation();
+  const { t } = useLanguage();
 
   const getScreenDetails = (pathname: string) => {
     switch (pathname) {
       case '/':
-        return { title: 'Welcome', showBack: false };
+        return { title: t('title.welcome'), showBack: false };
       case '/pin':
-        return { title: 'Authentication', showBack: false };
+        return { title: t('title.auth'), showBack: false };
       case '/dashboard':
-        return { title: 'Dashboard', showBack: false };
+        return { title: t('title.dashboard'), showBack: false };
       case '/balance':
-        return { title: 'Balance Inquiry', showBack: true };
+        return { title: t('title.balance'), showBack: true };
       case '/deposit':
-        return { title: 'Cash Deposit', showBack: true };
+        return { title: t('title.deposit'), showBack: true };
       case '/withdraw':
-        return { title: 'Cash Withdrawal', showBack: true };
+        return { title: t('title.withdraw'), showBack: true };
       case '/transfer':
-        return { title: 'Funds Transfer', showBack: true };
+        return { title: t('title.transfer'), showBack: true };
       case '/history':
-        return { title: 'Recent Activity', showBack: true };
+        return { title: t('title.history'), showBack: true };
       case '/change-pin':
-        return { title: 'Security Settings', showBack: true };
+        return { title: t('title.changePin'), showBack: true };
       case '/eject':
-        return { title: 'Card Return', showBack: false };
+        return { title: t('title.eject'), showBack: false };
       default:
         return { title: '', showBack: false };
     }
@@ -143,12 +146,16 @@ const AppRoutes: React.FC = () => {
 export const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <BrowserRouter>
-        <AuthProvider>
-          <AnimatedBackground />
-          <AppRoutes />
-        </AuthProvider>
-      </BrowserRouter>
+      <LanguageProvider>
+        <BrowserRouter>
+          <AuthProvider>
+            <HardwareProvider>
+              <AnimatedBackground />
+              <AppRoutes />
+            </HardwareProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

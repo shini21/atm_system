@@ -77,6 +77,35 @@ export const api = {
     });
     return res.data.data;
   },
+
+  // Hardware Status & Demo Utilities
+  async getAtmStatus(): Promise<{
+    atmId: string;
+    terminalModel: string;
+    status: string;
+    supportedDenominations: number[];
+    maxWithdrawalPerTransaction: number;
+    totalCashAvailable: number;
+    isCashAvailable: boolean;
+  }> {
+    const res = await apiClient.get<ApiResponse<{
+      atmId: string;
+      terminalModel: string;
+      status: string;
+      supportedDenominations: number[];
+      maxWithdrawalPerTransaction: number;
+      totalCashAvailable: number;
+      isCashAvailable: boolean;
+    }>>('/atm/status');
+    return res.data.data;
+  },
+
+  async unblockCard(cardNumber: string): Promise<string> {
+    const res = await apiClient.post<ApiResponse<string>>('/atm/unblock', null, {
+      params: { cardNumber },
+    });
+    return res.data.data;
+  },
 };
 
 export function getErrorMessage(err: unknown): string {

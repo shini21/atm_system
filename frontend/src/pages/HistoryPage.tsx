@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHardware } from '../context/HardwareContext';
 import { api, getErrorMessage } from '../services/api';
 import type { TransactionItem as TransactionItemType } from '../types';
 import { TransactionItem } from '../components/transactions/TransactionItem';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import { Button } from '../components/ui/Button';
 import { motion, AnimatePresence } from 'motion/react';
-import { History, RefreshCw, AlertCircle, ArrowLeft } from 'lucide-react';
+import { History, RefreshCw, AlertCircle, ArrowLeft, Printer } from 'lucide-react';
 
 type FilterType = 'ALL' | 'DEPOSITS' | 'WITHDRAWALS' | 'TRANSFERS';
 
@@ -18,6 +19,7 @@ export const HistoryPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account } = useAuth();
+  const { printReceipt } = useHardware();
   const navigate = useNavigate();
 
   const fetchHistory = async () => {
@@ -70,15 +72,36 @@ export const HistoryPage: React.FC = () => {
             </p>
           </div>
 
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={fetchHistory}
-            isLoading={isLoading}
-            icon={<RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />}
-          >
-            Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                const latest = transactions[0];
+                printReceipt({
+                  transactionId: `STMT-${Date.now().toString().slice(-6)}`,
+                  type: 'MINI STATEMENT',
+                  amount: latest ? latest.amount : 0,
+                  balanceAfter: account?.availableBalance || 0,
+                  timestamp: new Date().toISOString(),
+                  accountNumber: account?.accountNumber || 'ACC1001',
+                  cardHolderName: account?.fullName,
+                });
+              }}
+              icon={<Printer className="w-3.5 h-3.5" />}
+            >
+              Print
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={fetchHistory}
+              isLoading={isLoading}
+              icon={<RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />}
+            >
+              Refresh
+            </Button>
+          </div>
         </div>
 
         {/* Filter Tabs */}

@@ -82,8 +82,7 @@ public class AtmPersistenceService {
             if (attempts >= 3) {
                 card.setBlocked(true);
                 cardRepository.save(card);
-                throw new InvalidPinException("Incorrect PIN. Card " + card.getCardNumber()
-                        + " has been blocked after 3 failed attempts.");
+                throw new InvalidPinException("Incorrect PIN. Card has been blocked after 3 failed attempts.");
             }
             cardRepository.save(card);
             int remaining = 3 - attempts;

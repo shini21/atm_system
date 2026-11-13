@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useHardware } from '../context/HardwareContext';
 import { api, getErrorMessage } from '../services/api';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
@@ -8,7 +9,7 @@ import { Modal } from '../components/ui/Modal';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import type { TransactionItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
 
 export const DepositPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
@@ -18,9 +19,37 @@ export const DepositPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account, refreshBalance } = useAuth();
+  const { printReceipt, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
 
   const quickAmounts = [500, 1000, 2000, 5000];
+
+  // Hardware keypad listener
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isLoading || completedTx) return;
+      if (/^[0-9]$/.test(key)) {
+        handleKeyPress(key);
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key === 'CLEAR') {
+        handleClear();
+      } else if (key === 'CANCEL') {
+        if (isConfirmOpen) {
+          setIsConfirmOpen(false);
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (key === 'ENTER') {
+        if (isConfirmOpen) {
+          handleExecuteDeposit();
+        } else if (amountStr && parseFloat(amountStr) > 0) {
+          handleOpenConfirm();
+        }
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr]);
 
   const handleKeyPress = (num: string) => {
     setError(null);
@@ -63,6 +92,17 @@ export const DepositPage: React.FC = () => {
       const record = await api.deposit(numericAmount);
       await refreshBalance();
       setCompletedTx(record);
+
+      // Trigger thermal receipt generation
+      printReceipt({
+        transactionId: record.transactionId,
+        type: 'CASH DEPOSIT',
+        amount: record.amount,
+        balanceAfter: record.balanceAfterTransaction,
+        timestamp: record.timestamp || new Date().toISOString(),
+        accountNumber: account?.accountNumber || 'ACC1001',
+        cardHolderName: account?.fullName,
+      });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -117,17 +157,30 @@ export const DepositPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Prompt to collect from hardware bay */}
+              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+                <span>↓ Thermal deposit receipt ready in printer slot below.</span>
+              </div>
+
               <div className="flex gap-2.5">
                 <Button
                   variant="secondary"
                   size="md"
                   onClick={() => {
-                    setCompletedTx(null);
-                    setAmountStr('');
+                    printReceipt({
+                      transactionId: completedTx.transactionId,
+                      type: 'CASH DEPOSIT (COPY)',
+                      amount: completedTx.amount,
+                      balanceAfter: completedTx.balanceAfterTransaction,
+                      timestamp: completedTx.timestamp,
+                      accountNumber: account?.accountNumber || 'ACC1001',
+                      cardHolderName: account?.fullName,
+                    });
                   }}
-                  className="flex-1"
+                  className="flex-1 flex items-center justify-center gap-1.5"
                 >
-                  Deposit More
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Receipt</span>
                 </Button>
                 <Button
                   variant="primary"

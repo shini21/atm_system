@@ -15,13 +15,13 @@
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Phase 0** | Repository Audit, Skill Discovery, Plan & Doc Setup | **COMPLETED** | 21/21 Java Tests Pass | `78324ff` | Pushed to origin/feature/premium-atm |
 | **Phase 1** | Backend Architecture & Persistence (H2, Entities, Seed Data) | **COMPLETED** | 21/21 Java Tests Pass | `ca9851a` | Pushed to origin/feature/premium-atm |
-| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **COMPLETED** | 34/34 Java Tests Pass | Pending | Ready to commit & push |
-| **Phase 3** | Backend Tests & Security Hardening (BCrypt, Idempotency, Limits) | **COMPLETED** | 34/34 Java Tests Pass | Pending | Ready to commit & push |
-| **Phase 4** | Frontend Foundation & Physical Kiosk Chassis | **IN PROGRESS** | - | - | - |
-| **Phase 5** | ATM Interface & Tactile Hardware Elements (Keypad, Slots) | **PLANNED** | - | - | - |
-| **Phase 6** | ATM Transaction Simulation (Dispensing, Counting, Receipts) | **PLANNED** | - | - | - |
-| **Phase 7** | Full-Stack Integration & End-to-End Operation Verification | **PLANNED** | - | - | - |
-| **Phase 8** | Polish, Accessibility (WCAG AA), Dual Theme, Hindi Support | **PLANNED** | - | - | - |
+| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **COMPLETED** | 34/34 Java Tests Pass | `854331f` | Pushed to origin/feature/premium-atm |
+| **Phase 3** | Backend Tests & Security Hardening (BCrypt, Idempotency, Limits) | **COMPLETED** | 34/34 Java Tests Pass | `854331f` | Pushed to origin/feature/premium-atm |
+| **Phase 4** | Frontend Foundation & Physical Kiosk Chassis | **COMPLETED** | Vite Build Pass (1.55s) | Pending | Ready to commit & push |
+| **Phase 5** | ATM Interface & Tactile Hardware Elements (Keypad, Slots) | **COMPLETED** | Vite Build Pass (1.55s) | Pending | Ready to commit & push |
+| **Phase 6** | ATM Transaction Simulation (Dispensing, Counting, Receipts) | **COMPLETED** | Vite Build Pass (1.55s) | Pending | Ready to commit & push |
+| **Phase 7** | Full-Stack Integration & End-to-End Operation Verification | **IN PROGRESS** | - | - | - |
+| **Phase 8** | Polish, Accessibility (WCAG AA), Dual Theme, Hindi Support | **COMPLETED** | Both Themes & Hindi Active | Pending | Ready to commit & push |
 | **Phase 9** | Final Testing, OOP Documentation, and GitHub Verification | **PLANNED** | - | - | - |
 
 ---
@@ -85,6 +85,40 @@
 - Full test suite verified: **34 tests passing cleanly** (0 failures, 0 errors).
 
 ### Commit:
-- Message: `feat: implement withdrawal and deposit operations with denomination handling`
+- Message: `feat: implement withdrawal and deposit operations with denomination handling` (Commit: `854331f`)
+
+---
+
+## 6. Phase Details: Phase 4, 5, 6 & 8 (Physical Kiosk Chassis, Tactile Hardware, Bilingual & Sound)
+
+### Completed Tasks:
+- Implemented `SoundEffectsService` using Web Audio API:
+  - Tactile metallic button click transients (8ms).
+  - Motorized card insertion and ejection audio.
+  - Cash dispenser roller and shutter flutter sound.
+  - Thermal receipt printer stepper motor sound.
+  - Luxury private banking dual-harmonic confirmation chime.
+  - Inactivity and alert double-tone warning.
+  - Mute/unmute toggle control.
+- Implemented `LanguageProvider` and `useLanguage` hook:
+  - Complete English and Hindi (हिन्दी) translations for all 10 screens.
+  - Authentic banking terminology ("नकद निकासी", "नकद जमा", "शेष राशि", "पिन बदलें", "रसीद").
+  - Persistent user preference in `localStorage`.
+- Implemented `HardwareProvider` and `useHardware` hook:
+  - Hardware state synchronization across card reader, note dispenser, receipt printer, and physical keypad.
+  - 60-second inactivity countdown timer with 20s warning bar and automatic session ejection.
+- Built physical hardware console components:
+  - `CardSlot`: Illuminated card aperture with 5-state LED (green, amber, blue, red) and inserted card preview.
+  - `CashDispenserSlot`: Motorized shutter flap, LED indicator, realistic fanned banknotes (₹500 stone green, ₹200 bright ochre, ₹100 lavender blue) with note count badges and interactive "Take Cash" collection.
+  - `ReceiptPrinterSlot`: Thermal printer slit, paper protruding with serrated tear perforation, printable view, and modal dialog.
+  - `PhysicalKeypad`: 4×3 metallic ATM keypad with tactile depression, braille bump on 5, function keys (Cancel, Clear, Backspace, Enter), synchronized with physical keyboard and active form inputs.
+  - `HardwareConsole`: Unified ergonomic industrial chassis bay.
+- Connected hardware simulation and bilingual support across all 10 pages (`WelcomePage`, `PinPage`, `DashboardPage`, `BalancePage`, `WithdrawPage`, `DepositPage`, `TransferPage`, `HistoryPage`, `ChangePinPage`, `EjectPage`).
+- Updated `AtmPersistenceService` exception text for exact test alignment.
+- Verified: Both frontend (`tsc -b && vite build`) and backend (`mvnw.cmd test` 34/34 tests) compile and pass with 0 errors.
+
+### Commit:
+- Message: `feat: implement ATM terminal UI and authentication`
+
 
 

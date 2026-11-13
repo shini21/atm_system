@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useHardware } from '../context/HardwareContext';
 import { api, getErrorMessage } from '../services/api';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
@@ -8,7 +10,7 @@ import { Modal } from '../components/ui/Modal';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import type { TransactionItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
 
 export const WithdrawPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
@@ -18,6 +20,8 @@ export const WithdrawPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { account, refreshBalance } = useAuth();
+  const { t } = useLanguage();
+  const { triggerDispense, printReceipt, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
 
   const quickAmounts = [500, 1000, 2000, 5000, 10000];
@@ -69,6 +73,33 @@ export const WithdrawPage: React.FC = () => {
     setIsConfirmOpen(true);
   };
 
+  // Physical Keypad Listener for Custom Amount Entry
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isLoading || completedTx) return;
+      if (/^[0-9]$/.test(key)) {
+        handleKeyPress(key);
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key === 'CLEAR') {
+        handleClear();
+      } else if (key === 'CANCEL') {
+        if (isConfirmOpen) {
+          setIsConfirmOpen(false);
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (key === 'ENTER') {
+        if (isConfirmOpen) {
+          handleExecuteWithdrawal();
+        } else if (amountStr && parseFloat(amountStr) > 0) {
+          handleOpenConfirm();
+        }
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr]);
+
   const handleExecuteWithdrawal = async () => {
     const numericAmount = parseFloat(amountStr);
     setIsLoading(true);
@@ -79,6 +110,25 @@ export const WithdrawPage: React.FC = () => {
       const record = await api.withdraw(numericAmount);
       await refreshBalance();
       setCompletedTx(record);
+
+      // Trigger the motorized physical note dispenser below
+      const breakdown = record.denominations || {
+        500: Math.floor(numericAmount / 500),
+        200: Math.floor((numericAmount % 500) / 200),
+        100: Math.floor(((numericAmount % 500) % 200) / 100),
+      };
+      triggerDispense(numericAmount, breakdown);
+
+      // Trigger thermal receipt generation
+      printReceipt({
+        transactionId: record.transactionId,
+        type: 'CASH WITHDRAWAL',
+        amount: record.amount,
+        balanceAfter: record.balanceAfterTransaction,
+        timestamp: record.timestamp || new Date().toISOString(),
+        accountNumber: account?.accountNumber || 'ACC1001',
+        cardHolderName: account?.fullName,
+      });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -127,10 +177,25 @@ export const WithdrawPage: React.FC = () => {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
 
-              <h2 className="text-xl font-semibold text-primary">Cash Dispensed</h2>
+              <h2 className="text-xl font-semibold text-primary">{t('withdraw.title')}</h2>
               <p className="text-xs text-tertiary mt-1 font-mono">Ref: {completedTx.transactionId}</p>
 
-              <div className="my-6 p-4 rounded-2xl bg-surface border border-border-subtle text-xs font-mono space-y-2">
+              {/* Note Breakdown Badges */}
+              {completedTx.denominations && Object.keys(completedTx.denominations).length > 0 && (
+                <div className="my-3 flex flex-wrap justify-center gap-2">
+                  {Object.entries(completedTx.denominations).map(([denom, count]) => (
+                    <span
+                      key={denom}
+                      className="px-2.5 py-1 rounded-lg bg-surface border border-accent/30 font-mono text-xs font-semibold text-accent shadow-xs flex items-center gap-1.5"
+                    >
+                      <span>₹{denom}</span>
+                      <span className="text-[10px] text-secondary">× {String(count)}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="my-5 p-4 rounded-2xl bg-surface border border-border-subtle text-xs font-mono space-y-2">
                 <div className="flex justify-between">
                   <span className="text-tertiary">Amount Dispensed:</span>
                   <span className="font-semibold text-primary">
@@ -145,17 +210,30 @@ export const WithdrawPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Prompt to collect from hardware bay */}
+              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+                <span>↓ Please collect your notes and receipt from the console below.</span>
+              </div>
+
               <div className="flex gap-2.5">
                 <Button
                   variant="secondary"
                   size="md"
                   onClick={() => {
-                    setCompletedTx(null);
-                    setAmountStr('');
+                    printReceipt({
+                      transactionId: completedTx.transactionId,
+                      type: 'CASH WITHDRAWAL (COPY)',
+                      amount: completedTx.amount,
+                      balanceAfter: completedTx.balanceAfterTransaction,
+                      timestamp: completedTx.timestamp,
+                      accountNumber: account?.accountNumber || 'ACC1001',
+                      cardHolderName: account?.fullName,
+                    });
                   }}
-                  className="flex-1"
+                  className="flex-1 flex items-center justify-center gap-1.5"
                 >
-                  Withdraw More
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Receipt</span>
                 </Button>
                 <Button
                   variant="primary"

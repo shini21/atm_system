@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, getErrorMessage } from '../services/api';
+import { useHardware } from '../context/HardwareContext';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
 import { ATMTransition } from '../components/layout/ATMTransition';
@@ -18,7 +19,29 @@ export const ChangePinPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { registerKeypadListener } = useHardware();
   const navigate = useNavigate();
+
+  // Hardware Keypad Listener
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isLoading || isSuccess) return;
+      if (/^[0-9]$/.test(key)) {
+        handleKeyPress(key);
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key === 'CLEAR') {
+        handleClear();
+      } else if (key === 'CANCEL') {
+        navigate('/dashboard');
+      } else if (key === 'ENTER') {
+        if (currentPin.length === 4 && newPin.length === 4 && confirmPin.length === 4) {
+          handleSubmit();
+        }
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isLoading, isSuccess, activeField, currentPin, newPin, confirmPin]);
 
   const handleKeyPress = (num: string) => {
     setError(null);

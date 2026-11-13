@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useHardware } from '../context/HardwareContext';
 import { NumberTicker } from '../components/ui/NumberTicker';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
@@ -15,6 +17,8 @@ import {
 
 export const BalancePage: React.FC = () => {
   const { account, balanceInfo, refreshBalance } = useAuth();
+  const { t } = useLanguage();
+  const { printReceipt } = useHardware();
   const navigate = useNavigate();
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isReceiptOpen, setIsReceiptOpen] = useState<boolean>(false);
@@ -112,10 +116,21 @@ export const BalancePage: React.FC = () => {
         <Button
           variant="secondary"
           size="md"
-          onClick={() => setIsReceiptOpen(true)}
+          onClick={() => {
+            setIsReceiptOpen(true);
+            printReceipt({
+              transactionId: `STMT-${Date.now().toString().slice(-6)}`,
+              type: 'BALANCE INQUIRY',
+              amount: 0,
+              balanceAfter: availableBalance,
+              timestamp: new Date().toISOString(),
+              accountNumber: account?.accountNumber || 'ACC1001',
+              cardHolderName: account?.fullName,
+            });
+          }}
           icon={<Printer className="w-4 h-4" />}
         >
-          View Receipt
+          {t('balance.print')}
         </Button>
 
         <Button

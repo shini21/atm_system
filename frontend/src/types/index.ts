@@ -51,6 +51,7 @@ export interface TransactionItem {
   balanceAfterTransaction: number;
   description: string;
   timestamp: string;
+  denominations?: Record<number, number>;
 }
 
 export interface AuthSession {

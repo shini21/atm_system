@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useHardware } from '../context/HardwareContext';
 import { Keypad } from '../components/ui/Keypad';
 import { DecryptedText } from '../components/ui/DecryptedText';
 import { motion, AnimatePresence } from 'motion/react';
@@ -10,6 +12,8 @@ export const PinPage: React.FC = () => {
   const [pin, setPin] = useState<string>('');
   const [isShaking, setIsShaking] = useState<boolean>(false);
   const { cardStatus, login, isLoading, error, clearCard, clearError } = useAuth();
+  const { t } = useLanguage();
+  const { registerKeypadListener } = useHardware();
   const navigate = useNavigate();
 
   // Redirect to welcome if no card is inserted
@@ -58,6 +62,28 @@ export const PinPage: React.FC = () => {
     setPin('');
     clearError();
   };
+
+  // Hardware PIN Pad listener
+  useEffect(() => {
+    const unsubscribe = registerKeypadListener((key) => {
+      if (isLoading) return;
+      if (/^[0-9]$/.test(key)) {
+        handleKeyPress(key);
+      } else if (key === 'BACKSPACE') {
+        handleBackspace();
+      } else if (key === 'CLEAR') {
+        handleClear();
+      } else if (key === 'CANCEL') {
+        clearCard();
+        navigate('/');
+      } else if (key === 'ENTER') {
+        if (pin.length === 4) {
+          handleSubmitPin(pin);
+        }
+      }
+    });
+    return unsubscribe;
+  }, [registerKeypadListener, isLoading, pin, handleSubmitPin, clearCard, navigate]);
 
   // Keyboard navigation listener (support physical number keys)
   useEffect(() => {
@@ -109,10 +135,10 @@ export const PinPage: React.FC = () => {
       {/* Screen Title */}
       <div className="text-center mb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-primary">
-          Enter Your PIN
+          {t('pin.title')}
         </h1>
         <p className="text-xs sm:text-sm text-secondary mt-1">
-          Please enter your 4-digit security code.
+          {t('pin.subtitle')}
         </p>
       </div>
 
