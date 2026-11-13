@@ -31,9 +31,9 @@
 | UI Phase | Description | Status | Verification | Commit |
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | `244f897` |
-| **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | Pending |
-| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **IN PROGRESS** | - | - |
-| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **PLANNED** | - | - |
+| **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | `7744dc7` |
+| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | Pending |
+| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **IN PROGRESS** | - | - |
 | **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **PLANNED** | - | - |
 | **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **PLANNED** | - | - |
 | **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
@@ -58,6 +58,22 @@
   - Wrapped touchscreen within physical terminal chassis and bezel assembly.
   - Fixed hardware bay header label crowding (`Hardware PIN Pad` with clean `PCI-PTS v6` tag).
 - Verified compilation: `npm run build` succeeds cleanly in 1.41s with 0 errors.
+
+---
+
+## 2.3 Phase Details: Phase U2 (Welcome Screen, Card Insertion Sequence, Spring PIN Entry)
+
+### Completed Tasks:
+- Refined `WelcomePage.tsx`:
+  - Authentic banking visual cues with glowing status LED (green standby / amber reading).
+  - 3D tactile card with specular sheen and mechanical vertical insertion animation into reader slot.
+  - Interactive demo profile selector with clear status badges (Active, Blocked, Expired) and unblock capability.
+- Enhanced `PinPage.tsx`:
+  - 4 animated PIN dots using spring physics (`type: 'spring', stiffness: 500, damping: 20`) on digit input.
+  - Tactile error feedback: horizontal spring shake (`x: [-12, 12, -8, 8, -4, 4, 0]`) and danger glow flash on incorrect PIN entry.
+  - Clear security warning badge with remaining attempts counter before card lockout.
+  - Registered physical side function keys (`R1` = Confirm PIN, `R4` = Cancel & Return Card) for physical hardware interaction.
+- Verified compilation: `npm run build` passes cleanly in 1.34s with 0 errors.
 
 ---
 

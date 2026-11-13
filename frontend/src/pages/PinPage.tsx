@@ -13,7 +13,7 @@ export const PinPage: React.FC = () => {
   const [isShaking, setIsShaking] = useState<boolean>(false);
   const { cardStatus, login, isLoading, error, clearCard, clearError } = useAuth();
   const { t } = useLanguage();
-  const { registerKeypadListener } = useHardware();
+  const { registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
 
   // Redirect to welcome if no card is inserted
@@ -31,7 +31,7 @@ export const PinPage: React.FC = () => {
       if (success) {
         navigate('/dashboard');
       } else {
-        // Trigger Apple-style subtle shake
+        // Trigger tactile spring shake on error
         setIsShaking(true);
         setTimeout(() => setIsShaking(false), 500);
         setPin('');
@@ -39,6 +39,27 @@ export const PinPage: React.FC = () => {
     },
     [isLoading, login, navigate]
   );
+
+  // Register physical side function keys on terminal chassis
+  useEffect(() => {
+    return registerSideKeys({
+      R1: pin.length === 4
+        ? {
+            id: 'R1',
+            label: 'Confirm PIN',
+            onClick: () => handleSubmitPin(pin),
+          }
+        : null,
+      R4: {
+        id: 'R4',
+        label: 'Cancel & Return Card',
+        onClick: () => {
+          clearCard();
+          navigate('/');
+        },
+      },
+    });
+  }, [registerSideKeys, pin, handleSubmitPin, clearCard, navigate]);
 
   const handleKeyPress = (num: string) => {
     if (pin.length < 4) {
@@ -106,13 +127,6 @@ export const PinPage: React.FC = () => {
     return null;
   }
 
-  const shakeAnimation = isShaking
-    ? {
-        x: [-10, 10, -8, 8, -4, 4, 0],
-        transition: { duration: 0.4 },
-      }
-    : {};
-
   return (
     <div className="flex flex-col items-center justify-center py-2 sm:py-4">
       {/* Top Breadcrumb / Card Pill with DecryptedText Reveal */}
@@ -160,10 +174,17 @@ export const PinPage: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* 4 Animated PIN Indicator Dots */}
+      {/* 4 Animated PIN Indicator Dots with Spring Pop & Error Flash */}
       <motion.div
-        animate={shakeAnimation}
-        className="flex items-center justify-center gap-4 mb-6 py-2"
+        animate={isShaking ? {
+          x: [-12, 12, -8, 8, -4, 4, 0],
+          transition: { duration: 0.45, ease: 'easeInOut' },
+        } : {}}
+        className={`flex items-center justify-center gap-4 mb-6 py-3 px-6 rounded-2xl border transition-all duration-200 ${
+          isShaking
+            ? 'bg-danger-subtle border-danger shadow-[0_0_12px_rgba(239,68,68,0.25)]'
+            : 'bg-surface-subdued/80 border-border-subtle'
+        }`}
       >
         {[0, 1, 2, 3].map((index) => {
           const isFilled = index < pin.length;
@@ -172,13 +193,20 @@ export const PinPage: React.FC = () => {
               key={index}
               initial={false}
               animate={{
-                scale: isFilled ? [1, 1.3, 1] : 1,
-                backgroundColor: isFilled ? 'var(--text-primary)' : 'transparent',
+                scale: isFilled ? [1, 1.45, 1] : 1,
+                backgroundColor: isShaking
+                  ? 'var(--danger)'
+                  : isFilled
+                  ? 'var(--text-primary)'
+                  : 'transparent',
+                borderColor: isShaking
+                  ? 'var(--danger)'
+                  : isFilled
+                  ? 'var(--text-primary)'
+                  : 'var(--border-strong)',
               }}
-              transition={{ duration: 0.18 }}
-              className={`w-3.5 h-3.5 rounded-full border transition-colors ${
-                isFilled ? 'border-primary' : 'border-border-strong'
-              }`}
+              transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+              className="w-4 h-4 rounded-full border-2 transition-colors"
             />
           );
         })}
