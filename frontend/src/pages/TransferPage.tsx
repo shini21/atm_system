@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHardware } from '../context/HardwareContext';
@@ -14,6 +14,8 @@ import { ArrowLeftRight, AlertCircle, CheckCircle2, ArrowLeft, UserCheck } from 
 export const TransferPage: React.FC = () => {
   const [recipient, setRecipient] = useState<string>('');
   const [amountStr, setAmountStr] = useState<string>('');
+  const [activeField, setActiveField] = useState<'RECIPIENT' | 'AMOUNT'>('RECIPIENT');
+  const recipientInputRef = useRef<HTMLInputElement>(null);
   const [countdown, setCountdown] = useState<number>(8);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [completedTx, setCompletedTx] = useState<TransactionItem | null>(null);
@@ -23,6 +25,8 @@ export const TransferPage: React.FC = () => {
   const { account, refreshBalance } = useAuth();
   const { printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  const quickAmounts = [500, 1000, 2000, 5000];
 
   // Auto-return countdown after completed transfer
   useEffect(() => {
@@ -288,18 +292,42 @@ export const TransferPage: React.FC = () => {
               {/* Left Column: Recipient Selection & Presets */}
               <div className="space-y-4 min-w-0 w-full">
                 {/* Recipient Account Input Box */}
-                <div className="p-4 rounded-2xl bg-surface-subdued border border-border-subtle space-y-3">
+                <div
+                  onClick={() => {
+                    setActiveField('RECIPIENT');
+                    recipientInputRef.current?.focus();
+                  }}
+                  className={`p-4 rounded-2xl bg-surface-subdued border transition-all cursor-text space-y-3 ${
+                    activeField === 'RECIPIENT'
+                      ? 'border-accent ring-1 ring-accent/30 shadow-xs'
+                      : 'border-border-subtle hover:border-accent/40'
+                  }`}
+                >
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-secondary">
-                      Recipient Account Number
+                    <label className="text-xs font-medium text-secondary flex items-center gap-1.5">
+                      <span>Recipient Account Number</span>
+                      {activeField === 'RECIPIENT' && (
+                        <span className="text-[9px] font-mono font-semibold uppercase text-accent">
+                          • Typing
+                        </span>
+                      )}
                     </label>
                     <ArrowLeftRight className="w-3.5 h-3.5 text-tertiary" />
                   </div>
 
                   <input
+                    ref={recipientInputRef}
                     type="text"
                     value={recipient}
+                    onFocus={() => setActiveField('RECIPIENT')}
                     onChange={(e) => setRecipient(e.target.value.toUpperCase())}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === 'Tab') {
+                        e.preventDefault();
+                        recipientInputRef.current?.blur();
+                        setActiveField('AMOUNT');
+                      }
+                    }}
                     placeholder="e.g. ACC1002"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border-subtle focus:border-accent text-primary font-mono text-sm tracking-wider outline-none placeholder:text-tertiary"
                   />
@@ -314,7 +342,12 @@ export const TransferPage: React.FC = () => {
                         <button
                           key={d.acc}
                           type="button"
-                          onClick={() => setRecipient(d.acc)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRecipient(d.acc);
+                            recipientInputRef.current?.blur();
+                            setActiveField('AMOUNT');
+                          }}
                           className={`py-2 px-3 rounded-xl border text-left text-xs transition-colors flex items-center justify-between cursor-pointer select-none ${
                             recipient === d.acc
                               ? 'bg-surface border-accent text-accent shadow-2xs'
@@ -356,23 +389,88 @@ export const TransferPage: React.FC = () => {
                 </AnimatePresence>
               </div>
 
-              {/* Right Column: Amount Display & Touch Keypad */}
-              <div className="flex flex-col items-center min-w-0 w-full">
+              {/* Right Column: Amount Display, Quick Pills & Touch Keypad */}
+              <div
+                onClick={() => {
+                  setActiveField('AMOUNT');
+                  recipientInputRef.current?.blur();
+                }}
+                className="flex flex-col items-center min-w-0 w-full"
+              >
                 {/* Display Amount Box */}
-                <div className="w-full max-w-[280px] p-3.5 mb-4 rounded-2xl bg-surface-subdued border border-border-subtle text-center">
-                  <span className="text-[10px] uppercase text-tertiary block font-medium">
-                    Transfer Amount
-                  </span>
-                  <div className="text-2xl font-mono font-semibold text-primary mt-0.5">
+                <div
+                  tabIndex={0}
+                  onFocus={() => {
+                    setActiveField('AMOUNT');
+                    recipientInputRef.current?.blur();
+                  }}
+                  className={`w-full max-w-[280px] p-3.5 mb-3 rounded-2xl bg-surface-subdued border transition-all cursor-pointer text-center outline-none ${
+                    activeField === 'AMOUNT'
+                      ? 'border-accent ring-1 ring-accent/30 shadow-xs'
+                      : 'border-border-subtle hover:border-accent/40'
+                  }`}
+                  title="Click to enter amount via keypad"
+                >
+                  <div className="flex items-center justify-between text-[10px] uppercase text-tertiary font-medium mb-0.5">
+                    <span>Transfer Amount</span>
+                    {activeField === 'AMOUNT' && (
+                      <span className="text-accent font-semibold flex items-center gap-1 font-mono text-[9px]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-2xl font-mono font-semibold text-primary">
                     ₹{amountStr ? parseFloat(amountStr).toLocaleString('en-IN') : '0.00'}
+                  </div>
+                </div>
+
+                {/* Fast Preset Amounts */}
+                <div className="w-full max-w-[280px] mb-3">
+                  <span className="text-[11px] font-medium text-secondary block mb-1.5">
+                    Fast Cash Presets
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {quickAmounts.map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setError(null);
+                          setAmountStr(amt.toString());
+                          recipientInputRef.current?.blur();
+                          setActiveField('AMOUNT');
+                        }}
+                        className={`py-2 px-2.5 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
+                          amountStr === amt.toString()
+                            ? 'bg-surface border-accent text-accent shadow-2xs'
+                            : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
+                        }`}
+                      >
+                        ₹{amt.toLocaleString('en-IN')}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
                 {/* Touch Keypad */}
                 <Keypad
-                  onKeyPress={handleKeyPress}
-                  onBackspace={handleBackspace}
-                  onClear={handleClear}
+                  onKeyPress={(num) => {
+                    recipientInputRef.current?.blur();
+                    setActiveField('AMOUNT');
+                    handleKeyPress(num);
+                  }}
+                  onBackspace={() => {
+                    recipientInputRef.current?.blur();
+                    setActiveField('AMOUNT');
+                    handleBackspace();
+                  }}
+                  onClear={() => {
+                    recipientInputRef.current?.blur();
+                    setActiveField('AMOUNT');
+                    handleClear();
+                  }}
                   onSubmit={handleInitiateTransfer}
                   submitLabel="Review Transfer"
                   submitDisabled={!amountStr || parseFloat(amountStr) <= 0 || !recipient.trim()}
@@ -386,14 +484,16 @@ export const TransferPage: React.FC = () => {
         {/* Back Link (shown only during input mode) */}
         {!completedTx && (
           <div className="mt-8 text-center">
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => navigate('/dashboard')}
-              className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
+              className="inline-flex items-center gap-2 font-medium"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Return to Dashboard</span>
-            </button>
+            </Button>
           </div>
         )}
 

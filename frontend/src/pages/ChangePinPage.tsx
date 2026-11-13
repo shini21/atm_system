@@ -337,14 +337,16 @@ export const ChangePinPage: React.FC = () => {
 
         {/* Back Link */}
         <div className="mt-8 text-center">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
+            className="inline-flex items-center gap-2 font-medium"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Return to Dashboard</span>
-          </button>
+          </Button>
         </div>
       </div>
     </ATMTransition>

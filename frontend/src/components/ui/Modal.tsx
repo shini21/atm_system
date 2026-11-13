@@ -43,14 +43,15 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-            className={`relative w-full ${maxWidthClass} z-10 p-6 rounded-2xl bg-atm-card border border-atm-border shadow-2xl overflow-hidden`}
+            className={`relative w-full ${maxWidthClass} z-10 p-6 rounded-2xl bg-surface border border-border-strong text-primary shadow-luxury overflow-hidden`}
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-atm-border mb-4">
-              {title && <h3 className="text-lg font-bold text-slate-100">{title}</h3>}
+            <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
+              {title && <h3 className="text-lg font-bold text-primary">{title}</h3>}
               <button
+                type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
+                className="p-1.5 rounded-lg text-secondary hover:text-primary hover:bg-surface-subdued transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>

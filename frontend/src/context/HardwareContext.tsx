@@ -65,7 +65,7 @@ export interface HardwareContextType {
 
 const HardwareContext = createContext<HardwareContextType | undefined>(undefined);
 
-const INACTIVITY_TIMEOUT = 60; // 60 seconds
+const INACTIVITY_TIMEOUT = 120; // 120 seconds (2 minutes) comfortable user session
 
 export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { session, logout } = useAuth();
@@ -108,18 +108,29 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   useEffect(() => {
+    let lastActivityTime = 0;
     const handleUserActivity = () => {
-      resetInactivity();
+      const now = Date.now();
+      if (now - lastActivityTime > 600) {
+        lastActivityTime = now;
+        resetInactivity();
+      }
     };
 
     window.addEventListener('click', handleUserActivity);
     window.addEventListener('keydown', handleUserActivity);
     window.addEventListener('touchstart', handleUserActivity);
+    window.addEventListener('pointermove', handleUserActivity);
+    window.addEventListener('wheel', handleUserActivity);
+    window.addEventListener('scroll', handleUserActivity);
 
     return () => {
       window.removeEventListener('click', handleUserActivity);
       window.removeEventListener('keydown', handleUserActivity);
       window.removeEventListener('touchstart', handleUserActivity);
+      window.removeEventListener('pointermove', handleUserActivity);
+      window.removeEventListener('wheel', handleUserActivity);
+      window.removeEventListener('scroll', handleUserActivity);
     };
   }, [resetInactivity]);
 

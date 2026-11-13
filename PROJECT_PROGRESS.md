@@ -294,6 +294,31 @@
 - All commits executed cleanly on designated branch `feature/premium-atm`.
 - Pushed to remote: `origin feature/premium-atm`.
 
+---
+
+## 8. Bug Audit & Stability Hardening (Post-Implementation Stabilization)
+
+### Issues Diagnosed & Resolved:
+1. **Transaction ID Database Collision (`TXN-1001` Constraint Violation)**:
+   - *Problem*: In-memory counter re-initialized to 1000 on application restart, causing duplicate primary key collisions in `transactions` table when seed data was already present.
+   - *Fix*: Replaced static seed with `AtomicLong(System.currentTimeMillis())` in `AtmPersistenceService.java` and `TransactionRecord.java`. Ensured unique, strictly monotonically increasing transaction IDs.
+2. **Laptop Keyboard & Numpad Full Support**:
+   - *Problem*: Physical keypad keys did not capture NumPad strokes when NumLock was toggled, and duplicate event listeners in `PinPage.tsx` caused double-keystroke inputs.
+   - *Fix*: Centralized physical keyboard listener into `HardwareContext.tsx`, unified top-row and `Numpad0-9` mappings via `e.code.replace('Numpad', '')`, added visual tactile depression on `PhysicalKeypad.tsx`, and enabled dashboard number shortcuts (`1`-`6`, `CANCEL`).
+3. **Premature Session Inactivity Timeout**:
+   - *Problem*: Session expired after 60 seconds of idle reading, abruptly kicking user to `/eject?reason=timeout`.
+   - *Fix*: Extended timeout to 120 seconds and enriched activity listeners to include throttled `pointermove`, `wheel`, and `scroll`.
+4. **Input Focus Entrapment on Transfer Screen**:
+   - *Problem*: On `/transfer`, focus was trapped in recipient text input; clicking outside did not blur it, swallowing keypad digits.
+   - *Fix*: Added `activeField` state, quick recipient selection blur, Enter key progression to amount, Fast Cash presets, and auto-blur on amount focus.
+5. **Vite Port Wandering**:
+   - *Problem*: Vite wandered to port 5174 when port 5173 was briefly busy, breaking active browser sessions.
+   - *Fix*: Added `strictPort: true` to `frontend/vite.config.ts`.
+6. **Modal Component Design Token Alignment**:
+   - *Problem*: `Modal.tsx` used legacy Tailwind utility classes (`bg-atm-card`).
+   - *Fix*: Upgraded to semantic tokens (`bg-surface border-border-strong text-primary shadow-luxury`).
+
+
 
 
 
