@@ -39,6 +39,12 @@ Both the **modern touchscreen web application** and the **original academic cons
 
 ## Key Features & Highlights
 
+- **Physical ATM Terminal Chassis & Side Function Keys**:
+  - Architectural matte bezel and recessed display housing designed with `ui-ux-pro-max` (Swiss minimalism, Deep Emerald `#065F46` / `#10B981` brand accent, Brushed Brass `#D97706`).
+  - 8 physical metallic side function keys (`L1`–`L4` and `R1`–`R4`) flanking the screen with directional chevrons (`►` and `◄`).
+  - Authentic 8-operation ATM menu aligned directly with the side keys (Withdrawal, Deposit, Transfer, Balance, Mini Statement, History, PIN Change, Eject).
+  - Prominent live circular session countdown ring with pulsing warning state in the last 15s.
+  - Strict account number masking (`ACC••••1001`) across all terminal screens.
 - **Full-Stack Integration & Genuine Java Backend**: Every financial operation in the React frontend communicates in real-time with the Java Spring Boot backend over REST. Strict zero-JS business logic policy.
 - **Embedded JPA Persistence & BCrypt**:
   - Embedded H2 file database (`atm_db.mv.db`) with zero setup overhead.

@@ -36,8 +36,8 @@
 | **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | `f34b944` |
 | **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | `466fd55` |
 | **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **COMPLETED** | Vite build pass (1.40s) | `b13f960` |
-| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **COMPLETED** | Vite build pass (1.40s) + WCAG AA | Pending |
-| **Phase U7** | Full-Stack Verification & Final Documentation | **IN PROGRESS** | - | - |
+| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **COMPLETED** | Vite build pass (1.40s) + WCAG AA | `d69e9b1` |
+| **Phase U7** | Full-Stack Verification & Final Documentation | **COMPLETED** | 34/34 Java Tests Pass + Vite Build Pass | Pending |
 
 ---
 
@@ -132,6 +132,25 @@
 
 ---
 
+## 2.8 Phase Details: Phase U7 (Full-Stack Verification & Final Documentation)
+
+### Completed Tasks:
+- Full backend verification executed: **All 34 Java unit and integration tests passing** (`.\mvnw.cmd test` exited with code 0).
+- Frontend compilation verified: **Vite build succeeds in 1.40s with 0 errors** (`npm run build`).
+- Lint verification: **0 errors** across all 48 frontend TypeScript/React files via `oxlint`.
+- Updated `README.md` with physical terminal chassis documentation, side function key descriptions, and token references.
+- Verified all flows against full-stack constraints:
+  - Welcome & demo card selection with motorized insertion sequence.
+  - BCrypt 4-digit PIN authentication with spring dots, error shake, and attempt countdown.
+  - 8-operation main menu with L1-L4 and R1-R4 side key triggers.
+  - Greedy note dispensing breakdown (₹500, ₹200, ₹100 note counts) driving physical hardware tray.
+  - Masked account numbers (`ACC••••1001`) enforced throughout.
+  - Thermal receipt printing and ledger transaction history.
+  - Session auto-logout after 60s inactivity with alert chime and automatic card ejection.
+  - English and Hindi (हिन्दी) bilingual toggle and persistent dual theme.
+
+---
+
 ## 2.7 Phase Details: Phase U6 (Polish: Reduced Motion, A11y, Contrast, Sound)
 
 ### Completed Tasks:
@@ -144,6 +163,25 @@
   - WCAG AA compliant contrast for both Light Theme (`#0F172A` text on `#FFFFFF` / `#ECEFF4` chassis) and Dark Theme (`#F8FAFC` text on `#0F172A` surface and `#0B0F17` chassis).
 - Documented borrowed animation and component registry in `SKILLS_AUDIT.md` (Motion for React, Magic UI, React Bits, Web Audio API).
 - Verified compilation: `npm run build` passes cleanly in 1.40s with 0 errors.
+
+---
+
+## 2.8 Phase Details: Phase U7 (Full-Stack Verification & Final Documentation)
+
+### Completed Tasks:
+- Full backend verification executed: **All 34 Java unit and integration tests passing** (`.\mvnw.cmd test` exited with code 0).
+- Frontend compilation verified: **Vite build succeeds in 1.40s with 0 errors** (`npm run build`).
+- Lint verification: **0 errors** across all 48 frontend TypeScript/React files via `oxlint`.
+- Updated `README.md` with physical terminal chassis documentation, side function key descriptions, and token references.
+- Verified all flows against full-stack constraints:
+  - Welcome & demo card selection with motorized insertion sequence.
+  - BCrypt 4-digit PIN authentication with spring dots, error shake, and attempt countdown.
+  - 8-operation main menu with L1-L4 and R1-R4 side key triggers.
+  - Greedy note dispensing breakdown (₹500, ₹200, ₹100 note counts) driving physical hardware tray.
+  - Masked account numbers (`ACC••••1001`) enforced throughout.
+  - Thermal receipt printing and ledger transaction history.
+  - Session auto-logout after 60s inactivity with alert chime and automatic card ejection.
+  - English and Hindi (हिन्दी) bilingual toggle and persistent dual theme.
 
 ---
 

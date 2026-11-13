@@ -91,3 +91,4 @@ export const SideFunctionKeys: React.FC<SideFunctionKeysProps> = ({ side }) => {
     </div>
   );
 };
+
