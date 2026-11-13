@@ -35,9 +35,9 @@
 | **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | `7417231` |
 | **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | `f34b944` |
 | **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **COMPLETED** | Vite build pass (1.30s) + 8/8 Tests Pass | `466fd55` |
-| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **COMPLETED** | Vite build pass (1.40s) | Pending |
-| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **IN PROGRESS** | - | - |
-| **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
+| **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **COMPLETED** | Vite build pass (1.40s) | `b13f960` |
+| **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **COMPLETED** | Vite build pass (1.40s) + WCAG AA | Pending |
+| **Phase U7** | Full-Stack Verification & Final Documentation | **IN PROGRESS** | - | - |
 
 ---
 
@@ -128,6 +128,21 @@
 - Updated `EjectPage.tsx`:
   - Added primary emphasis styling to "Start New Session" button (`variant="primary"` with Deep Emerald styling).
   - Preserved centered spring card emergence animation and auto-countdown to welcome screen.
+- Verified compilation: `npm run build` passes cleanly in 1.40s with 0 errors.
+
+---
+
+## 2.7 Phase Details: Phase U6 (Polish: Reduced Motion, A11y, Contrast, Sound)
+
+### Completed Tasks:
+- Implemented `useReducedMotion()` support in `ATMTransition.tsx` to automatically disable horizontal slide and scale motion in favor of gentle opacity fades when the user has OS reduced motion enabled.
+- Verified Web Audio API synthesized audio in `SoundEffectsService`:
+  - Zero external MP3/WAV dependencies, eliminating external license overhead.
+  - Tactile 8ms keypress transients, cash roller flutter, and receipt stepper motor audio.
+  - Unmuted/muted persistent toggle.
+- Contrast verification:
+  - WCAG AA compliant contrast for both Light Theme (`#0F172A` text on `#FFFFFF` / `#ECEFF4` chassis) and Dark Theme (`#F8FAFC` text on `#0F172A` surface and `#0B0F17` chassis).
+- Documented borrowed animation and component registry in `SKILLS_AUDIT.md` (Motion for React, Magic UI, React Bits, Web Audio API).
 - Verified compilation: `npm run build` passes cleanly in 1.40s with 0 errors.
 
 ---

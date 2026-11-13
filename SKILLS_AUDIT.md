@@ -37,9 +37,17 @@ This document tracks all agent skills discovered, configured, and actively utili
   - Re-queried design engine: `fintech atm terminal luxury`.
   - Selected Trust & Authority pattern with Deep Emerald (`#065F46` / `#10B981`) brand accent and warm brushed brass metallic accents (`#D97706`).
   - Drafted comprehensive [DESIGN_SYSTEM.md](file:///d:/College/CP/atm_system/DESIGN_SYSTEM.md) defining strict 4px spacing, 2-tier radius scale (8px, 16px), elevation inner shadows, and classical ATM side-function key mappings.
-- **Borrowed Component & Animation Registry**:
-  - `Motion for React`: Motion layout springs, AnimatePresence transitions (Free / MIT).
-  - Web Audio API Sound Synthesizer: Zero external asset dependency, procedural transients (Custom / Open).
+### Phase U0–U6: Frontend Redesign & Borrowed Animation Registry
+
+As required by `ATM_UI_REDESIGN_PROMPT.md` Section 4 & 8, all external components utilized are verified free/open source, restyled to project tokens, and tracked below (maximum 4 sources):
+
+| Component / Utility | Source | Source URL | License | Where Used |
+| :--- | :--- | :--- | :--- | :--- |
+| **Motion for React** | Motion | `https://motion.dev` | MIT | Screen transitions (`ATMTransition`), PIN dots spring pop (`PinPage`), side key mechanical travel (`SideFunctionKeys`), cash dispensing animation (`CashDispenserSlot`). |
+| **Number Ticker** | Magic UI | `https://magicui.design` | MIT | Real-time balance ticker (`DashboardPage`, `BalancePage`), cash deposit tally counter (`DepositPage`). |
+| **Decrypted Text** | React Bits | `https://reactbits.dev` | MIT | Masked card number decrypt reveal (`PinPage`, `DashboardPage`). |
+| **Web Audio Synthesizer** | Native Web Audio API | W3C Standard | Open / Custom | Procedural tactile button clicks (8ms transient), cash dispenser roller flutter, receipt stepper sound, and alerts (`sound.ts`). |
+
 
 
 
