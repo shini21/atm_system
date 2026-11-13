@@ -166,6 +166,26 @@ export const ChangePinPage: React.FC = () => {
   return (
     <ATMTransition>
       <div className="max-w-xl mx-auto py-2">
+        {/* Top Navigation Bar */}
+        {!isSuccess && (
+          <div className="flex items-center justify-between pb-3 mb-4 border-b border-border-subtle">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-1.5 font-medium cursor-pointer shadow-xs hover:border-accent hover:text-accent"
+            >
+              <ArrowLeft className="w-4 h-4 text-accent" />
+              <span>Return to Dashboard</span>
+            </Button>
+
+            <span className="text-[11px] font-mono text-tertiary hidden xs:inline">
+              Press <kbd className="px-1.5 py-0.5 rounded bg-surface-subdued border border-border-subtle text-primary font-bold">Esc</kbd> or <strong className="text-accent font-bold">L4</strong>
+            </span>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-6">
           <span className="text-xs uppercase tracking-wider text-tertiary font-medium">

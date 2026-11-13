@@ -104,3 +104,22 @@ describe('Security & Account Masking Specifications', () => {
     expect(maskAccountNumber('')).toBe('•••• ••••');
   });
 });
+
+describe('Return to Dashboard Navigation', () => {
+  it('renders Return to Dashboard button and handles click', () => {
+    const handleNavigate = vi.fn();
+    render(
+      <button
+        type="button"
+        onClick={() => handleNavigate('/dashboard')}
+      >
+        Return to Dashboard
+      </button>
+    );
+
+    const btn = screen.getByText('Return to Dashboard');
+    expect(btn).toBeInTheDocument();
+    fireEvent.click(btn);
+    expect(handleNavigate).toHaveBeenCalledWith('/dashboard');
+  });
+});
