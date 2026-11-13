@@ -1,0 +1,48 @@
+import type { DemoCard } from '../types';
+
+export const DEMO_CARDS: DemoCard[] = [
+  {
+    cardNumber: 'CARD1001',
+    pin: '1234',
+    holder: 'Aarav Sharma',
+    accountNumber: 'ACC1001',
+    accountType: 'Savings Account',
+    balance: '5,000.00',
+    expiry: '2028-12-31',
+    status: 'active',
+    notes: 'Standard Savings account with ₹100.00 minimum balance rule',
+  },
+  {
+    cardNumber: 'CARD1002',
+    pin: '5678',
+    holder: 'Priya Patel',
+    accountNumber: 'ACC1002',
+    accountType: 'Current Account',
+    balance: '12,000.00',
+    expiry: '2028-06-30',
+    status: 'active',
+    notes: 'Standard Current account with ₹0.00 minimum balance rule',
+  },
+  {
+    cardNumber: 'CARD1003',
+    pin: '4321',
+    holder: 'Rahul Verma',
+    accountNumber: 'ACC1003',
+    accountType: 'Savings Account',
+    balance: '800.00',
+    expiry: '2025-01-01',
+    status: 'expired',
+    notes: 'Expired card test case (expired on 2025-01-01)',
+  },
+  {
+    cardNumber: 'CARD1004',
+    pin: '9999',
+    holder: 'Neha Iyer',
+    accountNumber: 'ACC1004',
+    accountType: 'Savings Account',
+    balance: '1,500.00',
+    expiry: '2028-12-31',
+    status: 'blocked',
+    notes: 'Pre-blocked card test case (contact bank)',
+  },
+];

@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import './styles/animations.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --canvas: #F5F5F7;
+    --surface: #FFFFFF;
+    --surface-subdued: #EFEFF3;
+    --surface-hover: #E5E5EB;
+    --border-subtle: #E2E4E9;
+    --border-strong: #D1D5DB;
+    --text-primary: #111827;
+    --text-secondary: #6B7280;
+    --text-tertiary: #9CA3AF;
+    --accent: #0066CC;
+    --accent-hover: #0052A3;
+    --accent-subtle: rgba(0, 102, 204, 0.08);
+    --danger: #DC2626;
+    --danger-subtle: rgba(220, 38, 38, 0.08);
+    --success: #059669;
+    --success-subtle: rgba(5, 150, 105, 0.08);
+    --warning: #D97706;
+    --warning-subtle: rgba(217, 119, 6, 0.08);
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+    color-scheme: light;
+  }
+
+  .dark {
+    --canvas: #0A0B0E;
+    --surface: #131519;
+    --surface-subdued: #191B21;
+    --surface-hover: #22262E;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --text-primary: #F9FAFB;
+    --text-secondary: #9CA3AF;
+    --text-tertiary: #6B7280;
+    --accent: #3B82F6;
+    --accent-hover: #60A5FA;
+    --accent-subtle: rgba(59, 130, 246, 0.12);
+    --danger: #EF4444;
+    --danger-subtle: rgba(239, 68, 68, 0.12);
+    --success: #10B981;
+    --success-subtle: rgba(16, 185, 129, 0.12);
+    --warning: #F59E0B;
+    --warning-subtle: rgba(245, 158, 11, 0.12);
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    color-scheme: dark;
+  }
+
+  * {
+    box-sizing: border-box;
+    transition-property: color, background-color, border-color;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--canvas);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+}
+
+/* Custom Scrollbar for Luxury Feel */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

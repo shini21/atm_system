@@ -1,0 +1,54 @@
+# Compiled output
+out/
+bin/
+*.class
+
+# Source list created by optional "javac @sources.txt"
+sources.txt
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.settings/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Database (H2 file database)
+*.db
+*.mv.db
+*.trace.db
+
+# Environment variables
+.env
+.env*.local
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.local
+
+# Local Agent Workspace Data
+.agent/
+.agents/
