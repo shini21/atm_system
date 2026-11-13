@@ -2,14 +2,17 @@
 
 [![Java 17](https://img.shields.io/badge/Java-17%20LTS-007396?logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3.4-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Spring Data JPA](https://img.shields.io/badge/Spring%20Data-JPA%20%2B%20H2-4479A1?logo=hibernate&logoColor=white)](https://spring.io/projects/spring-data-jpa)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-7.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Motion](https://img.shields.io/badge/Motion%20for%20React-12-FF0055?logo=framer&logoColor=white)](https://motion.dev/)
-[![Build & Tests](https://img.shields.io/badge/JUnit%205-21%20Tests%20Passing-brightgreen)](https://junit.org/junit5/)
+[![Motion](https://img.shields.io/badge/Motion%20for%20React-14-FF0055?logo=framer&logoColor=white)](https://motion.dev/)
+[![Build & Tests](https://img.shields.io/badge/JUnit%205-34%20Tests%20Passing-brightgreen)](https://junit.org/junit5/)
+[![Bilingual](https://img.shields.io/badge/Languages-EN%20%7C%20%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80-orange)](#)
+[![Theme](https://img.shields.io/badge/Theme-Light%20%7C%20Dark-blue)](#)
 
-A full-stack, enterprise-grade ATM banking application built upon a robust Java Object-Oriented Programming (OOP) foundation. It combines a **Spring Boot 3 REST backend** with a **modern React 18 + TypeScript touchscreen terminal**, featuring realistic animations powered by Motion for React, Aceternity UI, Magic UI, and React Bits design patterns.
+A full-stack, enterprise-grade ATM banking application built upon a robust Java Object-Oriented Programming (OOP) foundation. It combines a **Spring Boot 3 REST backend with JPA persistence** and an **Apple-inspired minimal luxury React 19 + TypeScript touchscreen terminal**, featuring a physical kiosk enclosure, tactile numeric keypad with Web Audio API sound synthesis, motorized note dispenser with greedy ₹500, ₹200, ₹100 note breakdown, thermal receipt printer, and 60-second inactivity auto-logout.
 
 Both the **modern touchscreen web application** and the **original academic console application** coexist harmoniously and share the exact same domain business rules, accounts, and financial calculations.
 
@@ -26,8 +29,8 @@ Both the **modern touchscreen web application** and the **original academic cons
    - [Running the React Web Frontend](#2-running-the-react-web-frontend)
    - [Running the Original Console App](#3-running-the-original-console-application)
 6. [REST API Documentation](#rest-api-documentation)
-7. [Touchscreen ATM Screens & Visual UX](#touchscreen-atm-screens--visual-ux)
-8. [Automated Test Suite (21 Passing Tests)](#automated-test-suite-21-passing-tests)
+7. [Touchscreen ATM Screens & Hardware Simulation](#touchscreen-atm-screens--visual-ux)
+8. [Automated Test Suite (34 Passing Tests)](#automated-test-suite-21-passing-tests)
 9. [Core OOP Concepts Demonstrated](#core-oop-concepts-demonstrated)
 10. [UML Class Diagram & Domain Model](#uml-class-diagram--domain-model)
 11. [Project Structure](#project-structure)
@@ -36,27 +39,38 @@ Both the **modern touchscreen web application** and the **original academic cons
 
 ## Key Features & Highlights
 
-- **Full-Stack Integration**: Every financial operation in the React frontend communicates in real-time with the Java Spring Boot backend. No mock frontend databases.
-- **Stateful Session Authentication**: Uses secure HTTP session cookies (`JSESSIONID`) with server-side validation.
-- **Card Security & PIN Enforcement**:
+- **Full-Stack Integration & Genuine Java Backend**: Every financial operation in the React frontend communicates in real-time with the Java Spring Boot backend over REST. Strict zero-JS business logic policy.
+- **Embedded JPA Persistence & BCrypt**:
+  - Embedded H2 file database (`atm_db.mv.db`) with zero setup overhead.
+  - Optional production MySQL database profile (`application-mysql.properties`).
+  - Salted BCrypt PIN hashing (`$2a$10$...`) with secure matching and legacy plaintext fallback.
+- **Realistic Motorized Cash Dispenser & Denominations**:
+  - Strictly supported notes: ₹500, ₹200, ₹100 (strictly no ₹2000 notes).
+  - Greedy note breakdown calculation returned in API responses to drive frontend animations.
+  - Minimum withdrawal multiple: ₹100; Maximum limit per transaction: ₹20,000.00.
+  - Decrements physical ATM inventory upon dispense; increments inventory upon cash deposit.
+- **Thermal Receipt Printer**:
+  - Mechanical paper slit animation where thermal paper emerges with serrated tear line.
+  - Contains transaction reference, masked account, amount, remaining balance, and printable PDF view.
+- **Tactile ATM Keypad & Web Audio Synthesizer**:
+  - Physical 4×3 metallic ATM keypad with tactile depression, braille dot on key 5, function keys (Cancel, Clear, Backspace, Enter).
+  - Synchronized with physical PC keyboard and active on-screen input fields.
+  - Zero-dependency Web Audio API sound synthesis: crisp metallic clicks, card ingestion/ejection whirrs, roller flutter, thermal print sounds, and confirmation chords.
+- **Stateful Session Security & 60-Second Inactivity Auto-Logout**:
+  - Protected HTTP session cookies (`JSESSIONID`).
+  - Inactivity countdown timer with a 20-second warning banner and automatic card ejection upon timeout.
+- **Bilingual Interface (English & Hindi)**:
+  - Instant one-click toggle between English and authentic Hindi (हिन्दी) banking terminology ("नकद निकासी", "नकद जमा", "शेष राशि", "पिन बदलें", "रसीद").
+- **Minimal Luxury Dual-Theme Design**:
+  - Designed with `ui-ux-pro-max` (Swiss minimalism & authority palette: Obsidian `#0F172A`, warm gold `#F59E0B`, Inter + JetBrains Mono).
+  - High-contrast Light and Dark theme toggle persistent across sessions.
+- **Card Security & Attempt Limit**:
   - Exactly 4-digit PIN verification.
-  - Maximum 3 failed attempts before automatic card blocking.
-  - Expired and blocked card rejection with user-friendly errors.
+  - Automatic card lockout after 3 consecutive failed attempts.
+  - Dedicated `/api/atm/unblock` endpoint for instructor/classroom demo convenience.
 - **Financial Precision (`BigDecimal`)**:
-  - Zero loss of floating-point precision. All currency uses scale 2 with `RoundingMode.HALF_UP`.
+  - Zero floating-point rounding inaccuracies. All calculations use `BigDecimal` scale 2 with `RoundingMode.HALF_UP`.
   - Enforced minimum balances: ₹100.00 for `SavingsAccount`, ₹0.00 for `CurrentAccount`.
-- **Complete Suite of ATM Operations**:
-  - **Balance Inquiry**: Live dynamic counting counter (`NumberTicker`), ledger balance vs. available-to-withdraw.
-  - **Cash Deposit**: Quick presets (₹500, ₹1000, ₹2000, ₹5000), custom amount keypad, cash intake feeder animation.
-  - **Cash Withdrawal**: Fast cash options, custom withdrawal, animated cash dispenser slot with collection action.
-  - **Electronic Funds Transfer**: Account-to-account transfer with recipient lookup, same-account transfer guard, two-step confirmation modal.
-  - **Transaction History**: Displays the last 5 transactions in reverse chronological order (newest first) with colored badges.
-  - **PIN Change**: Verifies old PIN first, enforces 4-digit format, records `PIN_CHANGE` transaction.
-  - **Card Ejection**: Animated slide-up card ejection and session teardown.
-- **Tactile Touchscreen Kiosk UX**:
-  - Authentic ATM numeric keypad (0–9, Clear, Backspace, Confirm).
-  - Horizontal shake animation on invalid PIN or rejected transaction.
-  - Printable ATM slip modal for statement generation.
 
 ---
 

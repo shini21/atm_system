@@ -304,13 +304,33 @@ This document describes all REST API endpoints provided by the Java Spring Boot 
 ```json
 {
   "success": true,
+  "message": "ATM terminal status retrieved",
   "data": {
     "atmId": "ATM-MUM-04",
+    "terminalModel": "Apex Prime X-9000",
     "status": "ONLINE",
     "supportedDenominations": [500, 200, 100],
     "maxWithdrawalPerTransaction": 20000.00,
+    "totalCashAvailable": 35000.00,
     "isCashAvailable": true
   }
 }
 ```
+
+---
+
+### 4.2 Unblock Blocked Card (Demo Utility)
+- **Method**: `POST`
+- **Path**: `/api/atm/unblock?cardNumber=CARD1004`
+- **Auth Required**: No
+- **Query Parameter**: `cardNumber` (e.g. `CARD1004`)
+- **Success Response (`200 OK`)**:
+```json
+{
+  "success": true,
+  "message": "Card CARD1004 has been successfully unblocked for demo.",
+  "data": "CARD1004"
+}
+```
+
 

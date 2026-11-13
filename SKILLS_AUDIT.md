@@ -32,3 +32,16 @@ This document tracks all agent skills discovered, configured, and actively utili
 - **Taste-Skill (`design-taste-frontend`)**:
   - Enforced anti-slop rules: No floating random cards, strict equal border margins, physical hardware grounding.
 
+### Phase 4, 5, 6 & 8: Hardware Simulation & Terminal Design
+- **UI/UX Pro Max (`ui-ux-pro-max`)**:
+  - Selected authentic banknote color profiles: ₹500 stone green (`#435343`), ₹200 ochre orange (`#B45309`), ₹100 lavender blue (`#4338CA`).
+  - Implemented 44px+ tactile touch targets for all ATM interactive buttons.
+  - Implemented dual-theme contrast ratios exceeding WCAG AA 4.5:1.
+- **Taste-Skill (`design-taste-frontend`)**:
+  - Replaced generic AI card containers with a genuine industrial ATM chassis (`Apex Prime X-9000`), anti-glare screen surround, and physical hardware bay.
+- **Web Audio API (`modern-web-guidance`)**:
+  - Created zero-dependency synthesized audio engine (`sound.ts`) for mechanical button click transients, note dispenser flutter, card reader ingestion/ejection, and thermal printer stepper motor sound.
+- **Language Localization (`brand` / `design`)**:
+  - Created bilingual context (`LanguageContext.tsx`) with authentic Reserve Bank of India terminology in both English and Hindi (हिन्दी).
+
+

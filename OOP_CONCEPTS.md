@@ -204,3 +204,21 @@ classDiagram
     ATMCard ..> Account : links to
 ```
 
+---
+
+## 4. SOLID Design Principles & Service Architecture
+
+### 4.1 Single Responsibility Principle (SRP)
+- **`service.CashDispenserService`**: Responsible solely for currency inventory calculations, greedy denomination selection (₹500, ₹200, ₹100), and physical cassette tracking.
+- **`security.PinSecurityService`**: Responsible solely for cryptographic hashing and verification of 4-digit PINs using BCrypt (`$2a$10$...`).
+- **`service.AtmPersistenceService`**: Responsible for mapping pure OOP domain models (`Account`, `Card`, `Customer`) to relational JPA entities (`AccountEntity`, `CardEntity`, `CustomerEntity`) and managing `@Transactional` write boundaries.
+- **`service.AtmWebService`**: Orchestrates stateful HTTP session state (`JSESSIONID`) and coordinates operations between Bank controllers and domain services.
+
+### 4.2 Open/Closed Principle (OCP)
+- **Account Hierarchy**: The banking core is open for extension but closed for modification. Introducing a new account type (e.g., `FixedDepositAccount` or `SeniorCitizenSavingsAccount`) requires only subclassing `Account` and supplying its specific `getMinimumBalance()` rule, without touching `Bank`, `ATMCard`, or `AtmWebService`.
+
+### 4.3 Dependency Inversion Principle (DIP)
+- High-level controllers (`TransactionController`, `AuthController`, `AtmHardwareController`) depend upon abstracted service interfaces and Spring beans, rather than hardcoded instantiation.
+- Testing uses isolated in-memory H2 configuration (`@SpringBootTest`, `@DirtiesContext`) without modifying production file databases.
+
+
