@@ -13,6 +13,12 @@ public class InsufficientFundsException extends Exception {
     private final BigDecimal available;
     private final BigDecimal requested;
 
+    public InsufficientFundsException(String message) {
+        super(message);
+        this.available = BigDecimal.ZERO;
+        this.requested = BigDecimal.ZERO;
+    }
+
     /**
      * @param available the amount that can currently be withdrawn
      * @param requested the amount the user tried to withdraw or transfer

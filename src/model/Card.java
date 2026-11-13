@@ -178,6 +178,14 @@ public abstract class Card implements Authenticatable, Printable {
     }
 
     /**
+     * Unblocks the card and resets failed PIN attempts (bank-staff / demo feature).
+     */
+    public void unblock() {
+        this.blocked = false;
+        this.failedPinAttempts = 0;
+    }
+
+    /**
      * @return {@code true} if today is after the expiry date; the expiry date itself is still valid
      */
     public boolean isExpired() {

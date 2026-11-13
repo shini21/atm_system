@@ -313,3 +313,4 @@ This document describes all REST API endpoints provided by the Java Spring Boot 
   }
 }
 ```
+

@@ -11,6 +11,7 @@ import model.ATMCard;
 import model.Account;
 import model.TransactionRecord;
 import model.TransactionType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import service.Bank;
 import service.TransactionHistory;
@@ -20,7 +21,7 @@ import java.util.List;
 
 /**
  * Service orchestrating ATM web operations and managing session-backed state.
- * Reuses the existing {@link Bank}, {@link Account}, {@link ATMCard}, and {@link TransactionHistory}.
+ * Bridges in-memory {@link Bank} with persistent {@link AtmPersistenceService}.
  */
 @Service
 public class AtmWebService {
@@ -30,55 +31,67 @@ public class AtmWebService {
 
     private final Bank bank;
     private final TransactionHistory transactionHistory;
+    private final AtmPersistenceService persistenceService;
 
     public AtmWebService(Bank bank, TransactionHistory transactionHistory) {
-        this.bank = bank;
-        this.transactionHistory = transactionHistory;
+        this(bank, transactionHistory, null);
     }
 
-    /**
-     * Inspects a card without authenticating. Checks whether the card exists,
-     * whether it is blocked, and whether it has expired.
-     */
+    @Autowired
+    public AtmWebService(Bank bank, TransactionHistory transactionHistory,
+                         @Autowired(required = false) AtmPersistenceService persistenceService) {
+        this.bank = bank;
+        this.transactionHistory = transactionHistory;
+        this.persistenceService = persistenceService;
+    }
+
     public ATMCard checkCard(String cardNumber)
             throws AccountNotFoundException, CardBlockedException, CardExpiredException {
         if (cardNumber == null || cardNumber.trim().isEmpty()) {
             throw new AccountNotFoundException("Card number must not be empty.");
         }
+        if (persistenceService != null) {
+            persistenceService.checkCard(cardNumber.trim());
+        }
         ATMCard card = bank.findCardByNumber(cardNumber.trim());
-        card.isValid(); // Throws CardBlockedException or CardExpiredException if invalid
+        card.isValid();
         return card;
     }
 
-    /**
-     * Authenticates the user with card number and 4-digit PIN.
-     * On success, records authentication state in the server-side HTTP session.
-     */
     public Account login(String cardNumber, String pin, HttpSession session)
             throws AccountNotFoundException, CardBlockedException, CardExpiredException, InvalidPinException {
-        ATMCard card = checkCard(cardNumber);
-        card.verifyPin(pin); // Throws InvalidPinException if incorrect, handles attempt counters
+        if (cardNumber == null || cardNumber.trim().isEmpty()) {
+            throw new AccountNotFoundException("Card number must not be empty.");
+        }
+        Account account;
+        if (persistenceService != null) {
+            account = persistenceService.login(cardNumber.trim(), pin);
+            ATMCard memCard = bank.findCardByNumber(cardNumber.trim());
+            if (memCard != null) {
+                memCard.verifyPin(pin);
+            }
+        } else {
+            ATMCard card = checkCard(cardNumber);
+            card.verifyPin(pin);
+            account = bank.getAccountForCard(card);
+        }
 
-        Account account = bank.getAccountForCard(card);
-        session.setAttribute(SESSION_CARD_NUMBER, card.getCardNumber());
+        session.setAttribute(SESSION_CARD_NUMBER, cardNumber.trim());
         session.setAttribute(SESSION_ACCOUNT_NUMBER, account.getAccountNumber());
         return account;
     }
 
-    /**
-     * Retrieves the currently authenticated account from the active session.
-     */
     public Account getAuthenticatedAccount(HttpSession session) throws AccountNotFoundException {
         String accountNumber = (String) session.getAttribute(SESSION_ACCOUNT_NUMBER);
         if (accountNumber == null) {
             throw new IllegalStateException("No active ATM session found. Please insert your card and log in.");
         }
+        if (persistenceService != null) {
+            return persistenceService.getAccountByNumber(accountNumber);
+        }
         return bank.findAccountByNumber(accountNumber);
     }
 
-    /**
-     * Retrieves the currently authenticated card from the active session.
-     */
     public ATMCard getAuthenticatedCard(HttpSession session) throws AccountNotFoundException {
         String cardNumber = (String) session.getAttribute(SESSION_CARD_NUMBER);
         if (cardNumber == null) {
@@ -87,96 +100,143 @@ public class AtmWebService {
         return bank.findCardByNumber(cardNumber);
     }
 
-    /**
-     * Invalidates the active HTTP session.
-     */
     public void logout(HttpSession session) {
         if (session != null) {
             session.invalidate();
         }
     }
 
-    /**
-     * Deposits money into the authenticated account. Thread-safe synchronization on the account.
-     */
     public TransactionRecord deposit(BigDecimal amount, HttpSession session)
             throws AccountNotFoundException, InvalidAmountException {
         Account account = getAuthenticatedAccount(session);
-        synchronized (account) {
-            account.deposit(amount);
-            List<TransactionRecord> history = account.getTransactionHistory();
-            return history.get(history.size() - 1);
-        }
-    }
-
-    /**
-     * Withdraws money from the authenticated account. Thread-safe synchronization on the account.
-     */
-    public TransactionRecord withdraw(BigDecimal amount, HttpSession session)
-            throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
-        Account account = getAuthenticatedAccount(session);
-        synchronized (account) {
-            account.withdraw(amount);
-            List<TransactionRecord> history = account.getTransactionHistory();
-            return history.get(history.size() - 1);
-        }
-    }
-
-    /**
-     * Transfers money from the authenticated account to a recipient account.
-     */
-    public TransactionRecord transfer(String recipientAccountNumber, BigDecimal amount, HttpSession session)
-            throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
-        Account sender = getAuthenticatedAccount(session);
-        Account receiver = bank.findAccountByNumber(recipientAccountNumber);
-
-        // Lock accounts in consistent order to prevent deadlock
-        Account firstLock = sender.getAccountNumber().compareTo(receiver.getAccountNumber()) < 0 ? sender : receiver;
-        Account secondLock = firstLock == sender ? receiver : sender;
-
-        synchronized (firstLock) {
-            synchronized (secondLock) {
-                sender.transfer(receiver, amount);
-                List<TransactionRecord> history = sender.getTransactionHistory();
+        if (persistenceService != null) {
+            TransactionRecord record = persistenceService.deposit(account.getAccountNumber(), amount);
+            Account memAccount = bank.findAccountByNumber(account.getAccountNumber());
+            if (memAccount != null) {
+                synchronized (memAccount) {
+                    memAccount.deposit(amount);
+                }
+            }
+            return record;
+        } else {
+            synchronized (account) {
+                account.deposit(amount);
+                List<TransactionRecord> history = account.getTransactionHistory();
                 return history.get(history.size() - 1);
             }
         }
     }
 
-    /**
-     * Changes the card PIN after verifying the old one.
-     */
+    public TransactionRecord withdraw(BigDecimal amount, HttpSession session)
+            throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
+        return withdrawWithBreakdown(amount, session).getRecord();
+    }
+
+    public AtmPersistenceService.WithdrawalResult withdrawWithBreakdown(BigDecimal amount, HttpSession session)
+            throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
+        Account account = getAuthenticatedAccount(session);
+        if (persistenceService != null) {
+            AtmPersistenceService.WithdrawalResult result =
+                    persistenceService.withdraw(account.getAccountNumber(), amount);
+            Account memAccount = bank.findAccountByNumber(account.getAccountNumber());
+            if (memAccount != null) {
+                synchronized (memAccount) {
+                    memAccount.withdraw(amount);
+                }
+            }
+            return result;
+        } else {
+            synchronized (account) {
+                account.withdraw(amount);
+                List<TransactionRecord> history = account.getTransactionHistory();
+                TransactionRecord record = history.get(history.size() - 1);
+                return new AtmPersistenceService.WithdrawalResult(record, null, record.getTransactionId());
+            }
+        }
+    }
+
+    public TransactionRecord transfer(String recipientAccountNumber, BigDecimal amount, HttpSession session)
+            throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
+        Account sender = getAuthenticatedAccount(session);
+        if (persistenceService != null) {
+            TransactionRecord record =
+                    persistenceService.transfer(sender.getAccountNumber(), recipientAccountNumber, amount);
+            Account memSender = bank.findAccountByNumber(sender.getAccountNumber());
+            Account memReceiver = bank.findAccountByNumber(recipientAccountNumber);
+            if (memSender != null && memReceiver != null) {
+                Account firstLock = memSender.getAccountNumber().compareTo(memReceiver.getAccountNumber()) < 0 ? memSender : memReceiver;
+                Account secondLock = firstLock == memSender ? memReceiver : memSender;
+                synchronized (firstLock) {
+                    synchronized (secondLock) {
+                        memSender.transfer(memReceiver, amount);
+                    }
+                }
+            }
+            return record;
+        } else {
+            Account receiver = bank.findAccountByNumber(recipientAccountNumber);
+            Account firstLock = sender.getAccountNumber().compareTo(receiver.getAccountNumber()) < 0 ? sender : receiver;
+            Account secondLock = firstLock == sender ? receiver : sender;
+            synchronized (firstLock) {
+                synchronized (secondLock) {
+                    sender.transfer(receiver, amount);
+                    List<TransactionRecord> history = sender.getTransactionHistory();
+                    return history.get(history.size() - 1);
+                }
+            }
+        }
+    }
+
     public void changePin(String oldPin, String newPin, String confirmPin, HttpSession session)
             throws AccountNotFoundException, InvalidPinException {
         if (!newPin.equals(confirmPin)) {
             throw new InvalidPinException("New PIN and Confirm PIN do not match.");
         }
-        ATMCard card = getAuthenticatedCard(session);
-        Account account = getAuthenticatedAccount(session);
+        String cardNumber = (String) session.getAttribute(SESSION_CARD_NUMBER);
+        if (cardNumber == null) {
+            throw new IllegalStateException("No active ATM session found.");
+        }
 
-        synchronized (card) {
-            card.changePin(oldPin, newPin);
-            account.addTransaction(TransactionRecord.create(
-                    TransactionType.PIN_CHANGE,
-                    BigDecimal.ZERO,
-                    "PIN changed via Web ATM",
-                    account.getBalance()
-            ));
+        if (persistenceService != null) {
+            persistenceService.changePin(cardNumber, oldPin, newPin, confirmPin);
+            ATMCard memCard = bank.findCardByNumber(cardNumber);
+            if (memCard != null) {
+                memCard.changePin(oldPin, newPin);
+            }
+        } else {
+            ATMCard card = getAuthenticatedCard(session);
+            Account account = getAuthenticatedAccount(session);
+            synchronized (card) {
+                card.changePin(oldPin, newPin);
+                account.addTransaction(TransactionRecord.create(
+                        TransactionType.PIN_CHANGE,
+                        BigDecimal.ZERO,
+                        "PIN changed via Web ATM",
+                        account.getBalance()
+                ));
+            }
         }
     }
 
-    /**
-     * Returns the latest transactions (newest first).
-     */
     public List<TransactionRecord> getRecentTransactions(HttpSession session, int limit)
             throws AccountNotFoundException {
         Account account = getAuthenticatedAccount(session);
+        if (persistenceService != null) {
+            return persistenceService.getRecentTransactions(account.getAccountNumber(), limit);
+        }
         return transactionHistory.getLastTransactions(account, limit);
     }
 
-    /**
-     * Masks card numbers (e.g. "CARD1001" -> "**** **** 1001").
-     */
+    public void unblockCard(String cardNumber) throws AccountNotFoundException {
+        if (persistenceService != null) {
+            persistenceService.unblockCard(cardNumber);
+        }
+        ATMCard memCard = bank.findCardByNumber(cardNumber);
+        if (memCard != null) {
+            memCard.unblock();
+        }
+    }
+
     public static String maskCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() < 4) {
             return "****";
@@ -185,4 +245,3 @@ public class AtmWebService {
         return "**** **** " + lastFour;
     }
 }
-

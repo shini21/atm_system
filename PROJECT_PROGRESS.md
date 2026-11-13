@@ -13,9 +13,9 @@
 
 | Phase | Description | Status | Test Result | Git Commit | Push Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Phase 0** | Repository Audit, Skill Discovery, Plan & Doc Setup | **COMPLETED** | 21/21 Java Tests Pass | Pending | Initial branch commit |
-| **Phase 1** | Backend Architecture & Persistence (H2, Entities, Seed Data) | **PLANNED** | - | - | - |
-| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **PLANNED** | - | - | - |
+| **Phase 0** | Repository Audit, Skill Discovery, Plan & Doc Setup | **COMPLETED** | 21/21 Java Tests Pass | `78324ff` | Pushed to origin/feature/premium-atm |
+| **Phase 1** | Backend Architecture & Persistence (H2, Entities, Seed Data) | **COMPLETED** | 21/21 Java Tests Pass | Pending | Ready to commit & push |
+| **Phase 2** | Core ATM Services & REST API (Denominations, Status, Receipts) | **IN PROGRESS** | - | - | - |
 | **Phase 3** | Backend Tests & Security Hardening (BCrypt, Idempotency, Limits) | **PLANNED** | - | - | - |
 | **Phase 4** | Frontend Foundation & Physical Kiosk Chassis | **PLANNED** | - | - | - |
 | **Phase 5** | ATM Interface & Tactile Hardware Elements (Keypad, Slots) | **PLANNED** | - | - | - |
@@ -45,21 +45,23 @@
 
 ---
 
-## 4. Current Phase Details: Phase 0 (Audit)
+## 4. Phase Details: Phase 1 (Backend Architecture & Persistence)
 
-### Files Inspected & Verified:
-- `pom.xml`: Spring Boot 3.3.4, Java 17, Spring Web, Validation, JUnit 5.
-- `src/model/`: `Account`, `SavingsAccount`, `CurrentAccount`, `Card`, `ATMCard`, `Customer`, `TransactionRecord`, `TransactionType`.
-- `src/com/bank/atm/`: Controllers, DTOs, WebMvcConfig, AtmWebService, GlobalExceptionHandler.
-- `test/`: `AtmIntegrationTest`, `AtmWebServiceTest`, `FullStackAtmFlowTest`.
-- `frontend/`: React 19 + TypeScript + Tailwind + Motion components.
+### Completed Tasks:
+- Updated `pom.xml`: Added `spring-boot-starter-data-jpa`, `com.h2database:h2`, and `spring-security-crypto`.
+- Configured embedded H2 file database (`jdbc:h2:file:./data/atm_db`) in `resources/application.properties` and MySQL profile in `resources/application-mysql.properties`.
+- Configured isolated H2 in-memory test database in `test-resources/application.properties`.
+- Created JPA Entities under `src/com/bank/atm/entity/`: `CustomerEntity`, `AccountEntity`, `CardEntity`, `TransactionEntity`, `AtmInventoryEntity`.
+- Created Spring Data JPA Repositories under `src/com/bank/atm/repository/`.
+- Implemented `PinSecurityService` with BCrypt password hashing and verification.
+- Implemented `CashDispenserService` with denomination breakdown calculation (₹500, ₹200, ₹100; strictly no ₹2000 notes) and inventory management.
+- Implemented `DataInitializer` to automatically seed demo data with BCrypt PINs and ₹35,000 ATM cash reserve.
+- Implemented `AtmPersistenceService` bridging OOP domain entities with JPA database persistence.
+- Added note breakdown support to `TransactionItemResponse` and `TransactionController`.
+- Added `AtmHardwareController` for ATM inventory status and card unblock support.
+- All 21 Maven tests passing cleanly (`mvnw.cmd test`).
 
-### Tests Executed:
-- Backend: `.\mvnw.cmd test` executed with code 0 (21 tests run, 0 failures, 0 errors).
-- Frontend: `npm.cmd run build` executed with code 0.
+### Commit:
+- Message: `refactor: organize Java backend architecture with JPA persistence and H2`
 
-### Next Immediate Step:
-- Stage initial Phase 0 setup and baseline files on `feature/premium-atm`.
-- Commit with message: `chore: inspect repository and establish project architecture`.
-- Push branch `feature/premium-atm` to `origin`.
-- Begin **Phase 1: Backend Architecture & Persistence**.
+

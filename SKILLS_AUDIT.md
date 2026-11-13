@@ -31,3 +31,4 @@ This document tracks all agent skills discovered, configured, and actively utili
   - Result: Generated recommendation for **Minimalism & Swiss Style** with Trust & Authority pattern. High contrast, dark obsidian canvas (`#0F172A`), warm amber gold accents (`#F59E0B`), and corporate sans typography (`IBM Plex Sans` / `Inter`).
 - **Taste-Skill (`design-taste-frontend`)**:
   - Enforced anti-slop rules: No floating random cards, strict equal border margins, physical hardware grounding.
+

@@ -58,8 +58,10 @@ public class TransactionController {
             HttpSession session)
             throws AccountNotFoundException, InvalidAmountException, InsufficientFundsException {
 
-        TransactionRecord record = atmWebService.withdraw(request.getAmount(), session);
-        return ResponseEntity.ok(ApiResponse.ok("Withdrawal successful", TransactionItemResponse.from(record)));
+        com.bank.atm.service.AtmPersistenceService.WithdrawalResult result =
+                atmWebService.withdrawWithBreakdown(request.getAmount(), session);
+        return ResponseEntity.ok(ApiResponse.ok("Withdrawal successful",
+                TransactionItemResponse.from(result.getRecord(), result.getBreakdown())));
     }
 
     /**

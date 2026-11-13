@@ -17,6 +17,7 @@ public class TransactionItemResponse {
     private BigDecimal balanceAfterTransaction;
     private String description;
     private LocalDateTime timestamp;
+    private java.util.Map<Integer, Integer> denominations;
 
     public TransactionItemResponse() {
     }
@@ -24,23 +25,43 @@ public class TransactionItemResponse {
     public TransactionItemResponse(String transactionId, TransactionType type, BigDecimal amount,
                                    BigDecimal balanceAfterTransaction, String description,
                                    LocalDateTime timestamp) {
+        this(transactionId, type, amount, balanceAfterTransaction, description, timestamp, null);
+    }
+
+    public TransactionItemResponse(String transactionId, TransactionType type, BigDecimal amount,
+                                   BigDecimal balanceAfterTransaction, String description,
+                                   LocalDateTime timestamp, java.util.Map<Integer, Integer> denominations) {
         this.transactionId = transactionId;
         this.type = type;
         this.amount = amount;
         this.balanceAfterTransaction = balanceAfterTransaction;
         this.description = description;
         this.timestamp = timestamp;
+        this.denominations = denominations;
     }
 
     public static TransactionItemResponse from(TransactionRecord record) {
+        return from(record, null);
+    }
+
+    public static TransactionItemResponse from(TransactionRecord record, java.util.Map<Integer, Integer> denominations) {
         return new TransactionItemResponse(
                 record.getTransactionId(),
                 record.getType(),
                 record.getAmount(),
                 record.getBalanceAfterTransaction(),
                 record.getDescription(),
-                record.getTimestamp()
+                record.getTimestamp(),
+                denominations
         );
+    }
+
+    public java.util.Map<Integer, Integer> getDenominations() {
+        return denominations;
+    }
+
+    public void setDenominations(java.util.Map<Integer, Integer> denominations) {
+        this.denominations = denominations;
     }
 
     public String getTransactionId() {
