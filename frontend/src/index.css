@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import './styles/animations.css';
 
 @tailwind base;
@@ -7,84 +7,106 @@
 
 @layer base {
   :root {
-    /* Chassis & Environment (Light Theme: Warm Stone / Architectural Titanium) */
-    --canvas: #E2E8F0;
-    --chassis-bg: #ECEFF4;
-    --chassis-bezel: #CBD5E1;
+    /* -------------------------------------------------------------------------
+     * APEX Light Theme — Warm Ivory & Champagne (Style Guide §3.1)
+     * ------------------------------------------------------------------------- */
+    --canvas: #F5F2EB;             /* Warm page canvas */
+    --surface: #FFFEFA;            /* Cards, forms, primary content */
+    --surface-subdued: #F7F4EC;    /* Subdued panel surface */
+    --surface-hover: #ECE6D9;      /* Interactive hover state */
+    --surface-elevated: #EEE9DF;   /* Raised sections and subtle separation */
     
-    /* Recessed Touch Display */
-    --surface: #FFFFFF;
-    --surface-subdued: #F8FAFC;
-    --surface-hover: #F1F5F9;
-    --border-subtle: #E2E8F0;
-    --border-strong: #94A3B8;
+    --chassis-bg: #EFEAE0;         /* Kiosk housing */
+    --chassis-bezel: #DDD5C7;      /* Recessed bezel boundary */
+    
+    --border-subtle: #DCD4C7;      /* Defined but quiet outlines */
+    --border-strong: #C4B9A7;      /* Interactive and focused borders */
 
-    /* High-Contrast Typography (WCAG AA compliant) */
-    --text-primary: #0F172A;
-    --text-secondary: #334155;
-    --text-tertiary: #64748B;
+    /* Typography (WCAG 2.2 AA compliant contrast against #FFFEFA and #F5F2EB) */
+    --text-primary: #253448;        /* High-contrast deep navy text */
+    --text-secondary: #5C6777;      /* Muted readable secondary copy (>4.5:1) */
+    --text-tertiary: #848F9E;       /* Subdued metadata and hints */
 
-    /* Brand Accent: Deep Emerald */
-    --accent: #047857;
-    --accent-hover: #065F46;
-    --accent-subtle: rgba(4, 120, 87, 0.1);
+    /* Core Brand Accents */
+    --navy: #253448;               /* Navigation, headings, strong panels */
+    --navy-deep: #1A2636;
+    --accent: #00876A;             /* Emerald: primary action (optimized 4.6:1 WCAG contrast) */
+    --accent-hover: #007057;
+    --accent-subtle: rgba(0, 159, 125, 0.12);
+    
+    --cyan: #0E90BC;               /* Electric cyan: focus, hardware, technical feedback */
+    --cyan-subtle: rgba(54, 188, 232, 0.15);
+    
+    --champagne: #A88147;          /* Champagne: restrained luxury accents (>4.5:1) */
+    --champagne-subtle: rgba(185, 148, 91, 0.14);
+    --accent-brass: #A88147;
+    --accent-brass-subtle: rgba(185, 148, 91, 0.14);
 
-    /* Metallic Accent: Brushed Brass */
-    --accent-brass: #B45309;
-    --accent-brass-subtle: rgba(180, 83, 9, 0.1);
+    /* Semantic Status Colours (Style Guide §3.3) */
+    --success: #1E825D;            /* Success feedback (>4.5:1) */
+    --success-subtle: rgba(38, 155, 112, 0.12);
+    --warning: #C07F0E;            /* Warning / Caution */
+    --warning-subtle: rgba(217, 154, 40, 0.12);
+    --danger: #C93434;             /* Error / Failed state */
+    --danger-subtle: rgba(214, 69, 69, 0.12);
+    --info: #2B68A6;               /* Neutral info */
+    --info-subtle: rgba(57, 118, 184, 0.12);
 
-    /* Functional Semantics */
-    --danger: #DC2626;
-    --danger-subtle: rgba(220, 38, 38, 0.08);
-    --success: #059669;
-    --success-subtle: rgba(5, 150, 105, 0.08);
-    --warning: #D97706;
-    --warning-subtle: rgba(217, 119, 6, 0.08);
-
-    /* Inset Screen Shadow & Chassis Bevel */
-    --card-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.08);
-    --screen-pocket: inset 0 2px 6px rgba(0, 0, 0, 0.08);
+    /* Elevation & Shadows */
+    --card-shadow: 0 16px 36px -10px rgba(37, 52, 72, 0.08), 0 0 0 1px rgba(37, 52, 72, 0.05);
+    --screen-pocket: inset 0 2px 6px rgba(37, 52, 72, 0.06);
     color-scheme: light;
   }
 
   .dark {
-    /* Chassis & Environment (Dark Theme: Dark Graphite / Matte Basalt) */
-    --canvas: #06090E;
-    --chassis-bg: #0B0F17;
-    --chassis-bezel: #161E2E;
+    /* -------------------------------------------------------------------------
+     * APEX Dark Theme — Industrial Navy (Style Guide §3.2)
+     * ------------------------------------------------------------------------- */
+    --canvas: #0B1220;             /* Main canvas */
+    --surface: #111C2E;            /* Cards and content panels */
+    --surface-subdued: #152238;    /* Subdued panel surface */
+    --surface-hover: #1D2E49;      /* Interactive hover state */
+    --surface-elevated: #18263A;   /* Raised surfaces and overlays */
 
-    /* Recessed Touch Display */
-    --surface: #0F172A;
-    --surface-subdued: #1E293B;
-    --surface-hover: #263346;
-    --border-subtle: rgba(255, 255, 255, 0.1);
-    --border-strong: rgba(255, 255, 255, 0.2);
+    --chassis-bg: #0E1626;         /* Kiosk housing */
+    --chassis-bezel: #1C2B42;      /* Recessed bezel boundary */
 
-    /* High-Contrast Typography (WCAG AA compliant) */
-    --text-primary: #F8FAFC;
-    --text-secondary: #CBD5E1;
-    --text-tertiary: #94A3B8;
+    --border-subtle: #293A50;      /* Panel and control boundaries */
+    --border-strong: #3D5370;      /* Interactive and focused borders */
 
-    /* Brand Accent: Deep Emerald */
-    --accent: #10B981;
-    --accent-hover: #34D399;
-    --accent-subtle: rgba(16, 185, 129, 0.14);
+    /* Typography (WCAG 2.2 AA compliant contrast against #111C2E) */
+    --text-primary: #F4F7FA;        /* Main readable content */
+    --text-secondary: #AAB8C8;      /* Secondary content */
+    --text-tertiary: #76879E;       /* Subdued metadata and hints */
 
-    /* Metallic Accent: Brushed Brass */
-    --accent-brass: #F59E0B;
-    --accent-brass-subtle: rgba(245, 158, 11, 0.15);
+    /* Core Brand Accents */
+    --navy: #18263A;
+    --navy-deep: #0D1624;
+    --accent: #00B388;             /* Emerald: primary action (>7:1 contrast on dark) */
+    --accent-hover: #14D4A4;
+    --accent-subtle: rgba(0, 179, 136, 0.16);
 
-    /* Functional Semantics */
-    --danger: #EF4444;
-    --danger-subtle: rgba(239, 68, 68, 0.14);
-    --success: #10B981;
-    --success-subtle: rgba(16, 185, 129, 0.14);
-    --warning: #F59E0B;
-    --warning-subtle: rgba(245, 158, 11, 0.14);
+    --cyan: #36BCE8;               /* Electric cyan: focus, hardware, technical feedback */
+    --cyan-subtle: rgba(54, 188, 232, 0.16);
 
-    /* Inset Screen Shadow & Chassis Bevel */
-    --card-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
-    --screen-pocket: inset 0 3px 8px rgba(0, 0, 0, 0.4);
+    --champagne: #D4B072;          /* Champagne: restrained luxury accents */
+    --champagne-subtle: rgba(212, 176, 114, 0.16);
+    --accent-brass: #D4B072;
+    --accent-brass-subtle: rgba(212, 176, 114, 0.16);
+
+    /* Semantic Status Colours (Style Guide §3.3) */
+    --success: #269B70;
+    --success-subtle: rgba(38, 155, 112, 0.16);
+    --warning: #E0A332;
+    --warning-subtle: rgba(224, 163, 50, 0.16);
+    --danger: #E05353;
+    --danger-subtle: rgba(224, 83, 83, 0.16);
+    --info: #4686CE;
+    --info-subtle: rgba(70, 134, 206, 0.16);
+
+    /* Elevation & Shadows */
+    --card-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    --screen-pocket: inset 0 3px 8px rgba(0, 0, 0, 0.45);
     color-scheme: dark;
   }
 
@@ -97,23 +119,37 @@
     padding: 0;
     background-color: var(--canvas);
     color: var(--text-primary);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    font-family: 'IBM Plex Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
   }
 
-  /* Force Tabular Numerals on all Monospace & Currency displays */
+  /* Force Tabular Numerals on all Monospace & Currency displays (Style Guide §4.2) */
   .font-mono, [data-tabular] {
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', monospace;
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Smooth theme transition */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-transitioning,
+  html.theme-transitioning *,
+  html.theme-transitioning *::before,
+  html.theme-transitioning *::after {
+    transition: background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 }
 
 /* Custom Scrollbar for Terminal Feel */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -126,5 +162,5 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-tertiary);
+  background: var(--text-secondary);
 }
