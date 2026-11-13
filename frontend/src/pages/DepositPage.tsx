@@ -14,6 +14,7 @@ import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
 export const DepositPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
   const [completedTx, setCompletedTx] = useState<TransactionItem | null>(null);
+  const [countdown, setCountdown] = useState<number>(6);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,24 @@ export const DepositPage: React.FC = () => {
   const navigate = useNavigate();
 
   const quickAmounts = [500, 1000, 2000, 5000];
+
+  // Auto-return countdown after completed deposit
+  useEffect(() => {
+    if (!completedTx) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/dashboard');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [completedTx, navigate]);
 
   const maskAccountNumber = (accNum?: string) => {
     if (!accNum) return '•••• ••••';
@@ -98,7 +117,13 @@ export const DepositPage: React.FC = () => {
   // Hardware keypad listener
   useEffect(() => {
     const unsubscribe = registerKeypadListener((key) => {
-      if (isLoading || completedTx) return;
+      if (completedTx) {
+        if (key === 'ENTER' || key === 'CANCEL') {
+          navigate('/dashboard');
+        }
+        return;
+      }
+      if (isLoading) return;
       if (/^[0-9]$/.test(key)) {
         handleKeyPress(key);
       } else if (key === 'BACKSPACE') {
@@ -120,7 +145,7 @@ export const DepositPage: React.FC = () => {
       }
     });
     return unsubscribe;
-  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr]);
+  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr, navigate]);
 
   const handleKeyPress = (num: string) => {
     setError(null);
@@ -237,6 +262,7 @@ export const DepositPage: React.FC = () => {
 
               <div className="flex gap-2.5">
                 <Button
+                  type="button"
                   variant="secondary"
                   size="md"
                   onClick={() => {
@@ -256,12 +282,13 @@ export const DepositPage: React.FC = () => {
                   <span>Print Receipt</span>
                 </Button>
                 <Button
+                  type="button"
                   variant="primary"
                   size="md"
                   onClick={() => navigate('/dashboard')}
-                  className="flex-1"
+                  className="flex-1 font-semibold"
                 >
-                  Dashboard
+                  Return to Dashboard ({countdown}s)
                 </Button>
               </div>
             </motion.div>
@@ -350,17 +377,19 @@ export const DepositPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Back Link */}
-        <div className="mt-8 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
-          </button>
-        </div>
+        {/* Back Link (shown only during input mode) */}
+        {!completedTx && (
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Dashboard</span>
+            </button>
+          </div>
+        )}
 
         {/* Confirmation Modal */}
         <Modal

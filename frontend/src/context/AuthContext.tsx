@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { api, getErrorMessage } from '../services/api';
 import type { CardStatus, AuthSession, AccountDetails, BalanceInfo } from '../types';
 
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initSession();
   }, []);
 
-  const checkCard = async (cardNumber: string): Promise<boolean> => {
+  const checkCard = useCallback(async (cardNumber: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -63,9 +63,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const login = async (pin: string): Promise<boolean> => {
+  const login = useCallback(async (pin: string): Promise<boolean> => {
     if (!cardStatus) {
       setError('Please insert or select a card first.');
       return false;
@@ -104,9 +104,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [cardStatus]);
 
-  const logout = async (): Promise<void> => {
+  const logout = useCallback(async (): Promise<void> => {
     setIsLoading(true);
     try {
       await api.logout();
@@ -119,9 +119,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setBalanceInfo(null);
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const refreshAccount = async (): Promise<void> => {
+  const refreshAccount = useCallback(async (): Promise<void> => {
     try {
       const details = await api.getAccountDetails();
       setAccount(details);
@@ -130,23 +130,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err) {
       setError(getErrorMessage(err));
     }
-  };
+  }, []);
 
-  const refreshBalance = async (): Promise<void> => {
+  const refreshBalance = useCallback(async (): Promise<void> => {
     try {
       const bal = await api.getBalance();
       setBalanceInfo(bal);
-      if (account) {
-        setAccount({
-          ...account,
-          balance: bal.currentBalance,
-          availableBalance: bal.availableBalance,
-        });
-      }
+      setAccount((prev) =>
+        prev
+          ? {
+              ...prev,
+              balance: bal.currentBalance,
+              availableBalance: bal.availableBalance,
+            }
+          : prev
+      );
     } catch (err) {
       setError(getErrorMessage(err));
     }
-  };
+  }, []);
 
   const clearCard = () => {
     setCardStatus(null);

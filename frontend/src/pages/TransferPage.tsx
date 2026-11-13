@@ -14,6 +14,7 @@ import { ArrowLeftRight, AlertCircle, CheckCircle2, ArrowLeft, UserCheck } from 
 export const TransferPage: React.FC = () => {
   const [recipient, setRecipient] = useState<string>('');
   const [amountStr, setAmountStr] = useState<string>('');
+  const [countdown, setCountdown] = useState<number>(8);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [completedTx, setCompletedTx] = useState<TransactionItem | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -22,6 +23,24 @@ export const TransferPage: React.FC = () => {
   const { account, refreshBalance } = useAuth();
   const { printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  // Auto-return countdown after completed transfer
+  useEffect(() => {
+    if (!completedTx) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/dashboard');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [completedTx, navigate]);
 
   const maskAccountNumber = (accNum?: string) => {
     if (!accNum) return '•••• ••••';
@@ -253,12 +272,13 @@ export const TransferPage: React.FC = () => {
                   New Transfer
                 </Button>
                 <Button
+                  type="button"
                   variant="primary"
                   size="md"
                   onClick={() => navigate('/dashboard')}
-                  className="flex-1"
+                  className="flex-1 font-semibold"
                 >
-                  Dashboard
+                  Return to Dashboard ({countdown}s)
                 </Button>
               </div>
             </motion.div>
@@ -363,17 +383,19 @@ export const TransferPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Back Link */}
-        <div className="mt-8 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
-          </button>
-        </div>
+        {/* Back Link (shown only during input mode) */}
+        {!completedTx && (
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Dashboard</span>
+            </button>
+          </div>
+        )}
 
         {/* Confirmation Modal */}
         <Modal

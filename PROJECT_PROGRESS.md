@@ -201,6 +201,10 @@
    - Withdrawals execute a greedy denomination algorithm, decrement inventory, and return the note breakdown to drive frontend animations.
 5. **Persistence**:
    - Transitioning from in-memory maps to embedded H2 file database (`atm_db.mv.db`) with Spring Data JPA and Flyway/schema auto-generation, keeping zero setup overhead.
+6. **Post-Transaction Navigation & Auto-Return Stability**:
+   - Wrapped `AuthContext` actions (`refreshBalance`, `refreshAccount`, `login`, `logout`, `checkCard`) in `useCallback` with functional state updates to eliminate infinite re-render loops upon returning to `/dashboard`.
+   - Explicitly defaulted `Button` component type to `'button'` to prevent accidental form submission traps.
+   - Added automatic return countdown timers on transaction success views (`DepositPage`, `WithdrawPage`, `TransferPage`) so the terminal automatically transitions back to the main menu while preserving immediate button clicks and physical keypad triggers (`ENTER` / `CANCEL`).
 
 ---
 

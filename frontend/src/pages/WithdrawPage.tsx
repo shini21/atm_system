@@ -15,6 +15,7 @@ import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
 export const WithdrawPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
   const [completedTx, setCompletedTx] = useState<TransactionItem | null>(null);
+  const [countdown, setCountdown] = useState<number>(8);
   const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,24 @@ export const WithdrawPage: React.FC = () => {
   const { t } = useLanguage();
   const { triggerDispense, printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  // Auto-return countdown after completed withdrawal
+  useEffect(() => {
+    if (!completedTx) return;
+
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate('/dashboard');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [completedTx, navigate]);
 
   const quickAmounts = [500, 1000, 2000, 5000, 10000];
   const availableBalance = account?.availableBalance ?? 0;
@@ -153,7 +172,13 @@ export const WithdrawPage: React.FC = () => {
   // Physical Keypad Listener for Custom Amount Entry
   useEffect(() => {
     const unsubscribe = registerKeypadListener((key) => {
-      if (isLoading || completedTx) return;
+      if (completedTx) {
+        if (key === 'ENTER' || key === 'CANCEL') {
+          navigate('/dashboard');
+        }
+        return;
+      }
+      if (isLoading) return;
       if (/^[0-9]$/.test(key)) {
         handleKeyPress(key);
       } else if (key === 'BACKSPACE') {
@@ -175,7 +200,7 @@ export const WithdrawPage: React.FC = () => {
       }
     });
     return unsubscribe;
-  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr]);
+  }, [registerKeypadListener, isLoading, completedTx, isConfirmOpen, amountStr, navigate]);
 
   const handleExecuteWithdrawal = async () => {
     const numericAmount = parseFloat(amountStr);
@@ -315,12 +340,13 @@ export const WithdrawPage: React.FC = () => {
                   <span>Print Receipt</span>
                 </Button>
                 <Button
+                  type="button"
                   variant="primary"
                   size="md"
                   onClick={() => navigate('/dashboard')}
-                  className="flex-1"
+                  className="flex-1 font-semibold"
                 >
-                  Dashboard
+                  Return to Dashboard ({countdown}s)
                 </Button>
               </div>
             </motion.div>
@@ -409,17 +435,19 @@ export const WithdrawPage: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {/* Back Link */}
-        <div className="mt-8 text-center">
-          <button
-            type="button"
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
-          </button>
-        </div>
+        {/* Back Link (shown only during input mode) */}
+        {!completedTx && (
+          <div className="mt-8 text-center">
+            <button
+              type="button"
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Dashboard</span>
+            </button>
+          </div>
+        )}
 
         {/* Confirmation Modal */}
         <Modal

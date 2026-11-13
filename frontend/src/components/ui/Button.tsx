@@ -10,6 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button: React.FC<ButtonProps> = ({
   children,
+  type = 'button',
   variant = 'primary',
   size = 'md',
   isLoading = false,
@@ -42,6 +43,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <motion.button
+      type={type}
       whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       disabled={disabled || isLoading}
