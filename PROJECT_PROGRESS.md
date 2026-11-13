@@ -32,9 +32,9 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | `244f897` |
 | **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | `7744dc7` |
-| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | Pending |
-| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **IN PROGRESS** | - | - |
-| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **PLANNED** | - | - |
+| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **COMPLETED** | Vite build pass (1.34s) | `7417231` |
+| **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **COMPLETED** | Vite build pass (1.30s) | Pending |
+| **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **IN PROGRESS** | - | - |
 | **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **PLANNED** | - | - |
 | **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
 | **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
@@ -74,6 +74,21 @@
   - Clear security warning badge with remaining attempts counter before card lockout.
   - Registered physical side function keys (`R1` = Confirm PIN, `R4` = Cancel & Return Card) for physical hardware interaction.
 - Verified compilation: `npm run build` passes cleanly in 1.34s with 0 errors.
+
+---
+
+## 2.4 Phase Details: Phase U3 (Main Menu / Dashboard with Side-Key Alignment & Session Timer)
+
+### Completed Tasks:
+- Redesigned `DashboardPage.tsx`:
+  - Replaced 6 generic cards with authentic 8-operation ATM menu directly aligned to physical chassis side keys:
+    - Left column: Cash Withdrawal (`L1`), Funds Transfer (`L2`), Mini Statement (`L3`), Change PIN (`L4`).
+    - Right column: Cash Deposit (`R1`), Balance Inquiry (`R2`), Transaction History (`R3`), Eject Card & Exit (`R4`).
+  - Added directional chevrons and tactile press animations on all operations.
+  - Implemented account number masking (`maskAccountNumber`) ensuring no raw `ACC1001` is exposed on screen (`ACC••••1001`).
+  - Added live circular session countdown progress ring (60s timer with pulsing warning state in the last 15s).
+  - Prominent high-contrast balance display with tabular numerals (`font-mono`).
+- Verified compilation: `npm run build` passes cleanly in 1.30s with 0 errors.
 
 ---
 
