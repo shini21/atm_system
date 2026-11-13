@@ -84,7 +84,7 @@ public class TransactionController {
     /**
      * Retrieves recent transactions for the authenticated account (newest first).
      */
-    @GetMapping("/recent")
+    @GetMapping({"/recent", "/history"})
     public ResponseEntity<ApiResponse<List<TransactionItemResponse>>> getRecentTransactions(
             @RequestParam(defaultValue = "5") int limit,
             HttpSession session)

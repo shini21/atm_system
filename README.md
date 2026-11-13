@@ -155,12 +155,22 @@ The system comes pre-loaded with the exact classroom demo dataset:
 | `CARD1002` | `ACC1002` | `5678` | **Priya Patel** | Current | ₹12,000.00 | 2028-06-30 | <span style="color:green">ACTIVE</span> | Standard current flow; ₹0.00 minimum balance rule |
 | `CARD1003` | `ACC1003` | `4321` | **Rahul Verma** | Savings | ₹800.00 | 2025-01-01 | <span style="color:orange">EXPIRED</span> | Rejection test for expired cards |
 | `CARD1004` | `ACC1004` | `9999` | **Neha Iyer** | Savings | ₹1,500.00 | 2028-12-31 | <span style="color:red">BLOCKED</span> | Rejection test for pre-blocked cards |
+| `CARD1005` | `ACC1005` | `2468` | **Vikram Malhotra** | Savings | ₹150.00 | 2028-12-31 | <span style="color:green">ACTIVE</span> | Low balance test (minimum balance ₹100 enforcement) |
 
-> **Classroom Notice**: All data resides in-memory in the `Bank` singleton. Restarting the backend resets all balances, transactions, and blocked cards to these initial states.
+> **Persistence Notice**: All balances, transaction records, and card states are stored persistently in the embedded H2 file database (`./data/atm_db.mv.db`). Real-time mutations survive server restarts. An optional MySQL database profile is also provided (`application-mysql.properties`).
 
 ---
 
 ## Quickstart Guide
+
+### 0. 1-Click Launch (Windows)
+Double-click or run from terminal:
+```cmd
+start-atm.bat
+```
+This automatically compiles and launches the Spring Boot backend on port 8080, launches the Vite touchscreen frontend on port 5173, and opens your default browser at `http://localhost:5173`.
+
+---
 
 ### 1. Running the Spring Boot Backend
 

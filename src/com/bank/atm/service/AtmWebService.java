@@ -231,9 +231,13 @@ public class AtmWebService {
         if (persistenceService != null) {
             persistenceService.unblockCard(cardNumber);
         }
-        ATMCard memCard = bank.findCardByNumber(cardNumber);
-        if (memCard != null) {
-            memCard.unblock();
+        try {
+            ATMCard memCard = bank.findCardByNumber(cardNumber);
+            if (memCard != null) {
+                memCard.unblock();
+            }
+        } catch (AccountNotFoundException ignored) {
+            // Secondary in-memory bank cache synchronization is best-effort
         }
     }
 

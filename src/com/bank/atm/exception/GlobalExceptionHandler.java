@@ -77,6 +77,12 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Transaction failed due to a database integrity constraint or duplicate ID. Please try again."));
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.error("Resource not found: " + ex.getResourcePath()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class).error("Unhandled exception caught in GlobalExceptionHandler", ex);
