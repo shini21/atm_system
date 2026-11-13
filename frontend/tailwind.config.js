@@ -9,6 +9,10 @@ export default {
     extend: {
       colors: {
         canvas: "var(--canvas)",
+        chassis: {
+          DEFAULT: "var(--chassis-bg)",
+          bezel: "var(--chassis-bezel)",
+        },
         surface: {
           DEFAULT: "var(--surface)",
           subdued: "var(--surface-subdued)",
@@ -25,6 +29,7 @@ export default {
           DEFAULT: "var(--accent)",
           hover: "var(--accent-hover)",
           subtle: "var(--accent-subtle)",
+          brass: "var(--accent-brass)",
         },
         danger: {
           DEFAULT: "var(--danger)",
@@ -38,20 +43,6 @@ export default {
           DEFAULT: "var(--warning)",
           subtle: "var(--warning-subtle)",
         },
-        // Legacy colors for backwards compatibility
-        atm: {
-          bg: "var(--canvas)",
-          card: "var(--surface)",
-          panel: "var(--surface-subdued)",
-          accent: "var(--accent)",
-          cyan: "var(--accent)",
-          emerald: "var(--success)",
-          amber: "var(--warning)",
-          rose: "var(--danger)",
-          border: "var(--border-subtle)",
-          muted: "var(--text-secondary)",
-          text: "var(--text-primary)",
-        }
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'Roboto', 'sans-serif'],
@@ -59,7 +50,8 @@ export default {
       },
       boxShadow: {
         'luxury': 'var(--card-shadow)',
-        'elevated': '0 12px 32px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04)',
+        'pocket': 'var(--screen-pocket)',
+        'elevated': '0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06)',
       }
     },
   },

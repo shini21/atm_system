@@ -30,14 +30,34 @@
 
 | UI Phase | Description | Status | Verification | Commit |
 | :--- | :--- | :--- | :--- | :--- |
-| **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | Pending |
-| **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **IN PROGRESS** | - | - |
-| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **PLANNED** | - | - |
+| **Phase U0** | Audit, Token Design, Wireframe Proposal (`DESIGN_SYSTEM.md`) | **COMPLETED** | Design spec drafted & reviewed | `244f897` |
+| **Phase U1** | Tokens, Theme, Physical Chassis & Side Function Keys | **COMPLETED** | Vite build pass (1.41s) | Pending |
+| **Phase U2** | Welcome Screen, Card Insertion Sequence, Spring PIN Entry | **IN PROGRESS** | - | - |
 | **Phase U3** | Main Menu with Side-Key Alignment & Live Session Timer | **PLANNED** | - | - |
 | **Phase U4** | Transaction Screens (Withdrawal Note Breakdown, Cash Feeder) | **PLANNED** | - | - |
 | **Phase U5** | Thermal Receipt Slit, Mini Statement, Ledger Table | **PLANNED** | - | - |
 | **Phase U6** | Polish: Reduced Motion, A11y, Contrast, Sound | **PLANNED** | - | - |
 | **Phase U7** | Full-Stack Verification & Final Documentation | **PLANNED** | - | - |
+
+---
+
+## 2.2 Phase Details: Phase U1 (Tokens, Theme, Chassis & Side Function Keys)
+
+### Completed Tasks:
+- Implemented core design tokens in `frontend/src/index.css` and `frontend/tailwind.config.js`:
+  - `--canvas`, `--chassis-bg`, `--chassis-bezel`, `--surface`, `--surface-subdued`, `--accent` (Deep Emerald `#047857` / `#10B981`), `--accent-brass` (`#B45309` / `#F59E0B`), and inset screen shadow `--screen-pocket`.
+  - Added tabular numeral rules: `.font-mono, [data-tabular] { font-variant-numeric: tabular-nums; }`.
+- Extended `HardwareContext.tsx`:
+  - Added `sideKeys` state and `registerSideKeys(actions)` returning cleanup unregister function.
+  - Implemented `triggerSideKey(keyId)` invoking bound action, tactile audio click, and resetting inactivity timeout.
+- Created `SideFunctionKeys.tsx`:
+  - 4 physical metallic keys flanking display: `L1`–`L4` on left, `R1`–`R4` on right.
+  - Directional chevron alignment pips (`►` on left, `◄` on right) pointing directly at on-screen menu rows.
+  - Responsive collapse on narrow screens while preserving tactile keypad below.
+- Updated `AtmKiosk.tsx`:
+  - Wrapped touchscreen within physical terminal chassis and bezel assembly.
+  - Fixed hardware bay header label crowding (`Hardware PIN Pad` with clean `PCI-PTS v6` tag).
+- Verified compilation: `npm run build` succeeds cleanly in 1.41s with 0 errors.
 
 ---
 

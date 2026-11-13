@@ -116,3 +116,4 @@
   - Key 7: Aligned to on-screen row 3 (Transaction History)
   - Key 8: Aligned to on-screen row 4 (Eject / Exit)
 - Clicking either the on-screen row OR the physical side key triggers the action with satisfying mechanical press feedback and sound.
+

@@ -19,6 +19,13 @@ export interface ReceiptData {
   terminalId?: string;
 }
 
+export interface SideKeyAction {
+  id: string; // 'L1' | 'L2' | 'L3' | 'L4' | 'R1' | 'R2' | 'R3' | 'R4'
+  label?: string;
+  onClick: () => void;
+  disabled?: boolean;
+}
+
 export interface HardwareContextType {
   // Card Reader
   cardSlotState: 'empty' | 'inserted' | 'reading' | 'ejected' | 'blocked';
@@ -35,6 +42,11 @@ export interface HardwareContextType {
   currentReceipt: ReceiptData | null;
   printReceipt: (data: ReceiptData) => void;
   collectReceipt: () => void;
+
+  // Physical Side Function Keys (L1-L4, R1-R4)
+  sideKeys: Record<string, SideKeyAction | null>;
+  registerSideKeys: (actions: Record<string, SideKeyAction | null>) => () => void;
+  triggerSideKey: (keyId: string) => void;
 
   // Inactivity Timer
   inactivitySeconds: number;
@@ -72,6 +84,9 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Inactivity countdown
   const [inactivitySeconds, setInactivitySeconds] = useState<number>(INACTIVITY_TIMEOUT);
   const [isMuted, setIsMuted] = useState<boolean>(sound.getIsMuted());
+
+  // Physical Side Function Keys registry (L1-L4, R1-R4)
+  const [sideKeys, setSideKeys] = useState<Record<string, SideKeyAction | null>>({});
 
   // Keypad listener registry
   const keypadListenersRef = useRef<Set<(key: string) => void>>(new Set());
@@ -179,6 +194,29 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return muted;
   };
 
+  // Side function keys controls
+  const registerSideKeys = useCallback((actions: Record<string, SideKeyAction | null>) => {
+    setSideKeys((prev) => ({ ...prev, ...actions }));
+    return () => {
+      setSideKeys((prev) => {
+        const next = { ...prev };
+        Object.keys(actions).forEach((k) => {
+          delete next[k];
+        });
+        return next;
+      });
+    };
+  }, []);
+
+  const triggerSideKey = useCallback((keyId: string) => {
+    sound.playKeyClick();
+    resetInactivity();
+    const action = sideKeys[keyId];
+    if (action && !action.disabled) {
+      action.onClick();
+    }
+  }, [sideKeys, resetInactivity]);
+
   // Keypad broadcaster
   const pressKeypad = (key: string) => {
     sound.playKeyClick();
@@ -212,6 +250,9 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         currentReceipt,
         printReceipt,
         collectReceipt,
+        sideKeys,
+        registerSideKeys,
+        triggerSideKey,
         inactivitySeconds,
         isExpiringSoon: session?.authenticated ? inactivitySeconds <= 20 : false,
         resetInactivity,

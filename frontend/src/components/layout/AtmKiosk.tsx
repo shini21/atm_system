@@ -8,6 +8,7 @@ import { ThemeToggle } from '../ui/ThemeToggle';
 import { LanguageToggle } from '../ui/LanguageToggle';
 import { SoundToggle } from '../ui/SoundToggle';
 import { HardwareConsole } from '../atm/HardwareConsole';
+import { SideFunctionKeys } from '../atm/SideFunctionKeys';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AtmKioskProps {
@@ -65,7 +66,7 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
   return (
     <div className="min-h-screen bg-canvas text-primary flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 selection:bg-accent selection:text-white transition-colors duration-200">
       {/* Outer Kiosk Machine Enclosure */}
-      <div className="w-full max-w-5xl rounded-3xl bg-surface/90 border border-border-subtle shadow-luxury p-3 sm:p-6 transition-all duration-200 relative">
+      <div className="w-full max-w-5xl rounded-3xl bg-chassis border border-chassis-bezel shadow-luxury p-3 sm:p-6 transition-all duration-200 relative">
         
         {/* Terminal Canopy Header */}
         <div className="flex flex-wrap items-center justify-between pb-3 sm:pb-4 mb-4 border-b border-border-subtle gap-2">
@@ -170,11 +171,20 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Touchscreen Inset Display Surround */}
-        <div className="rounded-2xl bg-surface border border-border-subtle shadow-inner p-4 sm:p-6 min-h-[440px] flex flex-col justify-between relative overflow-hidden">
-          <main className="w-full flex flex-col justify-between min-h-[400px]">
-            {children}
-          </main>
+        {/* Screen + Physical Side Keys Bezel Assembly */}
+        <div className="flex items-stretch gap-1.5 sm:gap-3 my-2">
+          {/* Left Physical Side Function Keys (L1-L4) */}
+          <SideFunctionKeys side="left" />
+
+          {/* Recessed Touchscreen Display Surround */}
+          <div className="flex-1 rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-4 sm:p-6 min-h-[460px] flex flex-col justify-between relative overflow-hidden">
+            <main className="w-full flex-1 flex flex-col justify-between min-h-[400px]">
+              {children}
+            </main>
+          </div>
+
+          {/* Right Physical Side Function Keys (R1-R4) */}
+          <SideFunctionKeys side="right" />
         </div>
 
         {/* Hardware Bay (Card Slot, Note Dispenser with Animated Bills, Receipt Printer, Keypad) */}

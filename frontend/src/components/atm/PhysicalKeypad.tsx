@@ -55,9 +55,9 @@ export const PhysicalKeypad: React.FC = () => {
   return (
     <div className="flex flex-col items-center">
       {/* Label */}
-      <div className="w-full max-w-[240px] mb-1.5 px-1 flex justify-between items-center text-[10px] font-mono tracking-wider text-tertiary uppercase">
-        <span>Hardware PIN Pad</span>
-        <span className="text-[9px] text-zinc-500">PCI-PTS CERTIFIED</span>
+      <div className="w-full max-w-[240px] mb-1.5 px-1 flex justify-between items-center gap-2 text-[10px] font-mono tracking-wider text-tertiary uppercase">
+        <span className="truncate">Hardware PIN Pad</span>
+        <span className="text-[9px] text-tertiary whitespace-nowrap opacity-80">PCI-PTS v6</span>
       </div>
 
       {/* Keypad Base Enclosure */}

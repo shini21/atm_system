@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import './styles/animations.css';
 
 @tailwind base;
@@ -7,56 +7,89 @@
 
 @layer base {
   :root {
-    --canvas: #F5F5F7;
+    /* Chassis & Environment (Light Theme: Warm Stone / Architectural Titanium) */
+    --canvas: #E2E8F0;
+    --chassis-bg: #ECEFF4;
+    --chassis-bezel: #CBD5E1;
+    
+    /* Recessed Touch Display */
     --surface: #FFFFFF;
-    --surface-subdued: #EFEFF3;
-    --surface-hover: #E5E5EB;
-    --border-subtle: #E2E4E9;
-    --border-strong: #D1D5DB;
-    --text-primary: #111827;
-    --text-secondary: #6B7280;
-    --text-tertiary: #9CA3AF;
-    --accent: #0066CC;
-    --accent-hover: #0052A3;
-    --accent-subtle: rgba(0, 102, 204, 0.08);
+    --surface-subdued: #F8FAFC;
+    --surface-hover: #F1F5F9;
+    --border-subtle: #E2E8F0;
+    --border-strong: #94A3B8;
+
+    /* High-Contrast Typography (WCAG AA compliant) */
+    --text-primary: #0F172A;
+    --text-secondary: #334155;
+    --text-tertiary: #64748B;
+
+    /* Brand Accent: Deep Emerald */
+    --accent: #047857;
+    --accent-hover: #065F46;
+    --accent-subtle: rgba(4, 120, 87, 0.1);
+
+    /* Metallic Accent: Brushed Brass */
+    --accent-brass: #B45309;
+    --accent-brass-subtle: rgba(180, 83, 9, 0.1);
+
+    /* Functional Semantics */
     --danger: #DC2626;
     --danger-subtle: rgba(220, 38, 38, 0.08);
     --success: #059669;
     --success-subtle: rgba(5, 150, 105, 0.08);
     --warning: #D97706;
     --warning-subtle: rgba(217, 119, 6, 0.08);
-    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+
+    /* Inset Screen Shadow & Chassis Bevel */
+    --card-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.08);
+    --screen-pocket: inset 0 2px 6px rgba(0, 0, 0, 0.08);
     color-scheme: light;
   }
 
   .dark {
-    --canvas: #0A0B0E;
-    --surface: #131519;
-    --surface-subdued: #191B21;
-    --surface-hover: #22262E;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-strong: rgba(255, 255, 255, 0.16);
-    --text-primary: #F9FAFB;
-    --text-secondary: #9CA3AF;
-    --text-tertiary: #6B7280;
-    --accent: #3B82F6;
-    --accent-hover: #60A5FA;
-    --accent-subtle: rgba(59, 130, 246, 0.12);
+    /* Chassis & Environment (Dark Theme: Dark Graphite / Matte Basalt) */
+    --canvas: #06090E;
+    --chassis-bg: #0B0F17;
+    --chassis-bezel: #161E2E;
+
+    /* Recessed Touch Display */
+    --surface: #0F172A;
+    --surface-subdued: #1E293B;
+    --surface-hover: #263346;
+    --border-subtle: rgba(255, 255, 255, 0.1);
+    --border-strong: rgba(255, 255, 255, 0.2);
+
+    /* High-Contrast Typography (WCAG AA compliant) */
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-tertiary: #94A3B8;
+
+    /* Brand Accent: Deep Emerald */
+    --accent: #10B981;
+    --accent-hover: #34D399;
+    --accent-subtle: rgba(16, 185, 129, 0.14);
+
+    /* Metallic Accent: Brushed Brass */
+    --accent-brass: #F59E0B;
+    --accent-brass-subtle: rgba(245, 158, 11, 0.15);
+
+    /* Functional Semantics */
     --danger: #EF4444;
-    --danger-subtle: rgba(239, 68, 68, 0.12);
+    --danger-subtle: rgba(239, 68, 68, 0.14);
     --success: #10B981;
-    --success-subtle: rgba(16, 185, 129, 0.12);
+    --success-subtle: rgba(16, 185, 129, 0.14);
     --warning: #F59E0B;
-    --warning-subtle: rgba(245, 158, 11, 0.12);
-    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+    --warning-subtle: rgba(245, 158, 11, 0.14);
+
+    /* Inset Screen Shadow & Chassis Bevel */
+    --card-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --screen-pocket: inset 0 3px 8px rgba(0, 0, 0, 0.4);
     color-scheme: dark;
   }
 
   * {
     box-sizing: border-box;
-    transition-property: color, background-color, border-color;
-    transition-duration: 150ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   body {
@@ -70,9 +103,14 @@
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
   }
+
+  /* Force Tabular Numerals on all Monospace & Currency displays */
+  .font-mono, [data-tabular] {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
-/* Custom Scrollbar for Luxury Feel */
+/* Custom Scrollbar for Terminal Feel */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
