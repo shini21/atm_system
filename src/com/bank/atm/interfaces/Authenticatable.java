@@ -1,6 +1,6 @@
-package interfaces;
+package com.bank.atm.interfaces;
 
-import exceptions.InvalidPinException;
+import com.bank.atm.exceptions.InvalidPinException;
 
 /**
  * Contract for anything that can be secured by a 4-digit PIN (for example, an ATM card).

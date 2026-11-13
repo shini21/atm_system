@@ -1,4 +1,4 @@
-package model;
+package com.bank.atm.enums;
 
 /**
  * The kinds of completed action that can appear in an account's transaction history.

@@ -78,7 +78,7 @@
 ### 2.3 Exception Handling
 > **Definition**: A structured mechanism for intercepting, reporting, and recovering from runtime errors and domain rule violations without terminating the application.
 
-#### Custom Checked Exceptions (`src/exceptions/`):
+#### Custom Checked Exceptions (`src/com/bank/atm/exceptions/`):
 All custom exceptions inherit from Java's `java.lang.Exception` (checked exceptions), ensuring that the compiler mandates explicit handling (`try-catch` or `throws`):
 
 | Exception Class | Triggers When... | Mapped HTTP Status |
@@ -368,10 +368,10 @@ classDiagram
 ---
 
 ### Question 16: Can the original console project still be compiled without Spring Boot or Node.js?
-> **Answer**: Yes. The original CLI application in `src/app/Main.java` is 100% self-contained. It can be compiled using standard `javac`:
+> **Answer**: Yes. The original CLI application in `src/com/bank/atm/Main.java` is 100% self-contained. It can be compiled using standard `javac`:
 > ```bash
-> javac -d bin src/app/*.java src/exceptions/*.java src/interfaces/*.java src/model/*.java src/service/*.java src/util/*.java
-> java -cp bin app.Main
+> javac -d bin -sourcepath src src/com/bank/atm/Main.java
+> java -cp bin com.bank.atm.Main
 > ```
 > Both the CLI and the Web Application share the exact same domain classes.
 
@@ -426,3 +426,4 @@ classDiagram
 
 ### Question 25: How would you summarize the architecture in one sentence?
 > **Answer**: "The APEX ATM System is an N-tier, object-oriented banking application that implements rigorous abstraction, interface contracts, and checked exception handling in Java 17, coupled with an ACID-compliant Spring Boot 3 persistence engine and an accessible React 19 physical kiosk interface."
+

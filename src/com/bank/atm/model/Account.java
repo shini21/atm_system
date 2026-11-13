@@ -1,9 +1,13 @@
-package model;
+package com.bank.atm.model;
 
-import exceptions.InsufficientFundsException;
-import exceptions.InvalidAmountException;
-import interfaces.Printable;
-import interfaces.TransactionOperations;
+
+import com.bank.atm.enums.TransactionType;
+import com.bank.atm.exceptions.*;
+import com.bank.atm.interfaces.*;
+import com.bank.atm.exceptions.InsufficientFundsException;
+import com.bank.atm.exceptions.InvalidAmountException;
+import com.bank.atm.interfaces.Printable;
+import com.bank.atm.interfaces.TransactionOperations;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

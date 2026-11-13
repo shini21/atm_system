@@ -2,7 +2,7 @@ package com.bank.atm.service;
 
 import com.bank.atm.entity.AtmInventoryEntity;
 import com.bank.atm.repository.AtmInventoryRepository;
-import exceptions.InvalidAmountException;
+import com.bank.atm.exceptions.InvalidAmountException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,4 +1,4 @@
-# ATM Simulation System — Project Progress
+# 🗺️ ATM Simulation System — Phased Build & Progress Plan
 
 ## 1. Project Overview & Repository Coordinates
 - **Repository**: `https://github.com/shini21/atm_system`

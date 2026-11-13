@@ -1,4 +1,4 @@
-package exceptions;
+package com.bank.atm.exceptions;
 
 import java.math.BigDecimal;
 

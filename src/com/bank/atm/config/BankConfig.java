@@ -1,14 +1,20 @@
 package com.bank.atm.config;
 
-import model.ATMCard;
-import model.Account;
-import model.CurrentAccount;
-import model.Customer;
-import model.SavingsAccount;
+
+import com.bank.atm.model.*;
+import com.bank.atm.service.*;
+import com.bank.atm.interfaces.*;
+import com.bank.atm.enums.*;
+import com.bank.atm.exceptions.*;
+import com.bank.atm.model.ATMCard;
+import com.bank.atm.model.Account;
+import com.bank.atm.model.CurrentAccount;
+import com.bank.atm.model.Customer;
+import com.bank.atm.model.SavingsAccount;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import service.Bank;
-import service.TransactionHistory;
+import com.bank.atm.service.Bank;
+import com.bank.atm.service.TransactionHistory;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

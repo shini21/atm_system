@@ -1,4 +1,4 @@
-package exceptions;
+package com.bank.atm.exceptions;
 
 /**
  * Checked exception thrown when an operation is attempted using a blocked card.

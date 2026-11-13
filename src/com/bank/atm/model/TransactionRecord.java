@@ -1,6 +1,9 @@
-package model;
+package com.bank.atm.model;
 
-import interfaces.Printable;
+
+import com.bank.atm.enums.TransactionType;
+import com.bank.atm.interfaces.*;
+import com.bank.atm.interfaces.Printable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,13 +1,11 @@
-package app;
+package com.bank.atm;
 
-import model.ATMCard;
-import model.Account;
-import model.CurrentAccount;
-import model.Customer;
-import model.SavingsAccount;
-import service.ATM;
-import service.Bank;
 
+import com.bank.atm.model.*;
+import com.bank.atm.service.*;
+import com.bank.atm.interfaces.*;
+import com.bank.atm.enums.*;
+import com.bank.atm.exceptions.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Scanner;

@@ -1,8 +1,8 @@
-package util;
+package com.bank.atm.util;
 
-import exceptions.InvalidAmountException;
-import exceptions.InvalidMenuChoiceException;
-import model.Card;
+import com.bank.atm.exceptions.InvalidAmountException;
+import com.bank.atm.exceptions.InvalidMenuChoiceException;
+import com.bank.atm.model.Card;
 
 import java.math.BigDecimal;
 import java.util.regex.Pattern;

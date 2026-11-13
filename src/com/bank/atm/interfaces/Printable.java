@@ -1,4 +1,4 @@
-package interfaces;
+package com.bank.atm.interfaces;
 
 /**
  * Contract for domain objects that can print a short, human-readable summary

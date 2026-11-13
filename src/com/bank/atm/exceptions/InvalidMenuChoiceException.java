@@ -1,4 +1,4 @@
-package exceptions;
+package com.bank.atm.exceptions;
 
 /**
  * Checked exception thrown when a menu input is outside the available choices

@@ -1,5 +1,7 @@
 package com.bank.atm.entity;
 
+
+import com.bank.atm.enums.TransactionType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

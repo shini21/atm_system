@@ -1,4 +1,4 @@
-package exceptions;
+package com.bank.atm.exceptions;
 
 /**
  * Checked exception thrown when a deposit, withdrawal, or transfer amount is

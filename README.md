@@ -212,10 +212,10 @@ The original console application remains completely intact and can be compiled a
 
 ```bash
 # Compile console classes to bin/
-javac -d bin src/app/*.java src/exceptions/*.java src/interfaces/*.java src/model/*.java src/service/*.java src/util/*.java
+javac -d bin -sourcepath src src/com/bank/atm/Main.java
 
 # Run interactive console ATM
-java -cp bin app.Main
+java -cp bin com.bank.atm.Main
 ```
 
 ---
@@ -367,57 +367,51 @@ The backend features a comprehensive test suite in `test/com/bank/atm/`:
 ## Project Structure
 
 ```text
-OOP-CP/
+atm_system/
+├── resources/                                # Runtime application configurations
+│   ├── application.properties                # Spring Boot H2 persistent database config
+│   └── application-mysql.properties          # Production MySQL profile config
 ├── src/
-│   ├── app/
-│   │   └── Main.java                          # Original console application entry point
-│   ├── com/bank/atm/                          # Spring Boot Web Application
-│   │   ├── AtmApplication.java                # Spring Boot main class
-│   │   ├── config/
-│   │   │   ├── BankConfig.java                # Singleton Bank bean with demo data seed
-│   │   │   └── WebMvcConfig.java              # CORS configuration for Vite frontend
-│   │   ├── controller/
-│   │   │   ├── AuthController.java            # /api/auth/* endpoints
-│   │   │   ├── AccountController.java         # /api/account/* endpoints
-│   │   │   └── TransactionController.java     # /api/transactions/* endpoints
-│   │   ├── dto/                               # Request and Response transfer objects
-│   │   ├── exception/
-│   │   │   └── GlobalExceptionHandler.java    # Centralized REST error handling
-│   │   └── service/
-│   │       └── AtmWebService.java             # Thread-safe session & business bridge
-│   ├── exceptions/                            # 7 Domain checked exceptions
-│   ├── interfaces/                            # Core OOP contracts
-│   ├── model/                                 # Account, Card, Customer, Transaction domain models
-│   ├── service/                               # In-memory Bank and TransactionHistory
-│   └── util/                                  # InputValidator
-├── test/com/bank/atm/
-│   ├── AtmWebServiceTest.java                 # 13 Domain unit tests
-│   ├── AtmIntegrationTest.java                # 4 Spring MVC integration tests
-│   └── FullStackAtmFlowTest.java              # 4 End-to-end full user journey tests
-├── frontend/                                  # React 18 + Vite + TypeScript Touchscreen SPA
+│   └── com/
+│       └── bank/
+│           └── atm/
+│               ├── Main.java                 # Standalone console entry point (javac-executable)
+│               ├── AtmApplication.java       # Spring Boot web entry point
+│               ├── config/                   # BankConfig, DataInitializer, WebMvcConfig
+│               ├── controller/               # Auth, Account, Transaction, AtmHardware controllers
+│               ├── dto/                      # Request & response transfer envelopes
+│               ├── entity/                   # JPA database entities (Account, Card, Transaction, etc.)
+│               ├── enums/                    # TransactionType enum
+│               ├── exceptions/               # Domain checked exceptions & GlobalExceptionHandler
+│               ├── interfaces/               # Core OOP contracts (Authenticatable, Printable, TransactionOperations)
+│               ├── model/                    # Domain models (Account, SavingsAccount, CurrentAccount, Card, etc.)
+│               ├── repository/               # Spring Data JPA repositories
+│               ├── security/                 # PinSecurityService (BCrypt hashing)
+│               ├── service/                  # Domain services (ATM, Bank, History) & Web services
+│               └── util/                     # InputValidator
+├── test/com/bank/atm/                        # 34 JUnit 5 & MockMvc automated tests
+├── frontend/                                 # React 19 + Vite + TypeScript Touchscreen Kiosk
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── atm/                           # CardGraphic, CashDispenser
-│   │   │   ├── layout/                        # AtmKiosk, AnimatedBackground
-│   │   │   └── ui/                            # Button, Keypad, NumberTicker, Modal
-│   │   ├── context/
-│   │   │   └── AuthContext.tsx                # Global session state provider
-│   │   ├── pages/                             # 10 Touchscreen ATM pages
-│   │   ├── services/
-│   │   │   └── api.ts                         # Centralized Axios client with credentials
-│   │   └── types/                             # Strict TypeScript DTO models
+│   │   ├── components/                       # atm/, cards/, layout/, transactions/, ui/
+│   │   ├── context/                          # AuthContext, HardwareContext, LanguageContext, ThemeContext
+│   │   ├── pages/                            # 10 Touchscreen ATM kiosk views
+│   │   ├── services/                         # Centralized Axios client (api.ts)
+│   │   └── types/                            # Strict TypeScript interfaces
 │   ├── package.json
 │   ├── tailwind.config.js
 │   └── vite.config.ts
-├── pom.xml                                    # Maven configuration (Java 17, Spring Boot 3.3.4)
-├── mvnw.cmd / mvnw                            # Maven wrapper executable
-├── start-atm.bat                              # 1-Click launcher for both backend & frontend
-├── BACKEND_ARCHITECTURE_GUIDE.md              # In-depth Backend Engineering & Viva Defense Guide
-├── API_DOCUMENTATION.md                       # Complete REST API specification
-├── OOP_CONCEPTS.md                            # Object-Oriented Programming principles mapping
-├── DESIGN_SYSTEM.md                           # UI tokens, color palettes, and chassis specs
-├── PROJECT_PROGRESS.md                        # Phase-by-phase implementation & test audit log
-└── README.md                                  # Complete project documentation
+├── pom.xml                                   # Maven configuration (Java 17, Spring Boot 3.3.4)
+├── mvnw.cmd / mvnw                           # Maven wrapper executable
+├── start-atm.bat                             # 1-Click launcher for both backend & frontend
+├── ARCHITECTURE.md                           # Comprehensive Architecture & Engineering Guide
+├── PHASES.md                                 # Phased development & bug resolution log
+├── LICENSE                                   # MIT License
+├── OOP_CONCEPTS.md                           # Object-Oriented Programming principles mapping
+├── API_DOCUMENTATION.md                      # Complete REST API specification
+├── VIVA_PREPARATION.md                       # Complete viva defense preparation guide
+├── FINAL_PROJECT_AUDIT.md                    # Verification audit report & metrics
+├── DESIGN_SYSTEM.md                          # UI design system & physical chassis tokens
+└── README.md                                 # Complete project documentation
 ```
 
 ---

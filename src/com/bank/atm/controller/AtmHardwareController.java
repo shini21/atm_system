@@ -3,7 +3,7 @@ package com.bank.atm.controller;
 import com.bank.atm.dto.response.ApiResponse;
 import com.bank.atm.service.AtmWebService;
 import com.bank.atm.service.CashDispenserService;
-import exceptions.AccountNotFoundException;
+import com.bank.atm.exceptions.AccountNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,7 +1,7 @@
 package com.bank.atm.dto.response;
 
-import model.TransactionRecord;
-import model.TransactionType;
+import com.bank.atm.model.TransactionRecord;
+import com.bank.atm.enums.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

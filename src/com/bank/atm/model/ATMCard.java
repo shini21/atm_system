@@ -1,7 +1,10 @@
-package model;
+package com.bank.atm.model;
 
-import exceptions.CardBlockedException;
-import exceptions.CardExpiredException;
+
+import com.bank.atm.interfaces.*;
+import com.bank.atm.exceptions.*;
+import com.bank.atm.exceptions.CardBlockedException;
+import com.bank.atm.exceptions.CardExpiredException;
 
 import java.time.LocalDate;
 

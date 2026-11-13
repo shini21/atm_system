@@ -1,7 +1,9 @@
-package service;
+package com.bank.atm.service;
 
-import model.Account;
-import model.TransactionRecord;
+
+import com.bank.atm.enums.TransactionType;
+import com.bank.atm.model.Account;
+import com.bank.atm.model.TransactionRecord;
 
 import java.util.ArrayList;
 import java.util.List;

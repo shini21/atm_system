@@ -1,6 +1,6 @@
-package model;
+package com.bank.atm.model;
 
-import interfaces.Printable;
+import com.bank.atm.interfaces.Printable;
 
 /**
  * Stores the identity information of a bank customer.

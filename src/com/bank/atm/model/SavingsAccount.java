@@ -1,5 +1,9 @@
-package model;
+package com.bank.atm.model;
 
+
+import com.bank.atm.exceptions.*;
+import com.bank.atm.interfaces.*;
+import com.bank.atm.enums.*;
 import java.math.BigDecimal;
 
 /**

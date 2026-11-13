@@ -7,21 +7,21 @@ import com.bank.atm.dto.response.ApiResponse;
 import com.bank.atm.dto.response.AuthSessionResponse;
 import com.bank.atm.dto.response.CardStatusResponse;
 import com.bank.atm.service.AtmWebService;
-import exceptions.AccountNotFoundException;
-import exceptions.CardBlockedException;
-import exceptions.CardExpiredException;
-import exceptions.InvalidPinException;
+import com.bank.atm.exceptions.AccountNotFoundException;
+import com.bank.atm.exceptions.CardBlockedException;
+import com.bank.atm.exceptions.CardExpiredException;
+import com.bank.atm.exceptions.InvalidPinException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import model.ATMCard;
-import model.Account;
+import com.bank.atm.model.ATMCard;
+import com.bank.atm.model.Account;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.Bank;
+import com.bank.atm.service.Bank;
 
 /**
  * REST controller for ATM authentication and session management.

@@ -1,8 +1,10 @@
-package interfaces;
+package com.bank.atm.interfaces;
 
-import exceptions.InsufficientFundsException;
-import exceptions.InvalidAmountException;
-import model.Account;
+
+import com.bank.atm.exceptions.*;
+import com.bank.atm.exceptions.InsufficientFundsException;
+import com.bank.atm.exceptions.InvalidAmountException;
+import com.bank.atm.model.Account;
 
 import java.math.BigDecimal;
 

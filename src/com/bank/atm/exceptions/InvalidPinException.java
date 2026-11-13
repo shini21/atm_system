@@ -1,4 +1,4 @@
-package exceptions;
+package com.bank.atm.exceptions;
 
 /**
  * Checked exception thrown for an invalid PIN format (not exactly four digits)

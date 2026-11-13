@@ -1,12 +1,6 @@
-package com.bank.atm.exception;
+package com.bank.atm.exceptions;
 
 import com.bank.atm.dto.response.ApiResponse;
-import exceptions.AccountNotFoundException;
-import exceptions.CardBlockedException;
-import exceptions.CardExpiredException;
-import exceptions.InsufficientFundsException;
-import exceptions.InvalidAmountException;
-import exceptions.InvalidPinException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
