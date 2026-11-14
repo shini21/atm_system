@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useHardware } from '../context/HardwareContext';
-import { NumberTicker } from '../components/ui/NumberTicker';
 import { ATMTransition } from '../components/layout/ATMTransition';
+import { AccountOverviewCard } from '../components/cards/AccountOverviewCard';
+import { RecentActivityTimeline } from '../components/transactions/RecentActivityTimeline';
 import { motion } from 'motion/react';
 import {
   ArrowDownLeft,
@@ -15,7 +16,6 @@ import {
   Eye,
   LogOut,
   FileText,
-  ShieldCheck,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -23,11 +23,12 @@ import {
 export const DashboardPage: React.FC = () => {
   const { session, account, refreshBalance } = useAuth();
   const { t } = useLanguage();
-  const { inactivitySeconds, registerSideKeys, registerKeypadListener } = useHardware();
+  const { registerSideKeys, registerKeypadListener } = useHardware();
   const navigate = useNavigate();
+  const [refreshKey, setRefreshKey] = useState<number>(0);
 
   useEffect(() => {
-    refreshBalance();
+    refreshBalance().then(() => setRefreshKey((k) => k + 1));
   }, [refreshBalance]);
 
   // Physical Keypad numeric shortcuts from laptop keypad
@@ -89,15 +90,6 @@ export const DashboardPage: React.FC = () => {
       },
     });
   }, [registerSideKeys, navigate, t]);
-
-  // Mask account numbers everywhere: ACC1001 -> ACC••••1001
-  const maskAccountNumber = (accNum?: string) => {
-    if (!accNum) return '•••• ••••';
-    if (accNum.length <= 4) return `•••• ${accNum}`;
-    const prefix = accNum.slice(0, 3);
-    const suffix = accNum.slice(-4);
-    return `${prefix}••••${suffix}`;
-  };
 
   // 8-Operation ATM Menu Items (4 Left Rows, 4 Right Rows)
   const leftOperations = [
@@ -163,194 +155,127 @@ export const DashboardPage: React.FC = () => {
     },
   ];
 
-  // Circular timer circumference (r = 14)
-  const timerRadius = 14;
-  const circumference = 2 * Math.PI * timerRadius;
-  const timerOffset = ((60 - inactivitySeconds) / 60) * circumference;
-
   return (
     <ATMTransition>
-      <div className="flex flex-col justify-between h-full min-h-[420px] py-1 select-none">
+      <div className="flex flex-col space-y-4 py-1 select-none">
         
-        {/* Top Header: Account Identity + Balance + Live Session Timer */}
+        {/* Top Hero: Account Overview Card with Privacy Toggle & Balance */}
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-border-subtle"
         >
-          {/* Customer & Masked Account Line */}
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-base sm:text-lg text-primary tracking-tight">
-                {session?.customerName || account?.fullName || 'Valued Client'}
-              </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-surface-subdued text-secondary border border-border-subtle">
-                {account?.accountType?.replace(' Account', '') || 'Savings'}
-              </span>
-            </div>
-            <div className="text-xs text-tertiary font-mono mt-0.5 flex items-center gap-2">
-              <span>{maskAccountNumber(account?.accountNumber)}</span>
-              <span>•</span>
-              <span className="flex items-center gap-1 text-[11px] text-accent">
-                <ShieldCheck className="w-3 h-3" /> Encrypted Session
-              </span>
-            </div>
-          </div>
-
-          {/* Right Header Box: Available Balance & Circular Session Countdown */}
-          <div className="flex items-center gap-4 sm:gap-6 self-start sm:self-auto">
-            {/* Prominent Balance Display */}
-            <div className="text-right">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-tertiary block">
-                Available Balance
-              </span>
-              <div className="text-xl sm:text-2xl font-bold font-mono text-primary tracking-tight" data-tabular>
-                <NumberTicker value={account?.availableBalance ?? 0} />
-              </div>
-            </div>
-
-            {/* Circular Session Countdown Indicator */}
-            <div
-              className="flex items-center gap-2 pl-3 border-l border-border-subtle"
-              title={`Session timeout in ${inactivitySeconds}s`}
-            >
-              <div className="relative w-9 h-9 flex items-center justify-center">
-                <svg className="w-9 h-9 transform -rotate-90" viewBox="0 0 36 36">
-                  {/* Background Track */}
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r={timerRadius}
-                    className="stroke-border-subtle fill-none"
-                    strokeWidth="3"
-                  />
-                  {/* Animated Progress Ring */}
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r={timerRadius}
-                    className={`fill-none transition-all duration-300 ${
-                      inactivitySeconds <= 15
-                        ? 'stroke-warning'
-                        : inactivitySeconds <= 30
-                        ? 'stroke-accent-brass'
-                        : 'stroke-accent'
-                    }`}
-                    strokeWidth="3"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={timerOffset}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span
-                  className={`absolute font-mono text-[10px] font-bold ${
-                    inactivitySeconds <= 15 ? 'text-warning animate-pulse' : 'text-secondary'
-                  }`}
-                >
-                  {inactivitySeconds}
-                </span>
-              </div>
-              <div className="hidden lg:block text-[10px] font-mono leading-tight text-tertiary">
-                <span className="block uppercase text-secondary">Timeout</span>
-                <span>{inactivitySeconds}s</span>
-              </div>
-            </div>
-          </div>
+          <AccountOverviewCard
+            account={account}
+            customerName={session?.customerName}
+          />
         </motion.div>
 
         {/* 8-Operation ATM Menu Grid Aligned to Physical Side Keys (L1-L4 and R1-R4) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 my-auto">
-          
-          {/* Left Operations Column (Aligned to L1-L4) */}
-          <div className="space-y-2.5">
-            {leftOperations.map((op) => (
-              <motion.button
-                key={op.keyId}
-                type="button"
-                whileHover={{ x: -2 }}
-                whileTap={{ scale: 0.98, x: -4 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                onClick={op.onClick}
-                className="group w-full h-14 px-3 sm:px-4 rounded-xl bg-gradient-to-r from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border border-border-subtle hover:border-accent/50 shadow-xs flex items-center justify-between text-left transition-all cursor-pointer"
-              >
-                {/* Left Indicator & Key Tag */}
-                <div className="flex items-center gap-3">
-                  <div className="hidden sm:flex items-center justify-center w-7 h-7 rounded-lg bg-surface border border-border-subtle font-mono text-[10px] font-bold text-secondary group-hover:text-accent group-hover:border-accent/40 shadow-2xs">
-                    {op.keyId}
-                  </div>
-                  <div>
-                    <div className="text-xs sm:text-sm font-semibold text-primary group-hover:text-accent transition-colors flex items-center gap-1.5">
-                      <span>{op.title}</span>
-                    </div>
-                    <div className="text-[10px] text-tertiary font-mono">
-                      {op.subtitle}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Icon / Pointer */}
-                <div className="flex items-center gap-1.5">
-                  <div className="p-1 rounded-md bg-surface text-secondary group-hover:text-accent border border-border-subtle/50 transition-colors">
-                    {op.icon}
-                  </div>
-                  <ChevronLeft className="w-3.5 h-3.5 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
-              </motion.button>
-            ))}
+        <div>
+          <div className="flex items-center justify-between pb-2 mb-2 border-b border-border-subtle text-xs font-mono text-tertiary">
+            <span className="uppercase tracking-wider font-semibold text-secondary">
+              ATM Terminal Operations
+            </span>
+            <span className="hidden sm:inline text-[10px]">
+              Mapped to Side Keys [L1-L4 & R1-R4]
+            </span>
           </div>
 
-          {/* Right Operations Column (Aligned to R1-R4) */}
-          <div className="space-y-2.5">
-            {rightOperations.map((op) => (
-              <motion.button
-                key={op.keyId}
-                type="button"
-                whileHover={{ x: 2 }}
-                whileTap={{ scale: 0.98, x: 4 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                onClick={op.onClick}
-                className={`group w-full h-14 px-3 sm:px-4 rounded-xl bg-gradient-to-l from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border shadow-xs flex items-center justify-between text-right transition-all cursor-pointer ${
-                  op.isDanger
-                    ? 'border-border-subtle hover:border-danger/40 hover:bg-danger-subtle/10'
-                    : 'border-border-subtle hover:border-accent/50'
-                }`}
-              >
-                {/* Left Icon / Pointer */}
-                <div className="flex items-center gap-1.5">
-                  <ChevronRight className={`w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ${
-                    op.isDanger ? 'text-danger' : 'text-accent'
-                  }`} />
-                  <div className={`p-1 rounded-md bg-surface border border-border-subtle/50 transition-colors ${
-                    op.isDanger ? 'text-danger' : 'text-secondary group-hover:text-accent'
-                  }`}>
-                    {op.icon}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+            {/* Left Operations Column (Aligned to L1-L4) */}
+            <div className="space-y-2">
+              {leftOperations.map((op) => (
+                <motion.button
+                  key={op.keyId}
+                  type="button"
+                  whileHover={{ x: -2 }}
+                  whileTap={{ scale: 0.98, x: -4 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                  onClick={op.onClick}
+                  className="group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-r from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border border-border-subtle hover:border-accent/50 shadow-xs flex items-center justify-between text-left transition-all cursor-pointer"
+                >
+                  {/* Left Indicator & Key Tag */}
+                  <div className="flex items-center gap-3">
+                    <div className="hidden sm:flex items-center justify-center w-7 h-7 rounded-lg bg-surface border border-border-subtle font-mono text-[10px] font-bold text-secondary group-hover:text-accent group-hover:border-accent/40 shadow-2xs">
+                      {op.keyId}
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm font-semibold text-primary group-hover:text-accent transition-colors flex items-center gap-1.5">
+                        <span>{op.title}</span>
+                      </div>
+                      <div className="text-[10px] text-tertiary font-mono">
+                        {op.subtitle}
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Right Content & Key Tag */}
-                <div className="flex items-center gap-3">
-                  <div>
-                    <div className={`text-xs sm:text-sm font-semibold transition-colors flex items-center justify-end gap-1.5 ${
-                      op.isDanger ? 'text-danger' : 'text-primary group-hover:text-accent'
+                  {/* Right Icon / Pointer */}
+                  <div className="flex items-center gap-1.5">
+                    <div className="p-1 rounded-md bg-surface text-secondary group-hover:text-accent border border-border-subtle/50 transition-colors">
+                      {op.icon}
+                    </div>
+                    <ChevronLeft className="w-3.5 h-3.5 text-accent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Right Operations Column (Aligned to R1-R4) */}
+            <div className="space-y-2">
+              {rightOperations.map((op) => (
+                <motion.button
+                  key={op.keyId}
+                  type="button"
+                  whileHover={{ x: 2 }}
+                  whileTap={{ scale: 0.98, x: 4 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                  onClick={op.onClick}
+                  className={`group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-l from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border shadow-xs flex items-center justify-between text-right transition-all cursor-pointer ${
+                    op.isDanger
+                      ? 'border-border-subtle hover:border-danger/40 hover:bg-danger-subtle/10'
+                      : 'border-border-subtle hover:border-accent/50'
+                  }`}
+                >
+                  {/* Left Icon / Pointer */}
+                  <div className="flex items-center gap-1.5">
+                    <ChevronRight className={`w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity ${
+                      op.isDanger ? 'text-danger' : 'text-accent'
+                    }`} />
+                    <div className={`p-1 rounded-md bg-surface border border-border-subtle/50 transition-colors ${
+                      op.isDanger ? 'text-danger' : 'text-secondary group-hover:text-accent'
                     }`}>
-                      <span>{op.title}</span>
-                    </div>
-                    <div className="text-[10px] text-tertiary font-mono">
-                      {op.subtitle}
+                      {op.icon}
                     </div>
                   </div>
-                  <div className="hidden sm:flex items-center justify-center w-7 h-7 rounded-lg bg-surface border border-border-subtle font-mono text-[10px] font-bold text-secondary group-hover:text-accent group-hover:border-accent/40 shadow-2xs">
-                    {op.keyId}
+
+                  {/* Right Content & Key Tag */}
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <div className={`text-xs sm:text-sm font-semibold transition-colors flex items-center justify-end gap-1.5 ${
+                        op.isDanger ? 'text-danger' : 'text-primary group-hover:text-accent'
+                      }`}>
+                        <span>{op.title}</span>
+                      </div>
+                      <div className="text-[10px] text-tertiary font-mono">
+                        {op.subtitle}
+                      </div>
+                    </div>
+                    <div className="hidden sm:flex items-center justify-center w-7 h-7 rounded-lg bg-surface border border-border-subtle font-mono text-[10px] font-bold text-secondary group-hover:text-accent group-hover:border-accent/40 shadow-2xs">
+                      {op.keyId}
+                    </div>
                   </div>
-                </div>
-              </motion.button>
-            ))}
+                </motion.button>
+              ))}
+            </div>
           </div>
         </div>
 
+        {/* Real Backend-Grounded Recent Activity Timeline */}
+        <RecentActivityTimeline refreshKey={refreshKey} />
+
         {/* Bottom Status Ticker Bar */}
-        <div className="pt-3 mt-3 border-t border-border-subtle flex flex-wrap items-center justify-between text-[11px] text-tertiary font-mono">
+        <div className="pt-3 border-t border-border-subtle flex flex-wrap items-center justify-between text-[11px] text-tertiary font-mono">
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>Terminal Ready • 24/7 Apex Network</span>

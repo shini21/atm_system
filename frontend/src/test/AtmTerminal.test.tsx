@@ -286,3 +286,53 @@ describe('Application Shell & Navigation (Phase 3)', () => {
     expect(handleToggle).toHaveBeenCalledTimes(1);
   });
 });
+
+describe('Dashboard Experience & Financial Insights (Phase 4)', () => {
+  it('renders AccountOverviewCard with masked account and toggles balance privacy', async () => {
+    const { AccountOverviewCard } = await import('../components/cards/AccountOverviewCard');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    const mockAccount = {
+      customerId: 'CUST1001',
+      fullName: 'Aarav Sharma',
+      phoneNumber: '+91 98765 43210',
+      email: 'aarav@demo.bank',
+      accountNumber: 'ACC1001',
+      maskedCardNumber: 'CARD1001',
+      accountType: 'Savings Account',
+      balance: 16000,
+      availableBalance: 16000,
+      minimumBalance: 100,
+    };
+
+    render(
+      <BrowserRouter>
+        <AccountOverviewCard account={mockAccount} customerName="Aarav Sharma" />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Aarav Sharma')).toBeInTheDocument();
+    expect(screen.getByText('ACC••••1001')).toBeInTheDocument();
+
+    // Toggle balance privacy eye button
+    const eyeBtn = screen.getByLabelText(/hide account balance/i);
+    expect(eyeBtn).toBeInTheDocument();
+    fireEvent.click(eyeBtn);
+
+    // Balance should now be masked
+    expect(screen.getAllByText(/₹ ••••••••/i).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders RecentActivityTimeline with recent transactions or honest empty state', async () => {
+    const { RecentActivityTimeline } = await import('../components/transactions/RecentActivityTimeline');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <RecentActivityTimeline refreshKey={0} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Recent Terminal Activity')).toBeInTheDocument();
+  });
+});
