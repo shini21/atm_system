@@ -43,19 +43,15 @@ COPY --from=builder --chown=atmuser:atmgroup /build/target/atm-web-application-1
 # Switch to non-root user
 USER atmuser
 
-# Expose default HTTP port (Render dynamically overrides via $PORT environment variable)
-EXPOSE 8080
+# Expose Render default port
+EXPOSE 10000
 
-# Environment variables with sensible production defaults
-ENV PORT=8080 \
-    JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom" \
+# Environment variables with optimized JVM startup for cloud free-tiers
+ENV PORT=10000 \
+    JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Djava.security.egd=file:/dev/./urandom" \
     COOKIE_SAME_SITE="none" \
     COOKIE_SECURE="true"
 
-# Healthcheck probe pointing to the zero-dependency health endpoint
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:${PORT}/api/atm/health || exit 1
-
-# Launch Spring Boot application
-ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -Dserver.port=${PORT} -jar app.jar"]
+# Launch Spring Boot application binding dynamically to Render's $PORT
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -Dserver.port=${PORT:-10000} -Dserver.address=0.0.0.0 -jar app.jar"]
 
