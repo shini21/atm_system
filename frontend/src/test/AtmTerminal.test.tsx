@@ -458,3 +458,40 @@ describe('ATM Experience & Multi-Stage Transaction Workflows (Phase 6)', () => {
     expect(screen.getByText('Verify Beneficiary')).toBeInTheDocument();
   });
 });
+
+describe('ATM Hardware Simulation (Phase 7)', () => {
+  it('renders CardSlot with real-time status LED and slot aperture', async () => {
+    const { CardSlot } = await import('../components/atm/CardSlot');
+
+    render(<CardSlot />);
+
+    expect(screen.getByText('Card Reader')).toBeInTheDocument();
+  });
+
+  it('renders CashDispenserSlot with note shutter and status indicators', async () => {
+    const { CashDispenserSlot } = await import('../components/atm/CashDispenserSlot');
+
+    render(<CashDispenserSlot />);
+
+    expect(screen.getByText('Note Dispenser')).toBeInTheDocument();
+  });
+
+  it('renders ReceiptPrinterSlot with paper slot and status', async () => {
+    const { ReceiptPrinterSlot } = await import('../components/atm/ReceiptPrinterSlot');
+
+    render(<ReceiptPrinterSlot />);
+
+    expect(screen.getByText('Receipt Printer')).toBeInTheDocument();
+  });
+
+  it('renders PhysicalKeypad with tactile hardware buttons and function keys', async () => {
+    const { PhysicalKeypad } = await import('../components/atm/PhysicalKeypad');
+
+    render(<PhysicalKeypad />);
+
+    expect(screen.getByText('Hardware PIN Pad')).toBeInTheDocument();
+    expect(screen.getByText('ENTER')).toBeInTheDocument();
+    expect(screen.getByText('Cancel')).toBeInTheDocument();
+    expect(screen.getByText('Clear')).toBeInTheDocument();
+  });
+});
