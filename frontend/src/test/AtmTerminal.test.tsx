@@ -123,3 +123,86 @@ describe('Return to Dashboard Navigation', () => {
     expect(handleNavigate).toHaveBeenCalledWith('/dashboard');
   });
 });
+
+describe('Shared UI Components Library (Phase 2)', () => {
+  it('renders Button with variants and triggers click handler', async () => {
+    const { Button } = await import('../components/ui/Button');
+    const handleClick = vi.fn();
+    render(
+      <Button variant="primary" onClick={handleClick}>
+        Proceed to Review
+      </Button>
+    );
+
+    const btn = screen.getByRole('button', { name: /proceed to review/i });
+    expect(btn).toBeInTheDocument();
+    fireEvent.click(btn);
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders Badge with dot and semantic variants', async () => {
+    const { Badge } = await import('../components/ui/Badge');
+    render(
+      <Badge variant="success" dot>
+        Active Terminal
+      </Badge>
+    );
+
+    expect(screen.getByText('Active Terminal')).toBeInTheDocument();
+  });
+
+  it('renders Card with content and interactive styling', async () => {
+    const { Card } = await import('../components/ui/Card');
+    render(
+      <Card variant="interactive" padding="md">
+        <span>Account Card</span>
+      </Card>
+    );
+
+    expect(screen.getByText('Account Card')).toBeInTheDocument();
+  });
+
+  it('renders Input with label, error, and value updates', async () => {
+    const { Input } = await import('../components/ui/Input');
+    const handleChange = vi.fn();
+    render(
+      <Input
+        label="Account Number"
+        placeholder="e.g. ACC1001"
+        onChange={handleChange}
+        error="Invalid account format"
+      />
+    );
+
+    expect(screen.getByText('Account Number')).toBeInTheDocument();
+    expect(screen.getByText('Invalid account format')).toBeInTheDocument();
+    const input = screen.getByPlaceholderText('e.g. ACC1001');
+    fireEvent.change(input, { target: { value: 'ACC1002' } });
+    expect(handleChange).toHaveBeenCalled();
+  });
+
+  it('renders Skeleton loading placeholder with variant styles', async () => {
+    const { Skeleton } = await import('../components/ui/Skeleton');
+    const { container } = render(<Skeleton variant="card" height={100} />);
+    expect(container.firstChild).toBeInTheDocument();
+  });
+
+  it('renders EmptyState with icon, title, description, and action button', async () => {
+    const { EmptyState } = await import('../components/ui/EmptyState');
+    const handleAction = vi.fn();
+    render(
+      <EmptyState
+        title="No Transactions Found"
+        description="Your ledger statement is empty."
+        actionLabel="Refresh Statement"
+        onAction={handleAction}
+      />
+    );
+
+    expect(screen.getByText('No Transactions Found')).toBeInTheDocument();
+    expect(screen.getByText('Your ledger statement is empty.')).toBeInTheDocument();
+    const btn = screen.getByRole('button', { name: /refresh statement/i });
+    fireEvent.click(btn);
+    expect(handleAction).toHaveBeenCalledTimes(1);
+  });
+});

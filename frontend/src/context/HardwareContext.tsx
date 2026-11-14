@@ -251,9 +251,28 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Comprehensive physical keyboard listener (supports top-row numbers, laptop Numpad with NumLock ON/OFF, Enter, Bksp, Esc, Clear)
   useEffect(() => {
     const handlePhysicalKeyDown = (e: KeyboardEvent) => {
-      // Do not hijack keystrokes if the user is typing inside an <input> or <textarea>
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+
+      // Do not hijack keystrokes if the user is typing inside an input/textarea
+      const isInput = !!(
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      );
+      if (isInput) {
+        return;
+      }
+
+      // Do not hijack Enter / Space / activation keys when interacting with buttons or links
+      const isInteractiveElement = !!(
+        target &&
+        (target.tagName === 'BUTTON' ||
+          target.closest('button') ||
+          target.tagName === 'A' ||
+          target.closest('a'))
+      );
+      if (isInteractiveElement && e.key !== 'Escape') {
         return;
       }
 

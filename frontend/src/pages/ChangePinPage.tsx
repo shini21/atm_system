@@ -168,7 +168,7 @@ export const ChangePinPage: React.FC = () => {
       <div className="max-w-xl mx-auto py-2">
         {/* Top Navigation Bar */}
         {!isSuccess && (
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-border-subtle">
+          <div className="sticky top-0 z-20 flex items-center justify-between pb-3 mb-4 bg-surface/95 backdrop-blur-xs border-b border-border-subtle">
             <Button
               type="button"
               variant="secondary"
