@@ -4,6 +4,43 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Keypad } from '../components/ui/Keypad';
 import { sound } from '../utils/sound';
 
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    session: { authenticated: true, cardNumber: 'CARD1001', customerName: 'Aarav Sharma' },
+    cardStatus: { cardNumber: 'CARD1001', valid: true, active: true },
+    account: { accountNumber: 'ACC1001', fullName: 'Aarav Sharma', balance: 16000, availableBalance: 16000, accountType: 'Savings Account' },
+    clearCard: vi.fn(),
+  }),
+}));
+
+vi.mock('../context/ThemeContext', () => ({
+  useTheme: () => ({
+    theme: 'dark',
+    toggleTheme: vi.fn(),
+  }),
+}));
+
+vi.mock('../context/HardwareContext', () => ({
+  useHardware: () => ({
+    isMuted: false,
+    toggleSound: vi.fn(),
+  }),
+}));
+
+vi.mock('../context/LanguageContext', () => ({
+  useLanguage: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'app.brand': 'Apex Touch Banking',
+        'app.location': 'Terminal Mumbai-04',
+        'app.back': 'Back',
+        'app.eject': 'Eject',
+      };
+      return translations[key] || key;
+    },
+  }),
+}));
+
 describe('Keypad Component (ATM Touch & Physical Navigation)', () => {
   it('renders all numeric keys 0-9 and control keys', () => {
     const handleKeyPress = vi.fn();
@@ -204,5 +241,48 @@ describe('Shared UI Components Library (Phase 2)', () => {
     const btn = screen.getByRole('button', { name: /refresh statement/i });
     fireEvent.click(btn);
     expect(handleAction).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Application Shell & Navigation (Phase 3)', () => {
+  it('renders Header with brand monogram, title, and back navigation', async () => {
+    const { Header } = await import('../components/layout/Header');
+    const { BrowserRouter } = await import('react-router-dom');
+    const handleBack = vi.fn();
+
+    render(
+      <BrowserRouter>
+        <Header
+          activeScreenTitle="Deposit Terminal"
+          showBack={true}
+          onBack={handleBack}
+        />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Deposit Terminal')).toBeInTheDocument();
+    const backBtn = screen.getByRole('button', { name: /^back$/i });
+    expect(backBtn).toBeInTheDocument();
+    fireEvent.click(backBtn);
+    expect(handleBack).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders Sidebar with navigation items and toggle collapse', async () => {
+    const { Sidebar } = await import('../components/layout/Sidebar');
+    const { BrowserRouter } = await import('react-router-dom');
+    const handleToggle = vi.fn();
+
+    render(
+      <BrowserRouter>
+        <Sidebar isCollapsed={false} onToggleCollapse={handleToggle} />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Main Dashboard')).toBeInTheDocument();
+    expect(screen.getByText('Withdraw Cash')).toBeInTheDocument();
+    expect(screen.getByText('Deposit Cash')).toBeInTheDocument();
+    const collapseBtn = screen.getByTitle('Collapse');
+    fireEvent.click(collapseBtn);
+    expect(handleToggle).toHaveBeenCalledTimes(1);
   });
 });

@@ -3,8 +3,8 @@
 **Project:** APEX Touch Banking / ATM Simulation System  
 **Document:** `docs/IMPLEMENTATION_PROGRESS.md`  
 **Current Date:** November 14, 2026  
-**Active Phase:** Phase 2 — Shared Component Library  
-**Phase Status:** **PHASE 2 COMPLETE — AWAITING USER APPROVAL TO BEGIN PHASE 3**  
+**Active Phase:** Phase 3 — Application Shell and Navigation  
+**Phase Status:** **PHASE 3 COMPLETE — AWAITING USER APPROVAL TO BEGIN PHASE 4**  
 
 ---
 
@@ -14,9 +14,9 @@
 |:---:|---|---|:---:|:---:|
 | **0** | **Repository Audit & Baseline** | Full codebase inspection, baseline verification, roadmap mapping | **COMPLETED** | **Approved by User** |
 | **1** | **Design System Foundation** | Warm Ivory & Champagne / Industrial Navy tokens, IBM Plex fonts, WCAG AA | **COMPLETED** | **Approved by User** |
-| **2** | **Shared Component Library** | Standardized primitives (Buttons, Inputs, Cards, Dialogs, Progress Ring, Badges, Skeletons, Toasts) | **COMPLETED** | **Ready for Review** |
-| **3** | **Application Shell & Navigation** | Collapsible desktop glass sidebar, floating mobile bottom capsule, header | Pending | Awaiting Phase 2 Approval |
-| **4** | **Dashboard** | Account overview cards, ATM launch panel, real balance trend, activity | Pending | Queued |
+| **2** | **Shared Component Library** | Standardized primitives (Buttons, Inputs, Cards, Dialogs, Progress Ring, Badges, Skeletons, Toasts) | **COMPLETED** | **Approved by User** |
+| **3** | **Application Shell & Navigation** | Collapsible desktop glass sidebar, floating mobile bottom capsule, canopy header | **COMPLETED** | **Ready for Review** |
+| **4** | **Dashboard** | Account overview cards, ATM launch panel, real balance trend, activity | Pending | Awaiting Phase 3 Approval |
 | **5** | **Authentication & Security** | Centered login card, tactile PIN keypad, inline validation, session expiry | Pending | Queued |
 | **6** | **ATM Experience** | Terminal layout, progress steps, review screen, processing ring, result screen | Pending | Queued |
 | **7** | **ATM Hardware Simulation** | Synchronized card reader, greedy note dispenser, thermal receipt printer | Pending | Queued |
@@ -26,51 +26,37 @@
 
 ---
 
-## 2. Phase 2 Completed Deliverables
+## 2. Phase 3 Completed Deliverables
 
-### A. Shared UI Component Suite (`frontend/src/components/ui/`)
-1. **`Button.tsx` & `IconButton`**:
-   - Supports variants: `primary`, `secondary`, `accent`, `champagne`, `ghost`, `danger`, `outline`.
-   - Sizes: `sm`, `md`, `lg`.
-   - Integrated tactile audio click feedback via `sound.playKeyClick()`.
-   - Accessible focus-visible cyan ring (`focus-visible:ring-cyan focus-visible:ring-offset-2`).
-   - Tactile spring whileTap micro-interaction (`type: 'spring', stiffness: 450, damping: 25`).
-   - `IconButton` supporting `circle` and `rounded` shapes.
-2. **`Input.tsx`**:
-   - Standardized input supporting floating labels, helper text, and clear error banners.
-   - Masked password/PIN mode with interactive show/hide eye toggle.
-   - Built-in loading spinner, left icon, right action slots.
-   - Electric Cyan focus glow and accessibility attributes.
-3. **`Card.tsx`**:
-   - Variants: `default`, `elevated`, `subdued`, `glass`, `interactive`.
-   - Padding scale: `none`, `sm`, `md`, `lg`.
-   - Selected state ring with emerald glow.
-4. **`ProgressRing.tsx`**:
-   - Hardware-driven circular SVG progress indicator.
-   - Real transaction stages (`idle`, `validating`, `processing`, `completing`, `success`, `error`).
-   - Center stage text, status icons, and pulse animations without synthetic percentages.
-5. **`Badge.tsx`**:
-   - Semantic statuses: `success`, `warning`, `error`, `info`, `neutral`, `champagne`.
-   - Optional glowing indicator dot and icon support.
-6. **`Skeleton.tsx`**:
-   - Shimmer placeholder for cards, balances, avatars, and text rows.
-7. **`EmptyState.tsx`**:
-   - Empty state view with icon, title, description, and action button.
-8. **`Modal.tsx`**:
-   - Enhanced modal with Esc key listener, backdrop blur, scroll locking, and accessible focus dialog attributes.
-9. **`Toast.tsx`**:
-   - Glass floating status banner with automatic dismiss and dismiss button.
-10. **`index.ts`**:
-    - Centralized export barrel for all shared components.
+### A. Modular Canopy Header (`frontend/src/components/layout/Header.tsx`)
+- **Brand Identity**: Interactive APEX monogram and terminal designation (`X-9000`) with location badge (`Terminal Mumbai-04`).
+- **Contextual Controls**: Dynamic back button (`showBack`), page title breadcrumb, live synchronized 12-hour terminal clock with AM/PM format.
+- **System Toggles**: Sound effects toggle, Hindi/English language toggle, and Light/Dark theme toggle.
+- **Session Actions**: Eject/Exit button with confirmation and clean state teardown.
+- **Responsive Controls**: Desktop sidebar collapse/expand trigger and mobile drawer hamburger button.
 
-### B. Bug Resolution: Return to Dashboard Navigation & Keypad Interaction
-- **Root Cause Identified**:
-  1. In `HardwareContext.tsx`, `handlePhysicalKeyDown` was calling `e.preventDefault()` on `Enter` keydown globally whenever the active target was not an `<input>` or `<textarea>`. When users focused the "Return to Dashboard" button using keyboard tab navigation and pressed Enter, the browser's native button activation was suppressed.
-  2. Inside long scrollable terminal pages (`TransferPage`, `WithdrawPage`, `DepositPage`), the top navigation bar was scrolling out of view, forcing users to scroll all the way down to find the return button.
-- **Fix Applied**:
-  1. Updated `HardwareContext.tsx` to explicitly exempt all buttons, links, and interactive elements from `e.preventDefault()`, allowing native Enter/Space button clicks while preserving physical keypad shortcuts and <kbd>Esc</kbd> transaction cancellation.
-  2. Made the Top Navigation Bar `sticky top-0 z-20 bg-surface/95 backdrop-blur-xs` across `WithdrawPage`, `TransferPage`, `DepositPage`, `BalancePage`, `HistoryPage`, and `ChangePinPage`. The "Return to Dashboard" action remains anchored and visible at all times.
-  3. Ensured that <kbd>Esc</kbd>, side key <kbd>L4</kbd>, the terminal header Back button, and the on-screen "Return to Dashboard" buttons are fully wired to `navigate('/dashboard')`.
+### B. Collapsible Desktop Glass Sidebar (`frontend/src/components/layout/Sidebar.tsx`)
+- **Dual State**: Supports expanded mode (`w-56`) with full labels and badges, and collapsed mode (`w-16`) displaying icons only.
+- **Active Route Highlighting**: Slim emerald indicator bar (`border-accent`) with subtle emerald background wash (`bg-accent/10`), highlighted icon, and high-contrast typography.
+- **Domain Operation Routes**:
+  - Main Dashboard (`/dashboard`)
+  - Withdraw Cash (`/withdraw`)
+  - Deposit Cash (`/deposit`)
+  - Transfer Funds (`/transfer`)
+  - Balance Inquiry (`/balance`)
+  - Audit Statement (`/history`)
+  - PIN Management (`/change-pin`)
+- **Authenticated User Card**: Displays masked account number (`ACC••••1001`), account type (`Savings`), available balance, and instant card eject trigger.
+
+### C. Floating Glass Mobile Bottom Capsule (`frontend/src/components/layout/BottomNavigation.tsx`)
+- **Accessibility & Touch Targets**: Adheres to WCAG 2.2 touch targets with minimum `44px` tap dimensions.
+- **Floating Capsule Enclosure**: Frosted glass panel with `bg-surface/90 backdrop-blur-xl border border-border-strong/60 shadow-luxury rounded-full`.
+- **Core Operations**: Dashboard, Withdraw, Deposit, Transfer, and Menu/More (opening the comprehensive mobile slide-over drawer).
+- **Session Conditional**: Renders strictly during active authenticated sessions, keeping pre-auth screens completely distraction-free.
+
+### D. Shell Integration & Preservation (`frontend/src/components/layout/AtmKiosk.tsx`)
+- **Seamless Dual-Mode Layout**: The shell wraps the authentic physical ATM chassis (bezel keys `L1-L4`, `R1-R4`, touchscreen, motorized card slot, note dispenser, receipt printer, and PIN pad).
+- **Zero Layout Occlusion**: Enclosure width refactored to `max-w-6xl` with `overflow-x-hidden` ensuring no horizontal scrolling on viewports from `320px` to `4K`.
 
 ---
 
@@ -78,16 +64,16 @@
 
 | Test Target | Command Executed | Result | Notes |
 |---|---|:---:|---|
-| **Frontend Unit & Component Tests** | `npm.cmd --prefix frontend test` | **13 / 13 PASSED** | All component tests and navigation tests pass cleanly (2.66s) |
-| **Frontend Production Build** | `npm.cmd --prefix frontend run build` | **PASSED** | Clean build in 2.18s |
-| **Backend Automated Tests** | `.\mvnw.cmd test` | **34 / 34 PASSED** | 0 failures, 0 errors, 0 regressions (21.36s) |
+| **Frontend Unit & Component Tests** | `npm.cmd --prefix frontend test` | **15 / 15 PASSED** | All component, navigation, header, and sidebar tests pass (2.25s) |
+| **Frontend Production Build** | `npm.cmd --prefix frontend run build` | **PASSED** | Compiled in 1.51s with 0 errors |
+| **Backend Automated Tests** | `.\mvnw.cmd test` | **34 / 34 PASSED** | 0 failures, 0 errors, 0 regressions (18.93s) |
 | **Backend Health Probe** | `GET /api/atm/health` | **PASSED (200 OK)** | `{"status":"UP","service":"apex-atm-backend"}` |
 
 ---
 
-## 4. Next Phase: Phase 3 — Application Shell and Navigation
+## 4. Next Phase: Phase 4 — Dashboard
 
 Upon your approval:
-- Collapsible glass sidebar for desktop navigation with active state indicators.
-- Floating glass bottom pill/capsule navigation for mobile viewports.
-- Sticky glass canopy header with breadcrumb display, live clock, and quick toggles.
+- **Account Overview Cards**: Available balance, ledger balance, account type pill, masked account numbers with copy action.
+- **Prominent ATM Launch Panel**: Quick-access launch tiles for Withdraw, Deposit, Transfer, and Balance with status LEDs.
+- **Real Balance Trend / Transaction Timeline**: Visual debit/credit transaction breakdown derived strictly from backend ledger data (zero simulated trends).

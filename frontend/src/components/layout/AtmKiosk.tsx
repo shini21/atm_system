@@ -4,11 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useHardware } from '../../context/HardwareContext';
 import {
   LogOut,
-  ArrowLeft,
-  ShieldCheck,
-  Clock,
   AlertTriangle,
-  Menu,
   X,
   Home,
   LayoutDashboard,
@@ -32,6 +28,9 @@ import { HardwareConsole } from '../atm/HardwareConsole';
 import { SideFunctionKeys } from '../atm/SideFunctionKeys';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
+import { Header } from './Header';
+import { Sidebar } from './Sidebar';
+import { BottomNavigation } from './BottomNavigation';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface AtmKioskProps {
@@ -47,32 +46,15 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
   showBack = false,
   onBack,
 }) => {
-  const { session, cardStatus, account, clearCard } = useAuth();
+  const { session, account, clearCard } = useAuth();
   const { t } = useLanguage();
   const { inactivitySeconds, isExpiringSoon, resetInactivity } = useHardware();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [timeStr, setTimeStr] = useState<string>('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
-
-  // Live Terminal Clock
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTimeStr(
-        now.toLocaleTimeString('en-US', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        })
-      );
-    };
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, []);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Close mobile navigation drawer whenever route changes
   useEffect(() => {
@@ -121,116 +103,24 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
     }
   };
 
-  const handleLogoClick = () => {
-    setIsMobileMenuOpen(false);
-    if (session?.authenticated) {
-      navigate('/dashboard');
-    } else {
-      navigate('/');
-    }
-  };
-
   const currentYear = new Date().getFullYear();
 
   return (
     <div className="min-h-screen bg-canvas text-primary flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 selection:bg-accent selection:text-white transition-colors duration-200 w-full max-w-full overflow-x-hidden">
       {/* Outer Kiosk Machine Enclosure */}
-      <div className="w-full max-w-5xl rounded-2xl sm:rounded-3xl bg-chassis border border-chassis-bezel shadow-luxury p-2.5 sm:p-5 md:p-6 transition-all duration-200 relative overflow-x-hidden">
+      <div className="w-full max-w-6xl rounded-2xl sm:rounded-3xl bg-chassis border border-chassis-bezel shadow-luxury p-2.5 sm:p-5 md:p-6 transition-all duration-200 relative overflow-x-hidden">
         
         {/* Terminal Canopy Header */}
-        <header className="flex items-center justify-between pb-3 sm:pb-4 mb-3 sm:mb-4 border-b border-border-subtle gap-2">
-          {/* Left: Interactive Brand Logo + Back Button */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            {showBack && (
-              <button
-                type="button"
-                onClick={handleBack}
-                aria-label={t('app.back') || 'Go Back'}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium text-secondary hover:text-primary bg-surface-subdued hover:bg-surface-hover border border-border-subtle transition-colors cursor-pointer select-none flex-shrink-0"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span className="hidden xs:inline">{t('app.back')}</span>
-              </button>
-            )}
-
-            {/* Clickable Brand Monogram & Terminal Designation */}
-            <button
-              type="button"
-              onClick={handleLogoClick}
-              className="flex items-center gap-2 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl p-1 -m-1 transition-all select-none"
-              title="Return to Main ATM Terminal Screen"
-              aria-label="Apex ATM Home"
-            >
-              <div className="w-8 h-8 rounded-xl bg-primary text-surface flex items-center justify-center font-bold text-xs tracking-tight shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
-                AP
-              </div>
-              <div className="min-w-0">
-                <div className="font-bold text-sm tracking-tight text-primary flex items-center gap-1.5">
-                  <span className="group-hover:text-accent transition-colors">{t('app.brand')}</span>
-                  <span className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.2 rounded bg-surface-subdued text-secondary font-normal border border-border-subtle">
-                    X-9000
-                  </span>
-                </div>
-                <div className="text-[11px] text-tertiary flex items-center gap-1 truncate">
-                  <ShieldCheck className="w-3 h-3 text-emerald-500 flex-shrink-0" />
-                  <span className="truncate">{t('app.location')}</span>
-                </div>
-              </div>
-            </button>
-          </div>
-
-          {/* Center: Active Screen Title (Desktop & Tablet) */}
-          {activeScreenTitle && (
-            <div className="hidden md:block text-xs font-semibold text-secondary tracking-widest uppercase truncate max-w-[240px]">
-              {activeScreenTitle}
-            </div>
-          )}
-
-          {/* Right: Controls + Mobile Hamburger Toggle */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Live Clock (Large screens) */}
-            <div className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-tertiary mr-1">
-              <Clock className="w-3 h-3" />
-              <span>{timeStr}</span>
-            </div>
-
-            {/* Desktop Quick Toggles (Hidden on small mobile to prevent cramping) */}
-            <div className="hidden sm:flex items-center gap-1.5">
-              <SoundToggle />
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
-
-            {/* Eject / Exit Button */}
-            {(session?.authenticated || cardStatus) && (
-              <button
-                type="button"
-                onClick={handleEject}
-                className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-medium text-secondary hover:text-danger bg-surface-subdued hover:bg-danger-subtle border border-border-subtle hover:border-danger/20 transition-all cursor-pointer select-none flex-shrink-0"
-                title="Eject card and exit session"
-                aria-label="Eject card"
-              >
-                <LogOut className="w-3.5 h-3.5 text-danger" />
-                <span className="hidden md:inline">{t('app.eject')}</span>
-              </button>
-            )}
-
-            {/* Mobile Hamburger Menu Button (Visible on screens < md) */}
-            <button
-              type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-primary transition-colors cursor-pointer select-none"
-              aria-label={isMobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-4 h-4 text-accent" />
-              ) : (
-                <Menu className="w-4 h-4 text-primary" />
-              )}
-            </button>
-          </div>
-        </header>
+        <Header
+          activeScreenTitle={activeScreenTitle}
+          showBack={showBack}
+          onBack={handleBack}
+          isMobileMenuOpen={isMobileMenuOpen}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          showSidebarToggle={!!session?.authenticated}
+        />
 
         {/* Mobile Navigation Drawer Overlay & Panel */}
         <AnimatePresence>
@@ -533,20 +423,32 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Screen + Physical Side Keys Bezel Assembly */}
-        <div className="flex items-stretch gap-1.5 sm:gap-3 my-2 w-full">
-          {/* Left Physical Side Function Keys (L1-L4) - Hidden on mobile */}
-          <SideFunctionKeys side="left" />
+        {/* Middle: Optional Desktop Sidebar + Main Screen Assembly */}
+        <div className="flex items-stretch gap-2 sm:gap-3 my-2 w-full">
+          {/* Desktop Collapsible Glass Sidebar */}
+          {session?.authenticated && (
+            <Sidebar
+              isCollapsed={isSidebarCollapsed}
+              onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="flex-shrink-0"
+            />
+          )}
 
-          {/* Recessed Touchscreen Display Surround */}
-          <div className="flex-1 rounded-xl sm:rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-3 sm:p-5 md:p-6 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full">
-            <main className="w-full flex-1 flex flex-col justify-between min-h-[400px]">
-              {children}
-            </main>
+          {/* Screen + Physical Side Keys Bezel Assembly */}
+          <div className="flex-1 flex items-stretch gap-1.5 sm:gap-3 min-w-0">
+            {/* Left Physical Side Function Keys (L1-L4) - Hidden on mobile */}
+            <SideFunctionKeys side="left" />
+
+            {/* Recessed Touchscreen Display Surround */}
+            <div className="flex-1 rounded-xl sm:rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-3 sm:p-5 md:p-6 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full">
+              <main className="w-full flex-1 flex flex-col justify-between min-h-[400px]">
+                {children}
+              </main>
+            </div>
+
+            {/* Right Physical Side Function Keys (R1-R4) - Hidden on mobile */}
+            <SideFunctionKeys side="right" />
           </div>
-
-          {/* Right Physical Side Function Keys (R1-R4) - Hidden on mobile */}
-          <SideFunctionKeys side="right" />
         </div>
 
         {/* Hardware Bay (Card Slot, Note Dispenser with Animated Bills, Receipt Printer, Keypad) */}
@@ -554,7 +456,7 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
       </div>
 
       {/* Professional Responsive Terminal Footer */}
-      <footer className="mt-3 w-full max-w-5xl px-2 text-[11px] text-tertiary flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-border-subtle/40 pt-3">
+      <footer className="mt-3 w-full max-w-6xl px-2 text-[11px] text-tertiary flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-border-subtle/40 pt-3">
         {/* Left: Dynamic Copyright & Status */}
         <div className="flex items-center gap-2 text-center sm:text-left">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
@@ -647,6 +549,9 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
           </div>
         </div>
       </Modal>
+
+      {/* Mobile Floating Bottom Navigation Capsule */}
+      <BottomNavigation onOpenMenu={() => setIsMobileMenuOpen(true)} />
     </div>
   );
 };
