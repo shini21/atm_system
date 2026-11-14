@@ -7,9 +7,22 @@ import { sound } from '../utils/sound';
 vi.mock('../context/AuthContext', () => ({
   useAuth: () => ({
     session: { authenticated: true, cardNumber: 'CARD1001', customerName: 'Aarav Sharma' },
-    cardStatus: { cardNumber: 'CARD1001', valid: true, active: true },
+    cardStatus: {
+      cardNumber: 'CARD1001',
+      maskedCardNumber: 'CARD1001',
+      cardHolderName: 'Aarav Sharma',
+      accountType: 'Savings Account',
+      remainingAttempts: 3,
+      valid: true,
+      active: true,
+    },
     account: { accountNumber: 'ACC1001', fullName: 'Aarav Sharma', balance: 16000, availableBalance: 16000, accountType: 'Savings Account' },
     clearCard: vi.fn(),
+    checkCard: vi.fn().mockResolvedValue(true),
+    login: vi.fn().mockResolvedValue(true),
+    isLoading: false,
+    error: null,
+    clearError: vi.fn(),
   }),
 }));
 
@@ -24,6 +37,12 @@ vi.mock('../context/HardwareContext', () => ({
   useHardware: () => ({
     isMuted: false,
     toggleSound: vi.fn(),
+    setCardSlotState: vi.fn(),
+    registerKeypadListener: () => () => {},
+    registerSideKeys: () => () => {},
+    inactivitySeconds: 15,
+    isExpiringSoon: true,
+    resetInactivity: vi.fn(),
   }),
 }));
 
@@ -334,5 +353,42 @@ describe('Dashboard Experience & Financial Insights (Phase 4)', () => {
     );
 
     expect(screen.getByText('Recent Terminal Activity')).toBeInTheDocument();
+  });
+});
+
+describe('Authentication, PIN & Session Security (Phase 5)', () => {
+  it('renders WelcomePage with centered glassmorphic card, demo profiles, and manual card input', async () => {
+    const { WelcomePage } = await import('../pages/WelcomePage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <WelcomePage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Welcome to Apex')).toBeInTheDocument();
+    expect(screen.getByText(/APEX Touch Banking/i)).toBeInTheDocument();
+    expect(screen.getByText('Classroom Demo Profiles')).toBeInTheDocument();
+    expect(screen.getByText('CARD1001')).toBeInTheDocument();
+    expect(screen.getByText('CARD1002')).toBeInTheDocument();
+    expect(screen.getByText('CARD1003')).toBeInTheDocument();
+    expect(screen.getByText('CARD1004')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /insert card/i })).toBeInTheDocument();
+  });
+
+  it('renders PinPage with cardholder identity, security indicators, and tactile keypad', async () => {
+    const { PinPage } = await import('../pages/PinPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <PinPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText(/256-Bit/i)).toBeInTheDocument();
+    expect(screen.getByText(/3 attempts remaining/i)).toBeInTheDocument();
+    expect(screen.getByText(/cancel and return card/i)).toBeInTheDocument();
   });
 });

@@ -393,31 +393,45 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Inactivity Warning Banner (if session expiring soon) */}
+        {/* Inactivity Warning Floating Banner (if session expiring soon: last 20 seconds) */}
         <AnimatePresence>
           {session?.authenticated && isExpiringSoon && (
             <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
+              initial={{ height: 0, opacity: 0, y: -8 }}
+              animate={{ height: 'auto', opacity: 1, y: 0 }}
+              exit={{ height: 0, opacity: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
               className="mb-3 overflow-hidden"
+              role="alert"
+              aria-live="assertive"
             >
-              <div className="w-full px-3 sm:px-4 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              <div className="w-full px-3.5 sm:px-4 py-2.5 rounded-2xl bg-amber-500/15 dark:bg-amber-500/20 backdrop-blur-md border border-amber-500/35 text-amber-700 dark:text-amber-300 text-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 shadow-md">
+                <div className="flex items-center gap-2.5 min-w-0">
                   <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse flex-shrink-0" />
-                  <span>
+                  <span className="truncate">
                     {t('app.sessionExpiring')}{' '}
-                    <strong className="font-mono text-sm">{inactivitySeconds}</strong>{' '}
+                    <strong className="font-mono text-sm font-bold text-amber-600 dark:text-amber-300">
+                      {inactivitySeconds}
+                    </strong>{' '}
                     {t('app.seconds')}.
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={resetInactivity}
-                  className="px-2.5 py-1 rounded-lg bg-amber-500 text-white font-medium text-[11px] hover:bg-amber-600 cursor-pointer flex-shrink-0"
-                >
-                  Stay Logged In
-                </button>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={resetInactivity}
+                    className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-medium text-[11px] sm:text-xs transition-all shadow-xs cursor-pointer"
+                  >
+                    Stay Logged In
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleEject}
+                    className="px-2.5 py-1 rounded-xl bg-surface/80 hover:bg-danger-subtle hover:text-danger hover:border-danger/30 active:scale-95 border border-border-subtle text-secondary font-medium text-[11px] sm:text-xs transition-all cursor-pointer"
+                  >
+                    End Session
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
