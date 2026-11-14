@@ -6,10 +6,12 @@ import { api, getErrorMessage } from '../services/api';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { ProgressRing } from '../components/ui/ProgressRing';
+import { TransactionStepIndicator } from '../components/transactions/TransactionStepIndicator';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import type { TransactionItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, Printer, ShieldCheck, Banknote } from 'lucide-react';
 
 export const DepositPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
@@ -23,7 +25,15 @@ export const DepositPage: React.FC = () => {
   const { printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
 
+  const depositSteps = [
+    { id: 1, label: 'Deposit Amount' },
+    { id: 2, label: 'Review & Verify' },
+    { id: 3, label: 'Completed' },
+  ];
+  const currentStep = completedTx ? 3 : isConfirmOpen || isLoading ? 2 : 1;
+
   const quickAmounts = [500, 1000, 2000, 5000];
+  const currentBalance = account?.balance ?? 0;
 
   // Auto-return countdown after completed deposit
   useEffect(() => {
@@ -182,12 +192,12 @@ export const DepositPage: React.FC = () => {
     const numericAmount = parseFloat(amountStr);
     setIsLoading(true);
     setError(null);
-    setIsConfirmOpen(false);
 
     try {
       const record = await api.deposit(numericAmount);
       await refreshBalance();
       setCompletedTx(record);
+      setIsConfirmOpen(false);
 
       // Trigger thermal receipt generation
       printReceipt({
@@ -200,11 +210,15 @@ export const DepositPage: React.FC = () => {
         cardHolderName: account?.fullName,
       });
     } catch (err) {
+      setIsConfirmOpen(false);
       setError(getErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
   };
+
+  const parsedAmount = parseFloat(amountStr || '0');
+  const projectedBalance = currentBalance + parsedAmount;
 
   return (
     <ATMTransition>
@@ -229,6 +243,9 @@ export const DepositPage: React.FC = () => {
           </div>
         )}
 
+        {/* Standardized Horizontal Step Indicator */}
+        <TransactionStepIndicator steps={depositSteps} currentStep={currentStep} />
+
         {/* Screen Header */}
         <div className="text-center mb-6">
           <span className="text-xs uppercase tracking-wider text-tertiary font-medium">
@@ -240,7 +257,7 @@ export const DepositPage: React.FC = () => {
           <p className="text-xs text-secondary mt-1 font-mono flex items-center justify-center gap-2">
             <span>Account: {maskAccountNumber(account?.accountNumber)}</span>
             <span>•</span>
-            <span>Current Balance: ₹{(account?.balance ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            <span>Current Balance: ₹{currentBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </p>
         </div>
 
@@ -344,7 +361,7 @@ export const DepositPage: React.FC = () => {
                         onClick={() => handleQuickSelect(amt)}
                         className={`py-2.5 px-3 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-accent text-accent shadow-xs'
+                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >
@@ -388,7 +405,7 @@ export const DepositPage: React.FC = () => {
                   onBackspace={handleBackspace}
                   onClear={handleClear}
                   onSubmit={handleOpenConfirm}
-                  submitLabel="Proceed with Deposit"
+                  submitLabel="Review Deposit"
                   submitDisabled={!amountStr || parseFloat(amountStr) <= 0}
                   isLoading={isLoading}
                 />
@@ -413,54 +430,96 @@ export const DepositPage: React.FC = () => {
           </div>
         )}
 
-        {/* Confirmation Modal */}
+        {/* Pre-Execution Review Modal */}
         <Modal
           isOpen={isConfirmOpen}
-          onClose={() => setIsConfirmOpen(false)}
-          title="Confirm Cash Deposit"
+          onClose={() => {
+            if (!isLoading) setIsConfirmOpen(false);
+          }}
+          title={isLoading ? 'Counting Currency' : 'Review Deposit Details'}
         >
-          <div className="space-y-4 text-xs font-mono">
-            <p className="text-secondary font-sans text-xs">
-              Please review your deposit details before inserting currency notes.
-            </p>
+          {isLoading ? (
+            <div className="py-6 flex flex-col items-center justify-center">
+              <ProgressRing
+                stage="processing"
+                stageLabel="Validating Notes"
+                size={110}
+              />
+              <p className="text-center font-sans text-xs text-secondary mt-4">
+                Scanning currency notes in feeder slot and verifying security threads...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4 text-xs font-mono">
+              <p className="text-secondary font-sans text-xs">
+                Please verify your cash deposit details before confirming insertion.
+              </p>
 
-            <div className="p-3 rounded-xl bg-surface-subdued border border-border-subtle space-y-2">
-              <div className="flex justify-between">
-                <span className="text-tertiary">Target Account:</span>
-                <span className="text-primary font-medium">{account?.accountNumber}</span>
+              <div className="p-3.5 rounded-2xl bg-surface-subdued border border-border-subtle space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">To Account:</span>
+                  <span className="text-primary font-medium">{account?.accountNumber}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">Current Balance:</span>
+                  <span className="text-primary">
+                    ₹{currentBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm font-semibold border-t border-border-subtle pt-2">
+                  <span className="text-primary">Deposit Amount:</span>
+                  <span className="text-success font-mono font-bold">
+                    +₹{parsedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-secondary">
+                  <span className="text-tertiary">Projected Balance:</span>
+                  <span className="text-primary font-mono">
+                    ₹{projectedBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-tertiary">Account Type:</span>
-                <span className="text-primary">{account?.accountType}</span>
+
+              {/* Fee Disclosure & Accepted Notes */}
+              <div className="p-3 rounded-xl bg-surface border border-border-subtle space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-tertiary flex items-center gap-1">
+                    <Banknote className="w-3.5 h-3.5 text-accent" />
+                    Accepted Denominations:
+                  </span>
+                  <span className="font-semibold text-primary">₹500, ₹200, ₹100 Notes</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] border-t border-border-subtle/50 pt-1.5">
+                  <span className="text-tertiary flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                    Deposit Processing Fee:
+                  </span>
+                  <span className="font-semibold text-success">
+                    ₹0.00 (Zero Fee Deposit)
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm font-semibold border-t border-border-subtle pt-2">
-                <span className="text-primary">Deposit Amount:</span>
-                <span className="text-success font-mono">
-                  ₹{parseFloat(amountStr || '0').toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </span>
+
+              <div className="flex gap-2.5 pt-2">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setIsConfirmOpen(false)}
+                  className="flex-1 font-sans"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleExecuteDeposit}
+                  className="flex-1 font-sans"
+                >
+                  Confirm & Deposit
+                </Button>
               </div>
             </div>
-
-            <div className="flex gap-2.5 pt-2">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setIsConfirmOpen(false)}
-                className="flex-1 font-sans"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handleExecuteDeposit}
-                isLoading={isLoading}
-                className="flex-1 font-sans"
-              >
-                Confirm Deposit
-              </Button>
-            </div>
-          </div>
+          )}
         </Modal>
       </div>
     </ATMTransition>

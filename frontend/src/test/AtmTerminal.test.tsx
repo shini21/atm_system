@@ -392,3 +392,69 @@ describe('Authentication, PIN & Session Security (Phase 5)', () => {
     expect(screen.getByText(/cancel and return card/i)).toBeInTheDocument();
   });
 });
+
+describe('ATM Experience & Multi-Stage Transaction Workflows (Phase 6)', () => {
+  it('renders TransactionStepIndicator with current step and step labels', async () => {
+    const { TransactionStepIndicator } = await import('../components/transactions/TransactionStepIndicator');
+
+    const steps = [
+      { id: 1, label: 'Amount' },
+      { id: 2, label: 'Review' },
+      { id: 3, label: 'Dispense' },
+    ];
+
+    render(<TransactionStepIndicator steps={steps} currentStep={2} />);
+
+    expect(screen.getByText('Amount')).toBeInTheDocument();
+    expect(screen.getByText('Review')).toBeInTheDocument();
+    expect(screen.getByText('Dispense')).toBeInTheDocument();
+  });
+
+  it('renders WithdrawPage with standardized step indicator and fast cash presets', async () => {
+    const { WithdrawPage } = await import('../pages/WithdrawPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <WithdrawPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Cash Withdrawal')).toBeInTheDocument();
+    expect(screen.getByText('Select Amount')).toBeInTheDocument();
+    expect(screen.getByText('Review Details')).toBeInTheDocument();
+    expect(screen.getByText('Cash Dispensed')).toBeInTheDocument();
+    expect(screen.getByText('₹500')).toBeInTheDocument();
+    expect(screen.getByText('₹1,000')).toBeInTheDocument();
+  });
+
+  it('renders DepositPage with feeder slot indicator and step progress', async () => {
+    const { DepositPage } = await import('../pages/DepositPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <DepositPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Deposit Cash')).toBeInTheDocument();
+    expect(screen.getAllByText('Deposit Amount').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Review & Verify')).toBeInTheDocument();
+  });
+
+  it('renders TransferPage with beneficiary quick-select and intra-bank fee disclosure', async () => {
+    const { TransferPage } = await import('../pages/TransferPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <TransferPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Funds Transfer')).toBeInTheDocument();
+    expect(screen.getByText('Recipient & Amount')).toBeInTheDocument();
+    expect(screen.getByText('Verify Beneficiary')).toBeInTheDocument();
+  });
+});

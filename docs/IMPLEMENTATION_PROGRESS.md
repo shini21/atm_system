@@ -3,8 +3,8 @@
 **Project:** APEX Touch Banking / ATM Simulation System  
 **Document:** `docs/IMPLEMENTATION_PROGRESS.md`  
 **Current Date:** November 14, 2026  
-**Active Phase:** Phase 5 — Authentication and Security  
-**Phase Status:** **PHASE 5 COMPLETE — AWAITING USER APPROVAL TO BEGIN PHASE 6**  
+**Active Phase:** Phase 6 — ATM Experience  
+**Phase Status:** **PHASE 6 COMPLETE — AWAITING USER APPROVAL TO BEGIN PHASE 7**  
 
 ---
 
@@ -17,48 +17,40 @@
 | **2** | **Shared Component Library** | Standardized primitives (Buttons, Inputs, Cards, Dialogs, Progress Ring, Badges, Skeletons, Toasts) | **COMPLETED** | **Approved by User** |
 | **3** | **Application Shell & Navigation** | Collapsible desktop glass sidebar, floating mobile bottom capsule, canopy header | **COMPLETED** | **Approved by User** |
 | **4** | **Dashboard** | Account overview cards, ATM launch panel, real balance trend, activity | **COMPLETED** | **Approved by User** |
-| **5** | **Authentication & Security** | Centered login card, tactile PIN keypad, inline validation, session expiry | **COMPLETED** | **Ready for Review** |
-| **6** | **ATM Experience** | Terminal layout, progress steps, review screen, processing ring, result screen | Pending | Awaiting Phase 5 Approval |
-| **7** | **ATM Hardware Simulation** | Synchronized card reader, greedy note dispenser, thermal receipt printer | Pending | Queued |
+| **5** | **Authentication & Security** | Centered login card, tactile PIN keypad, inline validation, session expiry | **COMPLETED** | **Approved by User** |
+| **6** | **ATM Experience** | Terminal layout, progress steps, review screen, processing ring, result screen | **COMPLETED** | **Ready for Review** |
+| **7** | **ATM Hardware Simulation** | Synchronized card reader, greedy note dispenser, thermal receipt printer | Pending | Awaiting Phase 6 Approval |
 | **8** | **History, Accounts & Settings** | Transaction timeline grouping, account details, 4-category settings | Pending | Queued |
 | **9** | **Responsive Design & A11y** | 320px–1440px viewport audit, 44–48px touch targets, keyboard navigation | Pending | Queued |
 | **10** | **Complete QA & Stabilisation** | Full regression tests, build checks, FINAL_QA_REPORT.md, handoff | Pending | Queued |
 
 ---
 
-## 2. Phase 5 Completed Deliverables
+## 2. Phase 6 Completed Deliverables
 
-### A. Centered Glassmorphic Authentication Card (`frontend/src/pages/WelcomePage.tsx`)
-- **Centered Glassmorphic Container**: Elegant glassmorphic composition (`bg-surface/90 backdrop-blur-md border border-border-subtle rounded-3xl p-5 sm:p-7 shadow-luxury`) complying with Style Guide §10.1.
-- **Brand Emblem & Terminal Metadata**: APEX monogram with warm champagne / cyan glow, "APEX Touch Banking" wordmark, and "Terminal 042 • 256-Bit Hardware Encryption" status badge.
-- **Interactive Card Reader & 3D Debit Card**:
-  - Mechanical reader slot bezel with real-time status LED (Emerald for Ready, Amber pulsing for Reading, Rose/Red for Blocked).
-  - 3D interactive tilted debit card (`TiltedATMCard`) supporting mouse-tracking specular highlights and click-to-insert.
-- **Demo Profile Tabs & Manual Card Input**:
-  - Interactive classroom demo profile cards (`CARD1001` - Aarav, `CARD1002` - Priya, `CARD1003` - Rahul [Expired], `CARD1004` - Neha [Blocked]).
-  - Monospace uppercase card entry with one-click "Insert Card" button.
-  - Keyboard shortcuts: `[1 - 4]` demo select, `[Enter]` insert.
-- **Error Recovery & Demo Unblock**:
-  - One-click "Unblock Card (Demo Action)" calling `POST /api/cards/{card}/unblock` with success confirmation banner.
+### A. Standardized Horizontal Step Indicator (`frontend/src/components/transactions/TransactionStepIndicator.tsx`)
+- **Visual Progress Pipeline**: Clear horizontal steps with numbered bubbles, completed state checkmarks, smooth progress line transitions, and `aria-current="step"` accessibility.
+- **Unified Across All Workflows**: Integrated into Cash Withdrawal (3 steps), Cash Deposit (3 steps), Funds Transfer (3 steps), and Change PIN (4 steps).
 
-### B. PIN Verification & Tactile Keypad (`frontend/src/pages/PinPage.tsx`, `frontend/src/components/ui/Keypad.tsx`)
-- **Cardholder Identification Pill**: Masked card number (`•••• 1001`), cardholder name with `DecryptedText` reveal, and account type indicator.
-- **4 Animated PIN Glowing Pips**: Generous circular pips that illuminate on digit entry, pop with spring transitions, and shake with red error flash on invalid PIN entry.
-- **Inline Validation & Remaining Attempts**:
-  - Active remaining attempts counter (alerts in warning amber when `< 3` attempts remain before card lockout).
-  - Error banner explaining failures without wiping card or reloading the page.
-- **Tactile 3D Numeric Touch Keypad**:
-  - Physical 3D key button styling with bottom rim shadow, micro-bevel, and active click depress.
-  - Tabular typography (`font-mono tabular-nums`) with traditional alphanumeric sub-labels (ABC, DEF, etc.).
-  - Web Audio API integration: executes `sound.playKeyClick()` on every tap.
-  - Dedicated Clear (`RotateCcw`) and Backspace (`Delete`) controls.
-  - Side chassis key mappings preserved (`R1`: Confirm PIN, `R4`: Cancel & Return Card).
+### B. Pre-Execution Review Screens & Transparent Disclosures
+- **Transparent Fee Disclosures**: Explicitly surfaces `₹0.00 (Zero Network Fee / Zero Surcharge)` on all confirmation dialogs.
+- **Cash Withdrawal Review (`frontend/src/pages/WithdrawPage.tsx`)**:
+  - Displays source account, available balance, exact withdrawal amount, and estimated remaining balance.
+  - Estimated banknote denomination breakdown (e.g. `₹500 × 5`).
+- **Cash Deposit Review (`frontend/src/pages/DepositPage.tsx`)**:
+  - Displays target account, current ledger balance, deposit amount, and projected new balance.
+  - Accepted denomination notice (`₹500, ₹200, ₹100 Notes`).
+- **Funds Transfer Review (`frontend/src/pages/TransferPage.tsx`)**:
+  - Displays sender account, verified recipient account and customer name, transfer amount, zero intra-bank wire fee, and remaining balance.
 
-### C. Session Inactivity Floating Banner (`frontend/src/components/layout/AtmKiosk.tsx`)
-- **Synchronized Countdown**: Floating glassmorphic warning banner triggered in the final 20 seconds of session.
-- **Dual Security Actions**:
-  - "Stay Logged In" resets inactivity counter back to 120s.
-  - "End Session" terminates session immediately and triggers card return sequence.
+### C. Hardware-Synchronized Processing Stages (`ProgressRing.tsx`)
+- **Strict Hardware Truth**: When transactions execute, dialogs transition to the dedicated `ProgressRing` with honest real-time states (`validating`, `processing`, `completing`).
+- **Zero Synthetic Percentages**: Stages reflect actual backend execution states.
+
+### D. Result Summary Screens & Thermal Receipt Output
+- **Delivery / Accepted Confirmations**: Dedicated success cards featuring unique transaction reference IDs (`Ref: TXN-XXXXXXXX`).
+- **Dispensation Breakdown**: Displays genuine backend-returned note counts (`₹500 × 2`, `₹100 × 0`) directly from `CashDispenserService`.
+- **Thermal Slip Generation**: Immediate access to "Print Receipt" (which routes to the physical thermal receipt simulation) and automated dashboard return timer.
 
 ---
 
@@ -66,18 +58,16 @@
 
 | Test Target | Command Executed | Result | Notes |
 |---|---|:---:|---|
-| **Frontend Unit & Component Tests** | `npm.cmd --prefix frontend test` | **19 / 19 PASSED** | Keypad, WelcomePage, PinPage, Shell, and Dashboard tests all pass (3.15s) |
-| **Frontend Production Build** | `npm.cmd --prefix frontend run build` | **PASSED** | Compiled in 1.37s with 0 errors |
-| **Backend Automated Tests** | `.\mvnw.cmd test` | **34 / 34 PASSED** | 0 failures, 0 errors, 0 regressions (19.21s) |
+| **Frontend Unit & Component Tests** | `npm.cmd --prefix frontend test -- --run` | **23 / 23 PASSED** | StepIndicator, WithdrawPage, DepositPage, TransferPage, PinPage, Shell, and Dashboard pass (2.68s) |
+| **Frontend Production Build** | `npm.cmd --prefix frontend run build` | **PASSED** | Compiled in 1.48s with 0 errors |
+| **Backend Automated Tests** | `.\mvnw.cmd test` | **34 / 34 PASSED** | 0 failures, 0 errors, 0 regressions (20.15s) |
 | **Backend Health Probe** | `GET /api/atm/health` | **PASSED (200 OK)** | `{"status":"UP","service":"apex-atm-backend"}` |
 
 ---
 
-## 4. Next Phase: Phase 6 — ATM Experience
+## 4. Next Phase: Phase 7 — ATM Hardware Simulation
 
 Upon your approval:
-- **Terminal Layout Alignment**: Strict alignment to 8 hardware bezel buttons (`L1-L4`, `R1-R4`).
-- **Standardized Step Progress**: Horizontal step indicators across all multi-stage transactions (Withdraw, Deposit, Transfer).
-- **Pre-Execution Review Screens**: Transparent fee disclosures, breakdown of notes, recipient verification before ledger commit.
-- **Progress Ring Stages**: Integrated `ProgressRing` with honest real-time hardware stages (`Validating`, `Processing`, `Completing`).
-- **Result Summary Screens**: Clear success/failure views with reference IDs, note breakdown, and mini receipt action.
+- **Synchronized Card Reader Slot**: Real-time status LED and motorized card intake/retrieval animations synchronized with hardware states.
+- **Greedy Banknote Dispenser**: Shutter flap mechanism with audible motorized flutter and individual note stack presentation (`₹500`, `₹200`, `₹100`).
+- **Thermal Receipt Printer**: Realistic thermal paper slide-out animation, monospace paper receipt rendering with serrated edge, transaction barcodes, and one-click reprint.

@@ -7,10 +7,12 @@ import { api, getErrorMessage } from '../services/api';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
+import { ProgressRing } from '../components/ui/ProgressRing';
+import { TransactionStepIndicator } from '../components/transactions/TransactionStepIndicator';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import type { TransactionItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { AlertCircle, CheckCircle2, ArrowLeft, Printer } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, Printer, ShieldCheck, Banknote } from 'lucide-react';
 
 export const WithdrawPage: React.FC = () => {
   const [amountStr, setAmountStr] = useState<string>('');
@@ -24,6 +26,13 @@ export const WithdrawPage: React.FC = () => {
   const { t } = useLanguage();
   const { triggerDispense, printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
+
+  const withdrawSteps = [
+    { id: 1, label: 'Select Amount' },
+    { id: 2, label: 'Review Details' },
+    { id: 3, label: 'Cash Dispensed' },
+  ];
+  const currentStep = completedTx ? 3 : isConfirmOpen || isLoading ? 2 : 1;
 
   // Auto-return countdown after completed withdrawal
   useEffect(() => {
@@ -206,12 +215,12 @@ export const WithdrawPage: React.FC = () => {
     const numericAmount = parseFloat(amountStr);
     setIsLoading(true);
     setError(null);
-    setIsConfirmOpen(false);
 
     try {
       const record = await api.withdraw(numericAmount);
       await refreshBalance();
       setCompletedTx(record);
+      setIsConfirmOpen(false);
 
       // Trigger the motorized physical note dispenser below
       const breakdown = record.denominations || {
@@ -232,11 +241,15 @@ export const WithdrawPage: React.FC = () => {
         cardHolderName: account?.fullName,
       });
     } catch (err) {
+      setIsConfirmOpen(false);
       setError(getErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
   };
+
+  const parsedAmount = parseFloat(amountStr || '0');
+  const estRemainingBalance = Math.max(0, availableBalance - parsedAmount);
 
   return (
     <ATMTransition>
@@ -260,6 +273,9 @@ export const WithdrawPage: React.FC = () => {
             </span>
           </div>
         )}
+
+        {/* Standardized Horizontal Step Indicator */}
+        <TransactionStepIndicator steps={withdrawSteps} currentStep={currentStep} />
 
         {/* Screen Header */}
         <div className="text-center mb-6">
@@ -402,7 +418,7 @@ export const WithdrawPage: React.FC = () => {
                         onClick={() => handleQuickSelect(amt)}
                         className={`py-2.5 px-3 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-accent text-accent shadow-xs'
+                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >
@@ -446,7 +462,7 @@ export const WithdrawPage: React.FC = () => {
                   onBackspace={handleBackspace}
                   onClear={handleClear}
                   onSubmit={handleOpenConfirm}
-                  submitLabel="Dispense Cash"
+                  submitLabel="Review Withdrawal"
                   submitDisabled={!amountStr || parseFloat(amountStr) <= 0}
                   isLoading={isLoading}
                 />
@@ -471,56 +487,99 @@ export const WithdrawPage: React.FC = () => {
           </div>
         )}
 
-        {/* Confirmation Modal */}
+        {/* Pre-Execution Review Modal */}
         <Modal
           isOpen={isConfirmOpen}
-          onClose={() => setIsConfirmOpen(false)}
-          title="Confirm Cash Withdrawal"
+          onClose={() => {
+            if (!isLoading) setIsConfirmOpen(false);
+          }}
+          title={isLoading ? 'Processing Dispensation' : 'Review Withdrawal Details'}
         >
-          <div className="space-y-4 text-xs font-mono">
-            <p className="text-secondary font-sans text-xs">
-              Please verify your withdrawal request before dispensing currency notes.
-            </p>
+          {isLoading ? (
+            <div className="py-6 flex flex-col items-center justify-center">
+              <ProgressRing
+                stage="processing"
+                stageLabel="Dispensing Currency"
+                size={110}
+              />
+              <p className="text-center font-sans text-xs text-secondary mt-4">
+                Connecting to cash vault and preparing currency notes...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4 text-xs font-mono">
+              <p className="text-secondary font-sans text-xs">
+                Please verify your cash withdrawal request before dispensing currency notes.
+              </p>
 
-            <div className="p-3 rounded-xl bg-surface-subdued border border-border-subtle space-y-2">
-              <div className="flex justify-between">
-                <span className="text-tertiary">From Account:</span>
-                <span className="text-primary font-medium">{account?.accountNumber}</span>
+              <div className="p-3.5 rounded-2xl bg-surface-subdued border border-border-subtle space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">From Account:</span>
+                  <span className="text-primary font-medium">{account?.accountNumber}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">Available Balance:</span>
+                  <span className="text-primary">
+                    ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm font-semibold border-t border-border-subtle pt-2">
+                  <span className="text-primary">Withdrawal Amount:</span>
+                  <span className="text-primary font-mono font-bold">
+                    ₹{parsedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-secondary">
+                  <span className="text-tertiary">Remaining Balance:</span>
+                  <span className="text-primary font-mono">
+                    ₹{estRemainingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-tertiary">Available Balance:</span>
-                <span className="text-primary">
-                  ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </span>
+
+              {/* Note Breakdown Estimate & Zero Fee Disclosure */}
+              <div className="p-3 rounded-xl bg-surface border border-border-subtle space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-tertiary flex items-center gap-1">
+                    <Banknote className="w-3.5 h-3.5 text-accent" />
+                    Estimated Note Breakdown:
+                  </span>
+                  <span className="font-semibold text-primary">
+                    {Math.floor(parsedAmount / 500) > 0 && `₹500 × ${Math.floor(parsedAmount / 500)}`}
+                    {Math.floor((parsedAmount % 500) / 100) > 0 && ` + ₹100 × ${Math.floor((parsedAmount % 500) / 100)}`}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px] border-t border-border-subtle/50 pt-1.5">
+                  <span className="text-tertiary flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                    ATM Network Surcharge:
+                  </span>
+                  <span className="font-semibold text-success">
+                    ₹0.00 (Zero Network Fee)
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between text-sm font-semibold border-t border-border-subtle pt-2">
-                <span className="text-primary">Withdrawal Amount:</span>
-                <span className="text-primary font-mono">
-                  ₹{parseFloat(amountStr || '0').toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </span>
+
+              <div className="flex gap-2.5 pt-2">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setIsConfirmOpen(false)}
+                  className="flex-1 font-sans"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleExecuteWithdrawal}
+                  className="flex-1 font-sans"
+                >
+                  Confirm & Dispense
+                </Button>
               </div>
             </div>
-
-            <div className="flex gap-2.5 pt-2">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setIsConfirmOpen(false)}
-                className="flex-1 font-sans"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handleExecuteWithdrawal}
-                isLoading={isLoading}
-                className="flex-1 font-sans"
-              >
-                Confirm & Dispense
-              </Button>
-            </div>
-          </div>
+          )}
         </Modal>
       </div>
     </ATMTransition>

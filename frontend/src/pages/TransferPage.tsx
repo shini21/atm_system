@@ -6,10 +6,12 @@ import { api, getErrorMessage } from '../services/api';
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Keypad } from '../components/ui/Keypad';
+import { ProgressRing } from '../components/ui/ProgressRing';
+import { TransactionStepIndicator } from '../components/transactions/TransactionStepIndicator';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import type { TransactionItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeftRight, AlertCircle, CheckCircle2, ArrowLeft, UserCheck } from 'lucide-react';
+import { ArrowLeftRight, AlertCircle, CheckCircle2, ArrowLeft, UserCheck, ShieldCheck, Printer } from 'lucide-react';
 
 export const TransferPage: React.FC = () => {
   const [recipient, setRecipient] = useState<string>('');
@@ -26,7 +28,15 @@ export const TransferPage: React.FC = () => {
   const { printReceipt, registerKeypadListener, registerSideKeys } = useHardware();
   const navigate = useNavigate();
 
+  const transferSteps = [
+    { id: 1, label: 'Recipient & Amount' },
+    { id: 2, label: 'Verify Beneficiary' },
+    { id: 3, label: 'Transfer Complete' },
+  ];
+  const currentStep = completedTx ? 3 : isConfirmOpen || isLoading ? 2 : 1;
+
   const quickAmounts = [500, 1000, 2000, 5000];
+  const availableBalance = account?.availableBalance ?? 0;
 
   // Auto-return countdown after completed transfer
   useEffect(() => {
@@ -152,31 +162,24 @@ export const TransferPage: React.FC = () => {
   };
 
   const handleInitiateTransfer = () => {
-    setError(null);
-    const rec = recipient.trim().toUpperCase();
-    const amt = parseFloat(amountStr);
-
-    if (!rec) {
-      setError('Please specify a recipient account number.');
+    const numericAmount = parseFloat(amountStr);
+    if (!recipient.trim()) {
+      setError('Please specify a destination account number.');
       return;
     }
 
-    if (rec === account?.accountNumber) {
-      setError('Cannot transfer money to your own account.');
+    if (recipient.trim().toUpperCase() === account?.accountNumber?.toUpperCase()) {
+      setError('Cannot transfer funds to your own account.');
       return;
     }
 
-    if (isNaN(amt) || amt <= 0) {
+    if (isNaN(numericAmount) || numericAmount <= 0) {
       setError('Please enter a valid transfer amount greater than zero.');
       return;
     }
 
-    if (amt > (account?.availableBalance ?? 0)) {
-      setError(
-        `Transfer amount exceeds available balance of ₹${(account?.availableBalance ?? 0).toLocaleString('en-IN', {
-          minimumFractionDigits: 2,
-        })}.`
-      );
+    if (numericAmount > availableBalance) {
+      setError(`Insufficient funds. Your available balance is ₹${availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}.`);
       return;
     }
 
@@ -184,19 +187,20 @@ export const TransferPage: React.FC = () => {
   };
 
   const handleExecuteTransfer = async () => {
+    const numericAmount = parseFloat(amountStr);
     setIsLoading(true);
     setError(null);
 
     try {
-      const record = await api.transfer(recipient.trim().toUpperCase(), parseFloat(amountStr));
+      const record = await api.transfer(recipient.trim().toUpperCase(), numericAmount);
       await refreshBalance();
-      setIsConfirmOpen(false);
       setCompletedTx(record);
+      setIsConfirmOpen(false);
 
       // Trigger thermal receipt generation
       printReceipt({
         transactionId: record.transactionId,
-        type: `TRANSFER TO ${recipient.trim().toUpperCase()}`,
+        type: 'FUNDS TRANSFER',
         amount: record.amount,
         balanceAfter: record.balanceAfterTransaction,
         timestamp: record.timestamp || new Date().toISOString(),
@@ -210,6 +214,10 @@ export const TransferPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  const parsedAmount = parseFloat(amountStr || '0');
+  const estRemainingBalance = Math.max(0, availableBalance - parsedAmount);
+  const matchedRecipient = demoRecipients.find((r) => r.acc.toUpperCase() === recipient.trim().toUpperCase());
 
   return (
     <ATMTransition>
@@ -234,16 +242,21 @@ export const TransferPage: React.FC = () => {
           </div>
         )}
 
+        {/* Standardized Horizontal Step Indicator */}
+        <TransactionStepIndicator steps={transferSteps} currentStep={currentStep} />
+
         {/* Screen Header */}
         <div className="text-center mb-6">
           <span className="text-xs uppercase tracking-wider text-tertiary font-medium">
             Electronic Transfer
           </span>
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary mt-1">
-            Transfer Funds
+            Funds Transfer
           </h1>
-          <p className="text-xs text-secondary mt-1 font-mono">
-            Sender: {account?.fullName} ({maskAccountNumber(account?.accountNumber)}) • Available: ₹{(account?.availableBalance ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+          <p className="text-xs text-secondary mt-1 font-mono flex items-center justify-center gap-2">
+            <span>From: {maskAccountNumber(account?.accountNumber)}</span>
+            <span>•</span>
+            <span>Available: ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </p>
         </div>
 
@@ -260,40 +273,53 @@ export const TransferPage: React.FC = () => {
                 <CheckCircle2 className="w-6 h-6" />
               </div>
 
-              <h2 className="text-xl font-semibold text-primary">Transfer Completed</h2>
+              <h2 className="text-xl font-semibold text-primary">Transfer Successful</h2>
               <p className="text-xs text-tertiary mt-1 font-mono">Ref: {completedTx.transactionId}</p>
 
-              <div className="my-6 p-4 rounded-2xl bg-surface border border-border-subtle text-xs font-mono space-y-2">
+              <div className="my-5 p-4 rounded-2xl bg-surface border border-border-subtle text-xs font-mono space-y-2">
                 <div className="flex justify-between">
                   <span className="text-tertiary">Transferred:</span>
-                  <span className="font-semibold text-primary">
+                  <span className="font-semibold text-danger">
                     -₹{completedTx.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-tertiary">Recipient:</span>
+                <div className="flex justify-between border-t border-border-subtle pt-2">
+                  <span className="text-tertiary">To Account:</span>
                   <span className="font-semibold text-primary">{recipient.toUpperCase()}</span>
                 </div>
                 <div className="flex justify-between border-t border-border-subtle pt-2">
-                  <span className="text-tertiary">Remaining Balance:</span>
+                  <span className="text-tertiary">Updated Balance:</span>
                   <span className="font-semibold text-primary">
                     ₹{completedTx.balanceAfterTransaction.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
 
+              {/* Thermal confirmation slip prompt */}
+              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+                <span>↓ Wire transfer confirmation slip ready below.</span>
+              </div>
+
               <div className="flex gap-2.5">
                 <Button
+                  type="button"
                   variant="secondary"
                   size="md"
                   onClick={() => {
-                    setCompletedTx(null);
-                    setRecipient('');
-                    setAmountStr('');
+                    printReceipt({
+                      transactionId: completedTx.transactionId,
+                      type: 'FUNDS TRANSFER (COPY)',
+                      amount: completedTx.amount,
+                      balanceAfter: completedTx.balanceAfterTransaction,
+                      timestamp: completedTx.timestamp,
+                      accountNumber: account?.accountNumber || 'ACC1001',
+                      cardHolderName: account?.fullName,
+                    });
                   }}
-                  className="flex-1"
+                  className="flex-1 flex items-center justify-center gap-1.5"
                 >
-                  New Transfer
+                  <Printer className="w-3.5 h-3.5" />
+                  <span>Print Receipt</span>
                 </Button>
                 <Button
                   type="button"
@@ -307,90 +333,63 @@ export const TransferPage: React.FC = () => {
               </div>
             </motion.div>
           ) : (
-            /* Transfer Input Grid */
+            /* Transfer Input View */
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-              {/* Left Column: Recipient Selection & Presets */}
+              {/* Left Column: Beneficiary Selection & Info */}
               <div className="space-y-4 min-w-0 w-full">
-                {/* Recipient Account Input Box */}
-                <div
-                  onClick={() => {
-                    setActiveField('RECIPIENT');
-                    recipientInputRef.current?.focus();
-                  }}
-                  className={`p-4 rounded-2xl bg-surface-subdued border transition-all cursor-text space-y-3 ${
-                    activeField === 'RECIPIENT'
-                      ? 'border-accent ring-1 ring-accent/30 shadow-xs'
-                      : 'border-border-subtle hover:border-accent/40'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-medium text-secondary flex items-center gap-1.5">
-                      <span>Recipient Account Number</span>
-                      {activeField === 'RECIPIENT' && (
-                        <span className="text-[9px] font-mono font-semibold uppercase text-accent">
-                          • Typing
-                        </span>
-                      )}
-                    </label>
-                    <ArrowLeftRight className="w-3.5 h-3.5 text-tertiary" />
-                  </div>
-
-                  <input
-                    ref={recipientInputRef}
-                    type="text"
-                    value={recipient}
-                    onFocus={() => setActiveField('RECIPIENT')}
-                    onChange={(e) => setRecipient(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === 'Tab') {
-                        e.preventDefault();
-                        recipientInputRef.current?.blur();
-                        setActiveField('AMOUNT');
-                      }
-                    }}
-                    placeholder="e.g. ACC1002"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border-subtle focus:border-accent text-primary font-mono text-sm tracking-wider outline-none placeholder:text-tertiary"
-                  />
-
-                  {/* Quick Select Recipients */}
-                  <div>
-                    <span className="text-[11px] font-medium text-tertiary block mb-1.5">
-                      Classroom Test Accounts:
-                    </span>
-                    <div className="grid grid-cols-1 gap-1.5">
-                      {demoRecipients.map((d) => (
-                        <button
-                          key={d.acc}
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setRecipient(d.acc);
-                            recipientInputRef.current?.blur();
-                            setActiveField('AMOUNT');
-                          }}
-                          className={`py-2 px-3 rounded-xl border text-left text-xs transition-colors flex items-center justify-between cursor-pointer select-none ${
-                            recipient === d.acc
-                              ? 'bg-surface border-accent text-accent shadow-2xs'
-                              : 'bg-surface hover:bg-surface-hover border-border-subtle text-primary'
-                          }`}
-                        >
-                          <span className="font-mono font-medium">{d.acc}</span>
-                          <span className="text-[11px] text-secondary flex items-center gap-1">
-                            <UserCheck className="w-3 h-3 text-tertiary" />
-                            {d.name}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                {/* Beneficiary Account Input */}
+                <div className="p-4 rounded-2xl bg-surface-subdued border border-border-subtle">
+                  <label htmlFor="recipientInput" className="text-xs font-medium text-secondary block mb-1.5">
+                    Beneficiary Account Number
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="recipientInput"
+                      ref={recipientInputRef}
+                      type="text"
+                      value={recipient}
+                      onChange={(e) => {
+                        setError(null);
+                        setRecipient(e.target.value.toUpperCase());
+                      }}
+                      onFocus={() => setActiveField('RECIPIENT')}
+                      placeholder="e.g. ACC1002"
+                      maxLength={12}
+                      className="w-full px-3 py-2.5 rounded-xl bg-surface border border-border-subtle focus:border-accent font-mono text-sm uppercase placeholder:text-tertiary transition-colors outline-none"
+                    />
+                    <ArrowLeftRight className="w-4 h-4 text-tertiary absolute right-3 top-3 pointer-events-none" />
                   </div>
                 </div>
 
-                {/* Available Balance Status */}
-                <div className="p-3.5 rounded-2xl bg-surface-subdued border border-border-subtle flex items-center justify-between text-xs">
-                  <span className="text-tertiary">Available Balance:</span>
-                  <span className="font-mono font-semibold text-primary">
-                    ₹{(account?.availableBalance ?? 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                {/* Fast Select Demo Beneficiaries */}
+                <div>
+                  <span className="text-xs font-medium text-secondary block mb-2">
+                    Quick Select Demo Beneficiary
                   </span>
+                  <div className="space-y-1.5">
+                    {demoRecipients.map((rec) => (
+                      <button
+                        key={rec.acc}
+                        type="button"
+                        onClick={() => {
+                          setError(null);
+                          setRecipient(rec.acc);
+                          setActiveField('AMOUNT');
+                        }}
+                        className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between text-xs transition-colors cursor-pointer select-none ${
+                          recipient.toUpperCase() === rec.acc
+                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
+                            : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <UserCheck className="w-3.5 h-3.5 text-secondary" />
+                          <span className="font-mono font-medium">{rec.acc}</span>
+                        </div>
+                        <span className="text-secondary">{rec.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Error Banner */}
@@ -464,7 +463,7 @@ export const TransferPage: React.FC = () => {
                         }}
                         className={`py-2 px-2.5 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-accent text-accent shadow-2xs'
+                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >
@@ -517,58 +516,91 @@ export const TransferPage: React.FC = () => {
           </div>
         )}
 
-        {/* Confirmation Modal */}
+        {/* Pre-Execution Review Modal */}
         <Modal
           isOpen={isConfirmOpen}
-          onClose={() => setIsConfirmOpen(false)}
-          title="Confirm Electronic Transfer"
+          onClose={() => {
+            if (!isLoading) setIsConfirmOpen(false);
+          }}
+          title={isLoading ? 'Transferring Funds' : 'Verify Electronic Transfer'}
         >
-          <div className="space-y-4 text-xs font-mono">
-            <p className="text-secondary font-sans text-xs">
-              Please verify recipient details before sending funds. This transaction is irrevocable once confirmed.
-            </p>
+          {isLoading ? (
+            <div className="py-6 flex flex-col items-center justify-center">
+              <ProgressRing
+                stage="processing"
+                stageLabel="Transferring Funds"
+                size={110}
+              />
+              <p className="text-center font-sans text-xs text-secondary mt-4">
+                Executing double-entry journal transfer in core banking ledger...
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4 text-xs font-mono">
+              <p className="text-secondary font-sans text-xs">
+                Please verify recipient details before sending funds. This transfer executes immediately upon confirmation.
+              </p>
 
-            <div className="p-3.5 rounded-xl bg-surface-subdued border border-border-subtle space-y-2">
-              <div className="flex justify-between">
-                <span className="text-tertiary">From Account:</span>
-                <span className="text-primary font-medium">{account?.accountNumber} ({account?.fullName})</span>
+              <div className="p-3.5 rounded-2xl bg-surface-subdued border border-border-subtle space-y-2.5">
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">From Account:</span>
+                  <span className="text-primary font-medium">{account?.accountNumber} ({account?.fullName})</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">To Beneficiary:</span>
+                  <span className="text-accent font-semibold">{recipient.toUpperCase()}{matchedRecipient ? ` (${matchedRecipient.name})` : ''}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-tertiary">Available Balance:</span>
+                  <span className="text-primary font-mono">
+                    ₹{availableBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-sm font-semibold border-t border-border-subtle pt-2">
+                  <span className="text-primary">Transfer Amount:</span>
+                  <span className="text-danger font-mono font-bold">
+                    -₹{parsedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center text-secondary">
+                  <span className="text-tertiary">Est. Remaining Balance:</span>
+                  <span className="text-primary font-mono">
+                    ₹{estRemainingBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-tertiary">To Account:</span>
-                <span className="text-accent font-semibold">{recipient.toUpperCase()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-tertiary">Transfer Fee:</span>
-                <span className="text-success font-medium">₹0.00 (Zero Fee)</span>
-              </div>
-              <div className="flex justify-between text-sm font-semibold border-t border-border-subtle pt-2">
-                <span className="text-primary">Transfer Amount:</span>
-                <span className="text-primary font-mono">
-                  ₹{parseFloat(amountStr || '0').toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+
+              {/* Transparent Fee Disclosure */}
+              <div className="p-3 rounded-xl bg-surface border border-border-subtle flex items-center justify-between text-[11px]">
+                <span className="text-tertiary flex items-center gap-1">
+                  <ShieldCheck className="w-3.5 h-3.5 text-success" />
+                  Intra-Bank Transfer Fee:
+                </span>
+                <span className="font-semibold text-success">
+                  ₹0.00 (Zero Network Fee)
                 </span>
               </div>
-            </div>
 
-            <div className="flex gap-2.5 pt-2">
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => setIsConfirmOpen(false)}
-                className="flex-1 font-sans"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handleExecuteTransfer}
-                isLoading={isLoading}
-                className="flex-1 font-sans"
-              >
-                Confirm & Send
-              </Button>
+              <div className="flex gap-2.5 pt-2">
+                <Button
+                  variant="secondary"
+                  size="md"
+                  onClick={() => setIsConfirmOpen(false)}
+                  className="flex-1 font-sans"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="md"
+                  onClick={handleExecuteTransfer}
+                  className="flex-1 font-sans"
+                >
+                  Confirm & Send
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </Modal>
       </div>
     </ATMTransition>

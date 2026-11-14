@@ -4,9 +4,11 @@ import { api, getErrorMessage } from '../services/api';
 import { useHardware } from '../context/HardwareContext';
 import { Keypad } from '../components/ui/Keypad';
 import { Button } from '../components/ui/Button';
+import { ProgressRing } from '../components/ui/ProgressRing';
+import { TransactionStepIndicator } from '../components/transactions/TransactionStepIndicator';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import { motion, AnimatePresence } from 'motion/react';
-import { KeyRound, AlertCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { AlertCircle, CheckCircle2, ArrowLeft, ShieldCheck } from 'lucide-react';
 
 type ActiveField = 'CURRENT' | 'NEW' | 'CONFIRM';
 
@@ -21,6 +23,14 @@ export const ChangePinPage: React.FC = () => {
 
   const { registerKeypadListener } = useHardware();
   const navigate = useNavigate();
+
+  const pinSteps = [
+    { id: 1, label: 'Current PIN' },
+    { id: 2, label: 'New PIN' },
+    { id: 3, label: 'Confirm' },
+    { id: 4, label: 'Updated' },
+  ];
+  const currentStep = isSuccess ? 4 : activeField === 'CONFIRM' ? 3 : activeField === 'NEW' ? 2 : 1;
 
   // Hardware Keypad Listener
   useEffect(() => {
@@ -146,12 +156,12 @@ export const ChangePinPage: React.FC = () => {
             <motion.div
               key={idx}
               animate={{
-                scale: filled ? [1, 1.25, 1] : 1,
+                scale: filled ? [1, 1.35, 1] : 1,
               }}
               transition={{ duration: 0.15 }}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`w-3.5 h-3.5 rounded-full transition-all ${
                 filled
-                  ? 'bg-primary'
+                  ? 'bg-champagne dark:bg-accent border border-champagne dark:border-accent shadow-[0_0_8px_rgba(185,148,91,0.5)] dark:shadow-[0_0_8px_rgba(6,182,212,0.5)]'
                   : isActive
                   ? 'bg-surface border-2 border-border-strong'
                   : 'bg-surface-subdued border border-border-subtle'
@@ -186,6 +196,9 @@ export const ChangePinPage: React.FC = () => {
           </div>
         )}
 
+        {/* Standardized Horizontal Step Indicator */}
+        <TransactionStepIndicator steps={pinSteps} currentStep={currentStep} />
+
         {/* Header */}
         <div className="text-center mb-6">
           <span className="text-xs uppercase tracking-wider text-tertiary font-medium">
@@ -200,7 +213,23 @@ export const ChangePinPage: React.FC = () => {
         </div>
 
         <AnimatePresence mode="wait">
-          {isSuccess ? (
+          {isLoading ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="p-8 rounded-3xl bg-surface-subdued border border-border-subtle text-center shadow-sm max-w-md mx-auto my-6"
+            >
+              <ProgressRing
+                stage="processing"
+                stageLabel="Updating PIN"
+                size={110}
+              />
+              <p className="text-center font-sans text-xs text-secondary mt-4">
+                Hashing new PIN with BCrypt and updating cryptographic vault...
+              </p>
+            </motion.div>
+          ) : isSuccess ? (
             /* Success View */
             <motion.div
               initial={{ opacity: 0, scale: 0.98 }}
@@ -235,7 +264,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('CURRENT')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'CURRENT'
-                      ? 'bg-surface border-accent shadow-2xs'
+                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -244,7 +273,7 @@ export const ChangePinPage: React.FC = () => {
                       Current 4-Digit PIN
                     </span>
                     {activeField === 'CURRENT' && (
-                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
                         Active
                       </span>
                     )}
@@ -262,7 +291,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('NEW')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'NEW'
-                      ? 'bg-surface border-accent shadow-2xs'
+                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -271,7 +300,7 @@ export const ChangePinPage: React.FC = () => {
                       New 4-Digit PIN
                     </span>
                     {activeField === 'NEW' && (
-                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
                         Active
                       </span>
                     )}
@@ -289,7 +318,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('CONFIRM')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'CONFIRM'
-                      ? 'bg-surface border-accent shadow-2xs'
+                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -298,7 +327,7 @@ export const ChangePinPage: React.FC = () => {
                       Confirm New PIN
                     </span>
                     {activeField === 'CONFIRM' && (
-                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
                         Active
                       </span>
                     )}
@@ -313,9 +342,9 @@ export const ChangePinPage: React.FC = () => {
 
                 {/* Security Note */}
                 <div className="p-3 rounded-xl bg-surface-subdued border border-border-subtle text-[11px] text-tertiary flex items-start gap-2">
-                  <KeyRound className="w-4 h-4 text-secondary flex-shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-4 h-4 text-accent flex-shrink-0 mt-0.5" />
                   <p>
-                    Never share your PIN with anyone. Apex bank staff will never ask for your card PIN.
+                    Your PIN is encrypted with BCrypt salted hashing and never stored in plaintext.
                   </p>
                 </div>
 
@@ -342,7 +371,7 @@ export const ChangePinPage: React.FC = () => {
                   onBackspace={handleBackspace}
                   onClear={handleClear}
                   onSubmit={handleSubmit}
-                  submitLabel="Update PIN"
+                  submitLabel="Update Security PIN"
                   submitDisabled={
                     currentPin.length !== 4 ||
                     newPin.length !== 4 ||
@@ -356,18 +385,20 @@ export const ChangePinPage: React.FC = () => {
         </AnimatePresence>
 
         {/* Back Link */}
-        <div className="mt-8 text-center">
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center gap-2 font-medium"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Dashboard</span>
-          </Button>
-        </div>
+        {!isSuccess && (
+          <div className="mt-8 text-center">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => navigate('/dashboard')}
+              className="inline-flex items-center gap-2 font-medium"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Return to Dashboard</span>
+            </Button>
+          </div>
+        )}
       </div>
     </ATMTransition>
   );
