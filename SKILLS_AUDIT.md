@@ -6,7 +6,7 @@ In accordance with Section 2 of the Production Readiness & Optimization directiv
 
 | Skill Identifier | Location | Capability & Domain | Active Project Utilization |
 | :--- | :--- | :--- | :--- |
-| **ui-ux-pro-max** | `.agent/skills/ui-ux-pro-max/` | UI/UX design intelligence, responsive layouts, touch target metrics, WCAG accessibility, motion animation guidelines | Mobile navigation drawer, touch target sizing (min 44px), zero horizontal overflow at 320px-1440px, modal positioning |
+| **ui-ux-pro-max** | `.agent/skills/ui-ux-pro-max/` | UI/UX design intelligence, responsive layouts, touch target metrics, WCAG accessibility, motion animation guidelines | Mobile navigation drawer, touch target sizing (min 44px), zero horizontal overflow at 320px-1440px, modal positioning, focus visibility |
 | **modern-web-guidance** | `modern-web-guidance-plugin` | Modern HTML/CSS, Core Web Vitals, viewport metadata, container queries, fetch priority | Viewport meta, theme-color, Open Graph, dynamic document title, SPA rewrite rules |
 | **design-system** | `.agent/skills/design-system/` | Token architecture, semantic colors, component specifications | Preserving existing luxury chassis tokens, border-subtle, accent-brass, surface-subdued |
 | **ui-styling** | `.agent/skills/ui-styling/` | Accessible components, Tailwind CSS utility patterns | Mobile menu drawer, responsive button styling, 404 page |
@@ -28,8 +28,19 @@ In accordance with Section 2 of the Production Readiness & Optimization directiv
   * Minimum 8px gap between adjacent touch targets (`gap-2` or `gap-3`).
   * Avoid desktop-sized tiny buttons on mobile viewports.
 
+### Query 3: `python search.py "accessibility touch targets responsive" --domain ux`
+* **Guidance Applied**:
+  * Set `min-h-[44px]` on mobile fast cash presets, beneficiary select buttons, and keypad controls.
+  * Enforce minimum 8px spacing (`gap-2` to `gap-3`) between adjacent interactive elements.
+  * Expand mobile hamburger button touch box to `min-w-[44px] min-h-[44px]`.
+
+### Query 4: `python search.py "focus indicator keyboard navigation" --domain ux`
+* **Guidance Applied**:
+  * Implement universal `:focus-visible` styling (`outline: 2px solid var(--accent); outline-offset: 2px;`) in `index.css`.
+  * Add dedicated focus rings to keypad keys, physical side key shortcuts, and dashboard operation buttons.
+  * Ensure bottom navigation capsule doesn't obscure focused elements by maintaining `pb-16 md:pb-6` on the main touch recessed display.
+
 ---
 
 ## 3. Compliance Record
 All changes strictly preserve existing Java OOP principles (Abstraction, Interfaces, Exception Handling) and existing React/Tailwind design tokens. Zero mock data or destructive architecture changes introduced.
-

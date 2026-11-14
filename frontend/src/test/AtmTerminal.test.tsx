@@ -589,3 +589,41 @@ describe('History & Settings Experience (Phase 8)', () => {
     expect(screen.getByText('Industrial Navy')).toBeInTheDocument();
   });
 });
+
+describe('Responsive Design & Accessibility (Phase 9)', () => {
+  it('renders Header with accessible mobile hamburger menu having >=44px touch target', async () => {
+    const { Header } = await import('../components/layout/Header');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <Header activeScreenTitle="Dashboard" onToggleMobileMenu={() => {}} />
+      </BrowserRouter>
+    );
+
+    const menuButton = screen.getByLabelText('Open Navigation Menu');
+    expect(menuButton).toBeInTheDocument();
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    expect(menuButton.className).toContain('min-w-[44px]');
+    expect(menuButton.className).toContain('min-h-[44px]');
+  });
+
+  it('verifies numeric keypad buttons comply with touch target standards and focus visibility', async () => {
+    const { Keypad } = await import('../components/ui/Keypad');
+
+    render(
+      <Keypad
+        onKeyPress={() => {}}
+        onBackspace={() => {}}
+        onClear={() => {}}
+      />
+    );
+
+    // Verify Digit 1 button has touch-friendly dimensions and focus ring
+    const digit1 = screen.getByLabelText('Digit 1');
+    expect(digit1).toBeInTheDocument();
+    expect(digit1.className).toContain('w-14');
+    expect(digit1.className).toContain('h-14');
+    expect(digit1.className).toContain('focus-visible:ring-2');
+  });
+});

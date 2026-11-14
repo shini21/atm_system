@@ -376,7 +376,7 @@ export const TransferPage: React.FC = () => {
                           setRecipient(rec.acc);
                           setActiveField('AMOUNT');
                         }}
-                        className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between text-xs transition-colors cursor-pointer select-none ${
+                        className={`w-full min-h-[44px] p-2.5 rounded-xl border text-left flex items-center justify-between text-xs transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           recipient.toUpperCase() === rec.acc
                             ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
@@ -461,7 +461,7 @@ export const TransferPage: React.FC = () => {
                           recipientInputRef.current?.blur();
                           setActiveField('AMOUNT');
                         }}
-                        className={`py-2 px-2.5 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
+                        className={`min-h-[44px] py-2 px-2.5 rounded-xl border flex items-center justify-center font-mono text-xs font-medium transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           amountStr === amt.toString()
                             ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'

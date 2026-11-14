@@ -416,7 +416,7 @@ export const WithdrawPage: React.FC = () => {
                         key={amt}
                         type="button"
                         onClick={() => handleQuickSelect(amt)}
-                        className={`py-2.5 px-3 rounded-xl border text-center font-mono text-xs font-medium transition-colors cursor-pointer select-none ${
+                        className={`min-h-[44px] py-2.5 px-3 rounded-xl border flex items-center justify-center font-mono text-xs font-medium transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           amountStr === amt.toString()
                             ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'

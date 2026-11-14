@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onToggleMobileMenu}
-            className="md:hidden flex items-center justify-center w-8 h-8 rounded-xl bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-primary transition-colors cursor-pointer select-none"
+            className="md:hidden flex items-center justify-center min-w-[44px] min-h-[44px] rounded-xl bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-primary transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
             aria-label={isMobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
             aria-expanded={isMobileMenuOpen}
           >

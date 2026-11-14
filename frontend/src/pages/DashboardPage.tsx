@@ -193,7 +193,7 @@ export const DashboardPage: React.FC = () => {
                   whileTap={{ scale: 0.98, x: -4 }}
                   transition={{ type: 'spring', stiffness: 500, damping: 25 }}
                   onClick={op.onClick}
-                  className="group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-r from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border border-border-subtle hover:border-accent/50 shadow-xs flex items-center justify-between text-left transition-all cursor-pointer"
+                  className="group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-r from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border border-border-subtle hover:border-accent/50 shadow-xs flex items-center justify-between text-left transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
                 >
                   {/* Left Indicator & Key Tag */}
                   <div className="flex items-center gap-3">
@@ -231,7 +231,7 @@ export const DashboardPage: React.FC = () => {
                   whileTap={{ scale: 0.98, x: 4 }}
                   transition={{ type: 'spring', stiffness: 500, damping: 25 }}
                   onClick={op.onClick}
-                  className={`group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-l from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border shadow-xs flex items-center justify-between text-right transition-all cursor-pointer ${
+                  className={`group w-full h-13 px-3 sm:px-4 rounded-xl bg-gradient-to-l from-surface-subdued to-surface hover:from-surface-hover hover:to-surface-subdued border shadow-xs flex items-center justify-between text-right transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                     op.isDanger
                       ? 'border-border-subtle hover:border-danger/40 hover:bg-danger-subtle/10'
                       : 'border-border-subtle hover:border-accent/50'

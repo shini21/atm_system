@@ -77,7 +77,7 @@ export const Keypad: React.FC<KeypadProps> = ({
             transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             onClick={() => handleKeyClick(num)}
             aria-label={`Digit ${num}`}
-            className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-primary shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer group"
+            className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-primary shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer group focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
           >
             <span className="text-xl sm:text-2xl font-semibold font-mono tabular-nums leading-none">
               {num}
@@ -102,7 +102,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           onClick={handleClearClick}
           aria-label="Clear PIN"
           title="Clear PIN"
-          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface-subdued hover:bg-warning-subtle hover:border-warning/30 border border-border-subtle text-secondary hover:text-warning shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface-subdued hover:bg-warning-subtle hover:border-warning/30 border border-border-subtle text-secondary hover:text-warning shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-warning focus-visible:outline-none"
         >
           <RotateCcw className="w-4 h-4 mb-0.5" />
           <span className="text-[9px] uppercase tracking-wider font-medium">Clear</span>
@@ -117,7 +117,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           transition={{ type: 'spring', stiffness: 500, damping: 25 }}
           onClick={() => handleKeyClick('0')}
           aria-label="Digit 0"
-          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-primary shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface hover:bg-surface-hover active:bg-surface-hover border border-border-subtle text-primary shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
         >
           <span className="text-xl sm:text-2xl font-semibold font-mono tabular-nums leading-none">
             0
@@ -135,7 +135,7 @@ export const Keypad: React.FC<KeypadProps> = ({
           onClick={handleBackspaceClick}
           aria-label="Backspace"
           title="Backspace"
-          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface-subdued hover:bg-danger-subtle hover:border-danger/30 border border-border-subtle text-secondary hover:text-danger shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer"
+          className="w-14 h-14 xs:w-16 xs:h-16 sm:w-18 sm:h-18 mx-auto rounded-2xl bg-surface-subdued hover:bg-danger-subtle hover:border-danger/30 border border-border-subtle text-secondary hover:text-danger shadow-[0_3px_0_rgba(0,0,0,0.12)] dark:shadow-[0_3px_0_rgba(0,0,0,0.4)] active:shadow-none flex flex-col items-center justify-center transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-danger focus-visible:outline-none"
         >
           <Delete className="w-4 h-4 mb-0.5" />
           <span className="text-[9px] uppercase tracking-wider font-medium">Del</span>

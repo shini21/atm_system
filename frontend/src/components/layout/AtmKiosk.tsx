@@ -471,7 +471,7 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
             <SideFunctionKeys side="left" />
 
             {/* Recessed Touchscreen Display Surround */}
-            <div className="flex-1 rounded-xl sm:rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-3 sm:p-5 md:p-6 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full">
+            <div className="flex-1 rounded-xl sm:rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-3 sm:p-5 md:p-6 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full pb-16 md:pb-6">
               <main className="w-full flex-1 flex flex-col justify-between min-h-[400px]">
                 {children}
               </main>
