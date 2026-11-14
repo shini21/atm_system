@@ -17,6 +17,7 @@ import { WithdrawPage } from './pages/WithdrawPage';
 import { TransferPage } from './pages/TransferPage';
 import { HistoryPage } from './pages/HistoryPage';
 import { ChangePinPage } from './pages/ChangePinPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { EjectPage } from './pages/EjectPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
@@ -103,6 +104,12 @@ const AppRoutes: React.FC = () => {
           showBack: true,
           pageTitle: 'Card PIN Management | Apex ATM',
         };
+      case '/settings':
+        return {
+          title: 'Terminal Settings & Account',
+          showBack: true,
+          pageTitle: 'Settings & Security | Apex ATM',
+        };
       case '/eject':
         return {
           title: t('title.eject'),
@@ -183,6 +190,14 @@ const AppRoutes: React.FC = () => {
           element={
             <ProtectedRoute>
               <ChangePinPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

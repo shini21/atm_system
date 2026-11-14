@@ -43,7 +43,42 @@ vi.mock('../context/HardwareContext', () => ({
     inactivitySeconds: 15,
     isExpiringSoon: true,
     resetInactivity: vi.fn(),
+    printReceipt: vi.fn(),
   }),
+}));
+
+vi.mock('../services/api', () => ({
+  api: {
+    getRecentTransactions: vi.fn().mockResolvedValue([
+      {
+        transactionId: 'TXN-1001',
+        type: 'WITHDRAWAL',
+        amount: 2000,
+        balanceAfterTransaction: 14000,
+        description: 'Cash Dispensed at ATM Mumbai-04',
+        timestamp: new Date().toISOString(),
+        denominations: { 500: 4 },
+      },
+      {
+        transactionId: 'TXN-1002',
+        type: 'DEPOSIT',
+        amount: 5000,
+        balanceAfterTransaction: 19000,
+        description: 'Cash Deposited via Envelope Slot',
+        timestamp: new Date(Date.now() - 86400000).toISOString(),
+      },
+    ]),
+    getAtmStatus: vi.fn().mockResolvedValue({
+      atmId: 'APX-MUM-04',
+      terminalModel: 'Apex Prime X-9000',
+      status: 'ONLINE',
+      supportedDenominations: [500, 200, 100],
+      maxWithdrawalPerTransaction: 10000,
+      totalCashAvailable: 500000,
+      isCashAvailable: true,
+    }),
+  },
+  getErrorMessage: (err: any) => err?.message || 'Error occurred',
 }));
 
 vi.mock('../context/LanguageContext', () => ({
@@ -493,5 +528,64 @@ describe('ATM Hardware Simulation (Phase 7)', () => {
     expect(screen.getByText('ENTER')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     expect(screen.getByText('Clear')).toBeInTheDocument();
+  });
+});
+
+describe('History & Settings Experience (Phase 8)', () => {
+  it('renders HistoryPage with filter chips, date grouping, and statement printing', async () => {
+    const { HistoryPage } = await import('../pages/HistoryPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <HistoryPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Transaction History')).toBeInTheDocument();
+    expect(screen.getByText('All Operations')).toBeInTheDocument();
+    expect(screen.getByText('Cash Withdrawals')).toBeInTheDocument();
+    expect(screen.getByText('Deposits')).toBeInTheDocument();
+    expect(screen.getByText('Transfers')).toBeInTheDocument();
+    expect(screen.getByText('Security & PIN')).toBeInTheDocument();
+    expect(screen.getByText('Print Statement')).toBeInTheDocument();
+  });
+
+  it('renders SettingsPage with 4 distinct category tabs and allows tab switching', async () => {
+    const { SettingsPage } = await import('../pages/SettingsPage');
+    const { BrowserRouter } = await import('react-router-dom');
+
+    render(
+      <BrowserRouter>
+        <SettingsPage />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('Terminal Settings')).toBeInTheDocument();
+    expect(screen.getByText('Account & Limits')).toBeInTheDocument();
+    expect(screen.getByText('Security & PIN')).toBeInTheDocument();
+    expect(screen.getByText('Preferences & Audio')).toBeInTheDocument();
+    expect(screen.getByText('Appearance & Theme')).toBeInTheDocument();
+
+    // Verify Default Tab (Account & Limits) displays Regulatory Limits
+    expect(screen.getByText('Daily ATM Regulatory Limits')).toBeInTheDocument();
+    expect(screen.getByText('Daily Cash Dispense')).toBeInTheDocument();
+
+    // Switch to Security & PIN tab
+    fireEvent.click(screen.getByText('Security & PIN'));
+    expect(screen.getByText('Card & Security Credentials')).toBeInTheDocument();
+    expect(screen.getByText('Card PIN Management')).toBeInTheDocument();
+    expect(screen.getByText('Change PIN Now')).toBeInTheDocument();
+
+    // Switch to Preferences & Audio tab
+    fireEvent.click(screen.getByText('Preferences & Audio'));
+    expect(screen.getByText('Hardware Preferences & Audio')).toBeInTheDocument();
+    expect(screen.getByText('Synthesizer Audio Feedback')).toBeInTheDocument();
+
+    // Switch to Appearance & Theme tab
+    fireEvent.click(screen.getByText('Appearance & Theme'));
+    expect(screen.getByText('Appearance & Terminal Design System')).toBeInTheDocument();
+    expect(screen.getByText('Warm Ivory & Champagne')).toBeInTheDocument();
+    expect(screen.getByText('Industrial Navy')).toBeInTheDocument();
   });
 });

@@ -13,6 +13,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
+  Settings,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -79,6 +80,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'PIN Management',
       shortLabel: 'PIN',
       icon: <KeyRound className="w-4 h-4 flex-shrink-0" />,
+      badge: null,
+    },
+    {
+      path: '/settings',
+      label: 'Terminal Settings',
+      shortLabel: 'Settings',
+      icon: <Settings className="w-4 h-4 flex-shrink-0" />,
       badge: null,
     },
   ];

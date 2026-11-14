@@ -13,6 +13,7 @@ import {
   ArrowDownLeft,
   ArrowLeftRight,
   ShieldCheck,
+  Settings,
 } from 'lucide-react';
 
 export interface AccountOverviewCardProps {
@@ -82,21 +83,33 @@ export const AccountOverviewCard: React.FC<AccountOverviewCardProps> = ({
           </div>
         </div>
 
-        {/* Balance Visibility Toggle */}
-        <IconButton
-          icon={
-            isBalanceHidden ? (
-              <EyeOff className="w-4 h-4 text-secondary" />
-            ) : (
-              <Eye className="w-4 h-4 text-secondary" />
-            )
-          }
-          aria-label={isBalanceHidden ? 'Show account balance' : 'Hide account balance'}
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsBalanceHidden(!isBalanceHidden)}
-          className="hover:text-primary"
-        />
+        {/* Actions: Settings Link & Balance Visibility Toggle */}
+        <div className="flex items-center gap-1">
+          <IconButton
+            icon={<Settings className="w-4 h-4 text-secondary" />}
+            aria-label="Account and terminal settings"
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/settings')}
+            className="hover:text-primary"
+            title="Settings"
+          />
+          <IconButton
+            icon={
+              isBalanceHidden ? (
+                <EyeOff className="w-4 h-4 text-secondary" />
+              ) : (
+                <Eye className="w-4 h-4 text-secondary" />
+              )
+            }
+            aria-label={isBalanceHidden ? 'Show account balance' : 'Hide account balance'}
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsBalanceHidden(!isBalanceHidden)}
+            className="hover:text-primary"
+            title={isBalanceHidden ? 'Show Balance' : 'Hide Balance'}
+          />
+        </div>
       </div>
 
       {/* Middle Row: Balances Display */}

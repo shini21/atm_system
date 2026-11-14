@@ -19,6 +19,7 @@ import {
   Mail,
   CreditCard,
   Sparkles,
+  Settings,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ThemeToggle } from '../ui/ThemeToggle';
@@ -310,6 +311,22 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
                         >
                           <KeyRound className="w-4 h-4 text-accent" />
                           <span>Change PIN</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigate('/settings');
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-left transition-colors cursor-pointer ${
+                            location.pathname === '/settings'
+                              ? 'bg-accent/10 text-accent font-semibold'
+                              : 'text-primary hover:bg-surface-subdued'
+                          }`}
+                        >
+                          <Settings className="w-4 h-4 text-accent" />
+                          <span>Terminal Settings</span>
                         </button>
 
                         <button
