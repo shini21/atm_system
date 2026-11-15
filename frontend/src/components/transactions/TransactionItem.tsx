@@ -44,12 +44,12 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
       return <KeyRound className="w-4 h-4 text-secondary" />;
     }
     if (isTransfer) {
-      return <ArrowLeftRight className={`w-4 h-4 ${isCredit ? 'text-emerald-500' : 'text-primary'}`} />;
+      return <ArrowLeftRight className={`w-4 h-4 ${isCredit ? 'text-success' : 'text-primary'}`} />;
     }
     if (isCredit) {
-      return <ArrowDownLeft className="w-4 h-4 text-emerald-500" />;
+      return <ArrowDownLeft className="w-4 h-4 text-success" />;
     }
-    return <ArrowUpRight className="w-4 h-4 text-[#FF5C5C]" />;
+    return <ArrowUpRight className="w-4 h-4 text-danger" />;
   };
 
   return (
@@ -81,7 +81,7 @@ export const TransactionItem: React.FC<TransactionItemProps> = ({
         {!isPinChange && (
           <div
             className={`font-mono font-semibold text-sm tracking-tight ${
-              isCredit ? 'text-emerald-600 dark:text-emerald-400' : 'text-primary'
+              isCredit ? 'text-success ' : 'text-primary'
             }`}
           >
             {isCredit ? '+' : '-'}{formatINR(tx.amount)}

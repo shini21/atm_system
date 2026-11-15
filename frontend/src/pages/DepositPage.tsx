@@ -293,7 +293,7 @@ export const DepositPage: React.FC = () => {
               </div>
 
               {/* Prompt to collect from hardware bay */}
-              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+              <div className="p-2.5 mb-5 rounded-control bg-success-subtle border border-success/30 text-success text-xs font-medium flex items-center justify-center gap-2">
                 <span>↓ Thermal deposit receipt ready in printer slot below.</span>
               </div>
 
@@ -338,7 +338,7 @@ export const DepositPage: React.FC = () => {
                 <div className="p-4 rounded-2xl bg-surface-subdued border border-border-subtle">
                   <div className="flex items-center justify-between text-xs text-secondary mb-2">
                     <span className="font-medium">Deposit Envelope / Cash Slot</span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                   </div>
                   <div className="w-full h-8 bg-surface rounded-xl border border-border-subtle flex items-center justify-center shadow-inner">
                     <div className="w-32 h-1 bg-border-strong rounded-full opacity-60" />
@@ -361,7 +361,7 @@ export const DepositPage: React.FC = () => {
                         onClick={() => handleQuickSelect(amt)}
                         className={`min-h-[44px] py-2.5 px-3 rounded-xl border flex items-center justify-center font-mono text-xs font-medium transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
+                            ? 'bg-surface border-accent text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >

@@ -32,7 +32,7 @@ export const TransactionStepIndicator: React.FC<TransactionStepIndicatorProps> =
 
         {/* Dynamic active progress line */}
         <div
-          className="absolute left-4 top-3.5 sm:top-4 h-0.5 bg-champagne dark:bg-accent transition-all duration-300 z-0"
+          className="absolute left-4 top-3.5 sm:top-4 h-0.5 bg-accent transition-all duration-300 z-0"
           style={{ width: `calc(${progressPercent}% * 0.88)` }}
         />
 
@@ -50,9 +50,9 @@ export const TransactionStepIndicator: React.FC<TransactionStepIndicatorProps> =
               <div
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all duration-200 ${
                   isCompleted
-                    ? 'bg-champagne dark:bg-accent text-surface shadow-xs'
+                    ? 'bg-accent text-on-accent shadow-xs'
                     : isCurrent
-                    ? 'bg-surface border-2 border-champagne dark:border-accent text-champagne dark:text-accent shadow-[0_0_10px_rgba(185,148,91,0.35)] dark:shadow-[0_0_10px_rgba(6,182,212,0.35)]'
+                    ? 'bg-surface border-2 border-accent text-accent shadow-[0_0_10px_rgba(0,111,207,0.30)]'
                     : 'bg-surface border border-border-strong text-tertiary'
                 }`}
               >

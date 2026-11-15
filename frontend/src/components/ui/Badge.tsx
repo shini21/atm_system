@@ -24,15 +24,15 @@ export const Badge: React.FC<BadgeProps> = ({
 
   const variantStyles = {
     success:
-      'bg-success-subtle text-success border border-success/20 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-500/30',
+      'bg-success-subtle text-success border border-success/20 ',
     warning:
-      'bg-amber-500/10 text-amber-700 border border-amber-500/25 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-500/30',
+      'bg-warning-subtle text-warning border border-warning/40 ',
     error:
-      'bg-danger-subtle text-danger border border-danger/25 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-500/30',
+      'bg-danger-subtle text-danger border border-danger/25 ',
     info:
-      'bg-cyan/10 text-cyan border border-cyan/25 dark:bg-cyan/15 dark:text-cyan dark:border-cyan/30',
+      'bg-info-subtle text-info border border-info/20',
     champagne:
-      'bg-champagne/10 text-champagne border border-champagne/25 dark:bg-champagne/15 dark:text-champagne dark:border-champagne/30',
+      'bg-info-subtle text-info border border-info/20',
     neutral:
       'bg-surface-subdued text-secondary border border-border-subtle dark:bg-surface-elevated dark:text-secondary dark:border-border-subtle',
   };
@@ -41,8 +41,8 @@ export const Badge: React.FC<BadgeProps> = ({
     success: 'bg-success shadow-[0_0_6px_rgba(0,180,136,0.6)]',
     warning: 'bg-warning shadow-[0_0_6px_rgba(224,163,50,0.6)]',
     error: 'bg-danger shadow-[0_0_6px_rgba(224,83,83,0.6)]',
-    info: 'bg-cyan shadow-[0_0_6px_rgba(54,188,232,0.6)]',
-    champagne: 'bg-champagne shadow-[0_0_6px_rgba(212,176,114,0.6)]',
+    info: 'bg-info shadow-[0_0_6px_rgba(22,116,184,0.6)]',
+    champagne: 'bg-info shadow-[0_0_6px_rgba(22,116,184,0.6)]',
     neutral: 'bg-secondary',
   };
 

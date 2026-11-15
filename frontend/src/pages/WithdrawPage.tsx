@@ -307,7 +307,7 @@ export const WithdrawPage: React.FC = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.45 }}
-                  className="w-40 h-4 bg-emerald-600/30 border border-emerald-500/50 rounded flex items-center justify-center text-[9px] font-mono font-medium text-emerald-400"
+                  className="w-40 h-4 bg-success-subtle border border-success/30 rounded flex items-center justify-center text-[9px] font-mono font-medium text-success"
                 >
                   DISPENSING CURRENCY
                 </motion.div>
@@ -351,7 +351,7 @@ export const WithdrawPage: React.FC = () => {
               </div>
 
               {/* Prompt to collect from hardware bay */}
-              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+              <div className="p-2.5 mb-5 rounded-control bg-success-subtle border border-success/30 text-success text-xs font-medium flex items-center justify-center gap-2">
                 <span>↓ Please collect your notes and receipt from the console below.</span>
               </div>
 
@@ -395,7 +395,7 @@ export const WithdrawPage: React.FC = () => {
                 <div className="p-4 rounded-2xl bg-surface-subdued border border-border-subtle">
                   <div className="flex items-center justify-between text-xs text-secondary mb-2">
                     <span className="font-medium">Cash Dispenser Shutter</span>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="w-2 h-2 rounded-full bg-success animate-pulse" />
                   </div>
                   <div className="w-full h-8 bg-surface rounded-xl border border-border-subtle flex items-center justify-center shadow-inner">
                     <div className="w-32 h-1 bg-border-strong rounded-full opacity-60" />
@@ -418,7 +418,7 @@ export const WithdrawPage: React.FC = () => {
                         onClick={() => handleQuickSelect(amt)}
                         className={`min-h-[44px] py-2.5 px-3 rounded-xl border flex items-center justify-center font-mono text-xs font-medium transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
+                            ? 'bg-surface border-accent text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >

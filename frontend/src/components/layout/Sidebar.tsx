@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { BrandLogo } from '../brand/BrandLogo';
 import {
   LayoutDashboard,
   Wallet,
@@ -117,9 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Sidebar Header with Collapse Button */}
         <div className="flex items-center justify-between px-2 pb-3 mb-2 border-b border-border-subtle">
           <div className="flex items-center gap-2 overflow-hidden">
-            <div className="w-7 h-7 rounded-lg bg-primary text-surface flex items-center justify-center font-bold text-xs flex-shrink-0">
-              AP
-            </div>
+            <BrandLogo variant="monogram" surface="dark" plate className="w-7 h-7 rounded-md overflow-hidden flex-shrink-0" />
             {!isCollapsed && (
               <motion.div
                 initial={{ opacity: 0, x: -8 }}

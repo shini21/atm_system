@@ -72,14 +72,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 ? 'border-danger/60 focus:border-danger focus:ring-2 focus:ring-danger/20 text-danger'
                 : success
                 ? 'border-success/60 focus:border-success focus:ring-2 focus:ring-success/20'
-                : 'border-border-subtle hover:border-border-strong focus:border-cyan focus:ring-2 focus:ring-cyan/20'
+                : 'border-border-subtle hover:border-border-strong focus:border-accent focus:ring-2 focus:ring-accent/20'
             } ${className}`}
             {...props}
           />
 
           <div className="absolute right-3 flex items-center gap-1.5">
             {isLoading ? (
-              <svg className="animate-spin h-4 w-4 text-cyan" fill="none" viewBox="0 0 24 24">
+              <svg className="animate-spin h-4 w-4 text-accent" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>

@@ -25,9 +25,9 @@ export const CashDispenser: React.FC<CashDispenserProps> = ({
         <span
           className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
             isReady || isAccepted
-              ? 'bg-emerald-400 shadow-[0_0_12px_#34d399]'
+              ? 'bg-success shadow-[0_0_12px_#34d399]'
               : isDispensing || isDepositing
-              ? 'bg-amber-400 animate-ping'
+              ? 'bg-warning-subtle animate-ping'
               : 'bg-slate-600'
           }`}
         />
@@ -54,7 +54,7 @@ export const CashDispenser: React.FC<CashDispenserProps> = ({
               exit={{ y: 40, opacity: 0 }}
               transition={{ type: 'spring', damping: 20, stiffness: 200 }}
               onClick={onTakeCash}
-              className={`absolute cursor-pointer flex items-center gap-2 px-6 py-2 rounded-md bg-emerald-600/90 text-white font-mono font-bold shadow-lg border border-emerald-400/50 ${
+              className={`absolute cursor-pointer flex items-center gap-2 px-6 py-2 rounded-md bg-accent text-on-accent font-mono font-bold shadow-lg border border-border-strong ${
                 isReady ? 'animate-bounce' : ''
               }`}
             >
@@ -69,7 +69,7 @@ export const CashDispenser: React.FC<CashDispenserProps> = ({
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute flex items-center gap-2 text-emerald-400 font-semibold text-sm"
+              className="absolute flex items-center gap-2 text-success font-semibold text-sm"
             >
               <CheckCircle2 className="w-5 h-5" />
               <span>Cash Credited to Account</span>

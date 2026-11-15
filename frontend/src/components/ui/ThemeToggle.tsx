@@ -29,7 +29,7 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({ className = '' }) => {
         exit={{ rotate: 45, opacity: 0 }}
         transition={{ duration: 0.2 }}
       >
-        {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+        {isDark ? <Sun className="w-4 h-4 text-warning" /> : <Moon className="w-4 h-4 text-slate-700" />}
       </motion.div>
     </motion.button>
   );

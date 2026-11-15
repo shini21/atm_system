@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { useTheme } from '../../context/ThemeContext';
+import { BrandLogo } from '../brand/BrandLogo';
 import { ArrowLeft, Clock, ShieldCheck, LogOut, Menu, X, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { LanguageToggle } from '../ui/LanguageToggle';
@@ -30,6 +32,8 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { session, cardStatus, clearCard } = useAuth();
   const { t } = useLanguage();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const navigate = useNavigate();
   const [timeStr, setTimeStr] = useState<string>('');
 
@@ -106,26 +110,23 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* Clickable Brand Monogram & Terminal Designation */}
+        {/* Clickable Brand Horizontal Lockup & Terminal Designation */}
         <button
           type="button"
           onClick={handleLogoClick}
-          className="flex items-center gap-2 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan rounded-xl p-1 -m-1 transition-all select-none"
+          className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl p-1 -m-1 transition-all select-none"
           title="Return to Main ATM Terminal Screen"
-          aria-label="Apex ATM Home"
+          aria-label="Apex Bank ATM Home"
         >
-          <div className="w-8 h-8 rounded-xl bg-primary text-surface flex items-center justify-center font-bold text-xs tracking-tight shadow-sm group-hover:scale-105 transition-transform flex-shrink-0">
-            AP
-          </div>
-          <div className="min-w-0">
-            <div className="font-bold text-sm tracking-tight text-primary flex items-center gap-1.5">
-              <span className="group-hover:text-accent transition-colors">{t('app.brand')}</span>
-              <span className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.2 rounded bg-surface-subdued text-secondary font-normal border border-border-subtle">
+          <BrandLogo variant="horizontal" surface={isDark ? 'dark' : 'light'} className="h-10 w-[8.5rem] flex-shrink-0" />
+          <div className="hidden sm:block min-w-0 border-l border-border-subtle pl-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-surface-subdued text-secondary font-normal border border-border-subtle">
                 X-9000
               </span>
             </div>
-            <div className="text-[11px] text-tertiary flex items-center gap-1 truncate">
-              <ShieldCheck className="w-3 h-3 text-emerald-500 flex-shrink-0" />
+            <div className="text-[10px] text-tertiary flex items-center gap-1 truncate mt-0.5">
+              <ShieldCheck className="w-3 h-3 text-success flex-shrink-0" aria-hidden="true" />
               <span className="truncate">{t('app.location')}</span>
             </div>
           </div>
@@ -134,7 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Center: Active Screen Title (Desktop & Tablet) */}
       {activeScreenTitle && (
-        <div className="hidden md:block text-xs font-semibold text-secondary tracking-widest uppercase truncate max-w-[240px]">
+        <div className="hidden md:block text-xs font-semibold text-primary tracking-[0.16em] uppercase truncate max-w-[260px] text-center">
           {activeScreenTitle}
         </div>
       )}
@@ -142,9 +143,15 @@ export const Header: React.FC<HeaderProps> = ({
       {/* Right: Controls + Live Clock + Mobile Hamburger */}
       <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Live Clock (Large screens) */}
-        <div className="hidden lg:flex items-center gap-1 text-[11px] font-mono text-tertiary mr-1">
+        <div className="hidden md:flex items-center gap-1 text-[11px] font-mono text-tertiary mr-1">
           <Clock className="w-3 h-3" />
           <span>{timeStr}</span>
+        </div>
+
+        {/* Session status — text + dot, never colour alone */}
+        <div className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-subdued border border-border-subtle text-[11px] font-medium text-secondary" role="status">
+          <span className={`w-1.5 h-1.5 rounded-full ${session?.authenticated ? 'bg-success' : cardStatus ? 'bg-warning' : 'bg-border-strong'}`} aria-hidden="true" />
+          {session?.authenticated ? 'Session active' : cardStatus ? 'Awaiting PIN' : 'Idle'}
         </div>
 
         {/* Desktop Quick Toggles */}

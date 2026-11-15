@@ -31,14 +31,14 @@ export const ProgressRing: React.FC<ProgressRingProps> = ({
       isIndeterminate: false,
     },
     validating: {
-      color: 'text-cyan',
+      color: 'text-accent',
       progress: 0.35,
       label: stageLabel || 'Validating',
       sublabel: 'Checking credentials...',
       isIndeterminate: true,
     },
     processing: {
-      color: 'text-cyan',
+      color: 'text-accent',
       progress: 0.7,
       label: stageLabel || 'Processing',
       sublabel: 'Transacting with ledger...',

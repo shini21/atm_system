@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useHardware } from '../context/HardwareContext';
 import { sound } from '../utils/sound';
-import { TiltedATMCard } from '../components/cards/TiltedATMCard';
+import { ApexCard } from '../components/cards/ApexCard';
 import { ATMTransition } from '../components/layout/ATMTransition';
 import { Button } from '../components/ui/Button';
 import { motion } from 'motion/react';
@@ -61,10 +61,12 @@ export const EjectPage: React.FC = () => {
             transition={{ type: 'spring', damping: 22, stiffness: 180, delay: 0.1 }}
             className="relative z-10 -mt-2"
           >
-            <TiltedATMCard
+            <ApexCard
               cardNumber={cardNumber}
               cardHolderName={customerName}
               accountType={accountType}
+              expiryDate={cardStatus?.expiryDate || session?.expiryDate}
+              flippable={false}
             />
           </motion.div>
         </div>

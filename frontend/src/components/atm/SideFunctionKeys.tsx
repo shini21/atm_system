@@ -60,7 +60,7 @@ export const SideFunctionKeys: React.FC<SideFunctionKeysProps> = ({ side }) => {
                 <div
                   className={`w-1.5 h-1.5 rounded-full mt-0.5 transition-colors ${
                     isActive
-                      ? 'bg-accent shadow-[0_0_6px_rgba(4,120,87,0.6)]'
+                      ? 'bg-accent shadow-[0_0_6px_rgba(0,111,207,0.5)]'
                       : 'bg-transparent'
                   }`}
                 />

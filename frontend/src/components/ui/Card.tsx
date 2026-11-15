@@ -35,7 +35,7 @@ export const Card: React.FC<CardProps> = ({
   }[variant];
 
   const selectedClass = selected
-    ? 'border-accent ring-2 ring-accent/30 shadow-emerald-glow/20'
+    ? 'border-accent ring-2 ring-accent/30 '
     : '';
 
   const isInteractive = hoverable || variant === 'interactive' || !!onClick;

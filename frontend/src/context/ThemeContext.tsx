@@ -19,11 +19,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (saved === 'light' || saved === 'dark') {
       return saved;
     }
-    // 2. Check system color scheme preference, fallback to dark
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      return 'light';
-    }
-    return 'dark';
+    // 2. Porcelain display is the brand default; dark is opt-in via the toggle
+    return 'light';
   });
 
   // Apply theme class to <html> with smooth transitioning (respects reduced motion)

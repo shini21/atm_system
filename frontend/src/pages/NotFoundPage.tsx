@@ -63,7 +63,7 @@ export const NotFoundPage: React.FC = () => {
           </div>
           <div className="flex justify-between">
             <span>SESSION STATE:</span>
-            <span className={session?.authenticated ? 'text-emerald-500 font-semibold' : 'text-secondary'}>
+            <span className={session?.authenticated ? 'text-success font-semibold' : 'text-secondary'}>
               {session?.authenticated ? 'ACTIVE_AUTHENTICATED' : 'ANONYMOUS'}
             </span>
           </div>

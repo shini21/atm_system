@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useLanguage } from '../../context/LanguageContext';
 import { useHardware } from '../../context/HardwareContext';
+import { BrandLogo } from '../brand/BrandLogo';
 import {
   LogOut,
   AlertTriangle,
@@ -15,10 +16,7 @@ import {
   FileText,
   KeyRound,
   HelpCircle,
-  Phone,
-  Mail,
-  CreditCard,
-  Sparkles,
+    CreditCard,
   Settings,
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -104,12 +102,11 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
     }
   };
 
-  const currentYear = new Date().getFullYear();
 
   return (
     <div className="min-h-screen bg-canvas text-primary flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 selection:bg-accent selection:text-white transition-colors duration-200 w-full max-w-full overflow-x-hidden">
       {/* Outer Kiosk Machine Enclosure */}
-      <div className="w-full max-w-6xl rounded-2xl sm:rounded-3xl bg-chassis border border-chassis-bezel shadow-luxury p-2.5 sm:p-5 md:p-6 transition-all duration-200 relative overflow-x-hidden">
+      <div className="apex-chassis w-full max-w-[1360px] rounded-[18px] sm:rounded-[26px] p-2.5 sm:p-5 md:p-6 relative overflow-x-hidden">
         
         {/* Terminal Canopy Header */}
         <Header
@@ -152,11 +149,9 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
                   {/* Drawer Header */}
                   <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-4">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-primary text-surface flex items-center justify-center font-bold text-xs">
-                        AP
-                      </div>
+                      <BrandLogo variant="monogram" surface="dark" plate className="w-7 h-7 rounded-md overflow-hidden flex-shrink-0" />
                       <div>
-                        <div className="font-bold text-sm text-primary">APEX Touch ATM</div>
+                        <div className="font-bold text-sm text-primary">Apex Bank Terminal</div>
                         <div className="text-[10px] text-tertiary font-mono">Terminal Mumbai-04</div>
                       </div>
                     </div>
@@ -380,30 +375,8 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
                   </div>
                 </div>
 
-                {/* Drawer Footer Emergency Contact Links */}
-                <div className="pt-4 border-t border-border-subtle space-y-2 text-[11px] text-tertiary">
-                  <div className="font-semibold text-secondary text-xs flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-accent" />
-                    <span>Apex Terminal Support</span>
-                  </div>
-                  <div>
-                    <a
-                      href="tel:18002739000"
-                      className="flex items-center gap-2 hover:text-accent transition-colors"
-                    >
-                      <Phone className="w-3.5 h-3.5 text-secondary" />
-                      <span>1800-273-9000 (Toll-Free)</span>
-                    </a>
-                  </div>
-                  <div>
-                    <a
-                      href="mailto:support@apexbank.demo"
-                      className="flex items-center gap-2 hover:text-accent transition-colors"
-                    >
-                      <Mail className="w-3.5 h-3.5 text-secondary" />
-                      <span>support@apexbank.demo</span>
-                    </a>
-                  </div>
+                <div className="pt-4 border-t border-border-subtle text-[11px] text-tertiary">
+                  Academic banking simulation · No real funds or card data.
                 </div>
               </motion.div>
             </>
@@ -422,12 +395,12 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
               role="alert"
               aria-live="assertive"
             >
-              <div className="w-full px-3.5 sm:px-4 py-2.5 rounded-2xl bg-amber-500/15 dark:bg-amber-500/20 backdrop-blur-md border border-amber-500/35 text-amber-700 dark:text-amber-300 text-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 shadow-md">
+              <div className="w-full px-3.5 sm:px-4 py-2.5 rounded-2xl bg-warning-subtle backdrop-blur-md border border-warning/40 text-warning text-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 shadow-md">
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <AlertTriangle className="w-4 h-4 text-amber-500 animate-pulse flex-shrink-0" />
+                  <AlertTriangle className="w-4 h-4 text-warning animate-pulse flex-shrink-0" />
                   <span className="truncate">
                     {t('app.sessionExpiring')}{' '}
-                    <strong className="font-mono text-sm font-bold text-amber-600 dark:text-amber-300">
+                    <strong className="font-mono text-sm font-bold text-warning ">
                       {inactivitySeconds}
                     </strong>{' '}
                     {t('app.seconds')}.
@@ -437,7 +410,7 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
                   <button
                     type="button"
                     onClick={resetInactivity}
-                    className="px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-medium text-[11px] sm:text-xs transition-all shadow-xs cursor-pointer"
+                    className="px-3 py-1 rounded-xl bg-accent hover:bg-accent-hover active:scale-95 text-on-accent font-medium text-[11px] sm:text-xs transition-all shadow-xs cursor-pointer"
                   >
                     Stay Logged In
                   </button>
@@ -471,7 +444,7 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
             <SideFunctionKeys side="left" />
 
             {/* Recessed Touchscreen Display Surround */}
-            <div className="flex-1 rounded-xl sm:rounded-2xl bg-surface border border-border-strong/50 shadow-pocket p-3 sm:p-5 md:p-6 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full pb-16 md:pb-6">
+            <div className="flex-1 rounded-xl sm:rounded-2xl bg-screen border border-border-strong shadow-pocket p-3 sm:p-5 md:p-7 min-h-[460px] flex flex-col justify-between relative overflow-y-auto overflow-x-hidden w-full pb-16 md:pb-6">
               <main className="w-full flex-1 flex flex-col justify-between min-h-[400px]">
                 {children}
               </main>
@@ -486,43 +459,20 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
         <HardwareConsole />
       </div>
 
-      {/* Professional Responsive Terminal Footer */}
-      <footer className="mt-3 w-full max-w-6xl px-2 text-[11px] text-tertiary flex flex-col sm:flex-row items-center justify-between gap-2.5 border-t border-border-subtle/40 pt-3">
-        {/* Left: Dynamic Copyright & Status */}
+      {/* Terminal footer — simulation disclosure (no certification or support claims) */}
+      <footer className="mt-3 w-full max-w-[1360px] px-2 text-[11px] text-tertiary flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-border-subtle pt-3">
         <div className="flex items-center gap-2 text-center sm:text-left">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
-          <span>© {currentYear} Apex Touch Banking • PCI-PTS Certified Terminal • Hardware Encrypted</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-success flex-shrink-0" aria-hidden="true" />
+          <span>APEX BANK · Academic Banking Simulation · No real funds or card data.</span>
         </div>
-
-        {/* Right: Working Navigation & Contact Links */}
-        <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center text-xs">
-          <a
-            href="tel:18002739000"
-            className="hover:text-accent transition-colors flex items-center gap-1 cursor-pointer"
-            title="Apex ATM Toll-Free Helpline"
-          >
-            <Phone className="w-3 h-3 text-secondary" />
-            <span>1800-273-9000</span>
-          </a>
-
-          <a
-            href="mailto:support@apexbank.demo"
-            className="hover:text-accent transition-colors flex items-center gap-1 cursor-pointer"
-            title="Apex ATM Support Email"
-          >
-            <Mail className="w-3 h-3 text-secondary" />
-            <span>support@apexbank.demo</span>
-          </a>
-
-          <button
-            type="button"
-            onClick={() => setIsHelpModalOpen(true)}
-            className="hover:text-accent transition-colors cursor-pointer flex items-center gap-1 underline underline-offset-2 decoration-border-subtle hover:decoration-accent"
-          >
-            <HelpCircle className="w-3 h-3 text-secondary" />
-            <span>Demo Instructions</span>
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsHelpModalOpen(true)}
+          className="hover:text-primary transition-colors cursor-pointer flex items-center gap-1 min-h-[32px] underline underline-offset-2 decoration-border-strong"
+        >
+          <HelpCircle className="w-3 h-3" aria-hidden="true" />
+          <span>Demo instructions</span>
+        </button>
       </footer>
 
       {/* Demo Instructions & System Architecture Modal */}
@@ -532,6 +482,18 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
         title="APEX ATM Terminal Guide & Demo Accounts"
       >
         <div className="space-y-4 text-xs text-secondary">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-surface-subdued border border-border-subtle">
+            <img
+              src="/brand/app-icon/apex-app-icon-obsidian.svg"
+              alt="Apex Bank App Icon"
+              className="w-12 h-12 rounded-xl shadow-md flex-shrink-0"
+            />
+            <div>
+              <div className="font-bold text-sm text-primary">Apex Bank Terminal</div>
+              <div className="text-[11px] text-tertiary">Java OOP academic simulation</div>
+            </div>
+          </div>
+
           <p>
             Welcome to the <strong>APEX Touch Banking Simulation</strong>, an academic course project demonstrating <strong>Abstraction</strong>, <strong>Interfaces</strong>, and <strong>Exception Handling</strong> in Java with a full touchscreen physical ATM kiosk.
           </p>
@@ -542,31 +504,24 @@ export const AtmKiosk: React.FC<AtmKioskProps> = ({
               <div className="p-2 rounded-lg bg-surface border border-border-subtle">
                 <span className="font-bold text-accent">CARD1001</span> (PIN: 1234)<br />
                 <span>Aarav Sharma • Savings</span><br />
-                <span className="text-emerald-500 font-semibold">Active Profile</span>
+                <span className="text-success font-semibold">Active Profile</span>
               </div>
               <div className="p-2 rounded-lg bg-surface border border-border-subtle">
                 <span className="font-bold text-accent">CARD1002</span> (PIN: 5678)<br />
                 <span>Priya Patel • Current</span><br />
-                <span className="text-emerald-500 font-semibold">Active Profile</span>
+                <span className="text-success font-semibold">Active Profile</span>
               </div>
               <div className="p-2 rounded-lg bg-surface border border-border-subtle">
                 <span className="font-bold text-accent">CARD1003</span> (PIN: 4321)<br />
                 <span>Rahul Verma • Expired</span><br />
-                <span className="text-amber-500 font-semibold">Expired Test Card</span>
+                <span className="text-warning font-semibold">Expired Test Card</span>
               </div>
               <div className="p-2 rounded-lg bg-surface border border-border-subtle">
                 <span className="font-bold text-accent">CARD1004</span> (PIN: 9999)<br />
                 <span>Neha Iyer • Blocked</span><br />
-                <span className="text-rose-500 font-semibold">Pre-Blocked Card</span>
+                <span className="text-danger font-semibold">Pre-Blocked Card</span>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between text-[11px] pt-2 border-t border-border-subtle">
-            <span className="text-tertiary">Toll-free Helpdesk:</span>
-            <a href="tel:18002739000" className="font-mono text-accent font-semibold hover:underline">
-              1800-273-9000
-            </a>
           </div>
 
           <div className="flex justify-end pt-2">

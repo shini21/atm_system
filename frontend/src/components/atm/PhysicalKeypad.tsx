@@ -1,135 +1,74 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import { useHardware } from '../../context/HardwareContext';
 import { Delete, Check, X, RotateCcw } from 'lucide-react';
 
+const KEY_BASE =
+  'h-11 rounded-md flex flex-col items-center justify-center relative cursor-pointer select-none transition-[transform,box-shadow] duration-75 ' +
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ';
+const keyStyle = (pressed: boolean, tone: 'stone' | 'cancel' | 'clear' | 'enter'): React.CSSProperties => {
+  const bg = {
+    stone: 'linear-gradient(180deg,#F3F6FA,#D8E0E8)',
+    cancel: 'linear-gradient(180deg,#F5BABA,#D47070)',
+    clear: 'linear-gradient(180deg,#E6EBF1,#C8D4E0)',
+    enter: 'linear-gradient(180deg,#005BB5,#003B70)',
+  }[tone];
+  return {
+    background: bg,
+    color: tone === 'enter' ? '#fff' : '#202B38',
+    boxShadow: pressed
+      ? 'inset 0 2px 3px rgba(0,0,0,.35), 0 0 0 rgba(0,0,0,0)'
+      : 'inset 0 1px 0 rgba(255,255,255,.75), 0 2px 0 rgba(17,18,20,.35), 0 3px 5px rgba(17,18,20,.18)',
+    transform: pressed ? 'translateY(2px)' : undefined,
+  };
+};
+
+/** Simulated physical PIN pad. Presses are routed through HardwareContext so the on-screen keypad stays in sync. */
 export const PhysicalKeypad: React.FC = () => {
   const { pressKeypad, activeKeypadKey } = useHardware();
 
-  const handlePress = (key: string) => {
-    pressKeypad(key);
-  };
-
-  const keys = [
-    { label: '1', sub: 'QZ', value: '1' },
-    { label: '2', sub: 'ABC', value: '2' },
-    { label: '3', sub: 'DEF', value: '3' },
-    { label: '4', sub: 'GHI', value: '4' },
-    { label: '5', sub: 'JKL', value: '5', braille: true },
-    { label: '6', sub: 'MNO', value: '6' },
-    { label: '7', sub: 'PRS', value: '7' },
-    { label: '8', sub: 'TUV', value: '8' },
-    { label: '9', sub: 'WXY', value: '9' },
-  ];
-
   return (
-    <div className="flex flex-col items-center">
-      {/* Label */}
-      <div className="w-full max-w-[240px] mb-1.5 px-1 flex justify-between items-center gap-2 text-[10px] font-mono tracking-wider text-tertiary uppercase">
-        <span className="truncate">Hardware PIN Pad</span>
-        <span className="text-[9px] text-tertiary whitespace-nowrap opacity-80">PCI-PTS v6</span>
+    <div className="flex flex-col items-center" role="group" aria-label="PIN pad (simulated)">
+      <div className="w-full max-w-[240px] mb-1.5 px-0.5 flex justify-between items-center gap-2 text-[10px] font-semibold tracking-[0.14em] text-secondary uppercase">
+        <span>PIN pad</span>
+        <span className="font-normal normal-case tracking-normal text-tertiary">Simulated</span>
       </div>
 
-      {/* Keypad Base Enclosure */}
-      <div className="w-full max-w-[240px] p-2 rounded-xl bg-surface-subdued border border-border-subtle shadow-inner select-none">
+      <div className="w-full max-w-[240px] p-2 rounded-lg select-none"
+        style={{ background: 'linear-gradient(180deg,#B8C5D3,#9AAAC0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.5), inset 0 -1px 0 rgba(0,0,0,.2)' }}>
         <div className="grid grid-cols-3 gap-1.5">
-          {/* Numbers 1-9 */}
-          {keys.map((k) => (
-            <motion.button
-              key={k.value}
-              type="button"
-              whileTap={{ scale: 0.92, y: 1 }}
-              onClick={() => handlePress(k.value)}
-              className={`h-11 rounded-lg bg-gradient-to-b from-surface to-surface-subdued border border-border-subtle hover:border-accent/40 shadow-sm flex flex-col items-center justify-center relative cursor-pointer transition-all ${
-                activeKeypadKey === k.value ? 'ring-2 ring-accent scale-95' : ''
-              }`}
-            >
-              <span className="text-sm font-bold font-mono text-primary leading-none">
-                {k.label}
-              </span>
-              <span className="text-[7px] font-mono text-tertiary leading-none mt-0.5 tracking-tighter">
-                {k.sub}
-              </span>
-              {/* Tactile Braille Dot on Key 5 */}
-              {k.braille && (
-                <div className="absolute right-1 bottom-1 w-1 h-1 rounded-full bg-tertiary" />
-              )}
-            </motion.button>
+          {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
+            <button key={d} type="button" aria-label={`PIN pad ${d}`} onClick={() => pressKeypad(d)}
+              className={KEY_BASE} style={keyStyle(activeKeypadKey === d, 'stone')}>
+              <span className="text-base font-semibold font-mono leading-none">{d}</span>
+              {d === '5' && <span aria-hidden="true" className="absolute bottom-1 w-1 h-1 rounded-full bg-black/50" />}
+            </button>
           ))}
-
-          {/* Row 4: Cancel [Red], 0, Clear [Yellow] */}
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.92, y: 1 }}
-            onClick={() => handlePress('CANCEL')}
-            className={`h-11 rounded-lg bg-gradient-to-b from-rose-950/40 to-rose-900/60 border border-rose-500/40 hover:border-rose-400 text-rose-300 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKeypadKey === 'CANCEL' ? 'ring-2 ring-rose-500 scale-95' : ''
-            }`}
-            title="Cancel Transaction (Esc)"
-          >
-            <X className="w-4 h-4" />
-            <span className="text-[7px] font-mono font-semibold tracking-tighter uppercase mt-0.5">
-              Cancel
-            </span>
-          </motion.button>
-
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.92, y: 1 }}
-            onClick={() => handlePress('0')}
-            className={`h-11 rounded-lg bg-gradient-to-b from-surface to-surface-subdued border border-border-subtle hover:border-accent/40 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKeypadKey === '0' ? 'ring-2 ring-accent scale-95' : ''
-            }`}
-          >
-            <span className="text-sm font-bold font-mono text-primary leading-none">0</span>
-            <span className="text-[7px] font-mono text-tertiary leading-none mt-0.5">OPER</span>
-          </motion.button>
-
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.92, y: 1 }}
-            onClick={() => handlePress('CLEAR')}
-            className={`h-11 rounded-lg bg-gradient-to-b from-amber-950/40 to-amber-900/60 border border-amber-500/40 hover:border-amber-400 text-amber-300 shadow-sm flex flex-col items-center justify-center cursor-pointer ${
-              activeKeypadKey === 'CLEAR' ? 'ring-2 ring-amber-500 scale-95' : ''
-            }`}
-            title="Clear Input (Del)"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span className="text-[7px] font-mono font-semibold tracking-tighter uppercase mt-0.5">
-              Clear
-            </span>
-          </motion.button>
+          <button type="button" aria-label="PIN pad cancel" title="Cancel (Esc)" onClick={() => pressKeypad('CANCEL')}
+            className={KEY_BASE} style={keyStyle(activeKeypadKey === 'CANCEL', 'cancel')}>
+            <X className="w-4 h-4" aria-hidden="true" />
+            <span className="text-[8px] font-semibold uppercase mt-0.5">Cancel</span>
+          </button>
+          <button type="button" aria-label="PIN pad 0" onClick={() => pressKeypad('0')}
+            className={KEY_BASE} style={keyStyle(activeKeypadKey === '0', 'stone')}>
+            <span className="text-base font-semibold font-mono leading-none">0</span>
+          </button>
+          <button type="button" aria-label="PIN pad clear" title="Clear" onClick={() => pressKeypad('CLEAR')}
+            className={KEY_BASE} style={keyStyle(activeKeypadKey === 'CLEAR', 'clear')}>
+            <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="text-[8px] font-semibold uppercase mt-0.5">Clear</span>
+          </button>
         </div>
-
-        {/* Enter / Confirm Bar */}
         <div className="grid grid-cols-2 gap-1.5 mt-1.5">
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.94 }}
-            onClick={() => handlePress('BACKSPACE')}
-            className={`h-9 rounded-lg bg-surface-subdued hover:bg-surface-hover border border-border-subtle text-secondary shadow-sm flex items-center justify-center gap-1 cursor-pointer text-xs font-mono ${
-              activeKeypadKey === 'BACKSPACE' ? 'ring-2 ring-accent scale-95' : ''
-            }`}
-          >
-            <Delete className="w-3.5 h-3.5" />
-            <span className="text-[9px] font-semibold">BKSP</span>
-          </motion.button>
-
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.94 }}
-            onClick={() => handlePress('ENTER')}
-            className={`h-9 rounded-lg bg-gradient-to-b from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 border border-emerald-400/50 text-white shadow-sm flex items-center justify-center gap-1 cursor-pointer text-xs font-mono font-semibold ${
-              activeKeypadKey === 'ENTER' ? 'ring-2 ring-emerald-300 scale-95' : ''
-            }`}
-            title="Enter / Confirm (Enter)"
-          >
-            <Check className="w-3.5 h-3.5" />
-            <span className="text-[9px] tracking-wider uppercase">ENTER</span>
-          </motion.button>
+          <button type="button" aria-label="PIN pad backspace" onClick={() => pressKeypad('BACKSPACE')}
+            className={KEY_BASE.replace('h-11', 'h-9')} style={keyStyle(activeKeypadKey === 'BACKSPACE', 'stone')}>
+            <span className="flex items-center gap-1 text-[10px] font-semibold"><Delete className="w-3.5 h-3.5" aria-hidden="true" />Back</span>
+          </button>
+          <button type="button" aria-label="PIN pad enter" title="Enter" onClick={() => pressKeypad('ENTER')}
+            className={KEY_BASE.replace('h-11', 'h-9')} style={keyStyle(activeKeypadKey === 'ENTER', 'enter')}>
+            <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide"><Check className="w-3.5 h-3.5" aria-hidden="true" />Enter</span>
+          </button>
         </div>
       </div>
     </div>
   );
 };
-

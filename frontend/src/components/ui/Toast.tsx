@@ -32,15 +32,15 @@ export const Toast: React.FC<ToastProps> = ({
   const icons = {
     success: <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />,
     error: <AlertCircle className="w-4 h-4 text-danger flex-shrink-0" />,
-    warning: <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />,
-    info: <Info className="w-4 h-4 text-cyan flex-shrink-0" />,
+    warning: <AlertTriangle className="w-4 h-4 text-warning flex-shrink-0" />,
+    info: <Info className="w-4 h-4 text-info flex-shrink-0" />,
   };
 
   const borders = {
-    success: 'border-success/30 dark:border-emerald-500/30',
-    error: 'border-danger/30 dark:border-rose-500/30',
-    warning: 'border-amber-500/30 dark:border-amber-500/30',
-    info: 'border-cyan/30 dark:border-cyan/30',
+    success: 'border-success/30 ',
+    error: 'border-danger/30 ',
+    warning: 'border-warning/40 ',
+    info: 'border-info/30',
   };
 
   return (

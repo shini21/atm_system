@@ -163,8 +163,8 @@ export const SettingsPage: React.FC = () => {
             <span className="text-xs uppercase tracking-wider text-tertiary font-medium">
               Terminal Configuration
             </span>
-            <Badge variant="champagne" size="sm">
-              PCI-PTS v6
+            <Badge variant="neutral" size="sm">
+              Simulation
             </Badge>
           </div>
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-primary mt-1">
@@ -339,7 +339,7 @@ export const SettingsPage: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-2 text-[11px] text-tertiary pt-1 border-t border-border-subtle/70">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-success flex-shrink-0" />
                     <span>Zero network surcharges apply to intra-bank transfers and balance inquiries.</span>
                   </div>
                 </div>
@@ -393,7 +393,7 @@ export const SettingsPage: React.FC = () => {
                         PIN Protection
                       </span>
                       <span className="font-semibold text-primary mt-0.5 block flex items-center gap-1.5">
-                        <Lock className="w-3.5 h-3.5 text-emerald-500" />
+                        <Lock className="w-3.5 h-3.5 text-success" />
                         <span>BCrypt (10 Rounds)</span>
                       </span>
                     </div>
@@ -505,7 +505,7 @@ export const SettingsPage: React.FC = () => {
                       onClick={toggleSound}
                       className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer select-none ${
                         !isMuted
-                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                          ? 'bg-success-subtle text-success border border-success/30'
                           : 'bg-surface-subdued text-secondary border border-border-subtle'
                       }`}
                     >
@@ -589,21 +589,26 @@ export const SettingsPage: React.FC = () => {
 
                 {/* Theme Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Light Theme: Warm Ivory & Champagne */}
+                  {/* Light Theme: Silver Mist & Apex Blue */}
                   <div
                     onClick={() => setTheme('light')}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden select-none ${
                       theme === 'light'
-                        ? 'border-accent bg-[#FDFCFA] shadow-md ring-2 ring-accent/30'
+                        ? 'border-accent bg-[#F3F6FA] shadow-md ring-2 ring-accent/30'
                         : 'border-border-subtle bg-surface hover:border-accent/40'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Sun className="w-4 h-4 text-amber-500" />
-                        <span className="font-semibold text-sm text-slate-900">
-                          Warm Ivory & Champagne
-                        </span>
+                        <Sun className="w-4 h-4 text-warning" />
+                        <div>
+                          <span className="font-semibold text-sm text-slate-900 block">
+                            Silver Mist & Apex Blue
+                          </span>
+                          <span className="text-[10px] text-tertiary block font-mono">
+                            Warm Ivory & Champagne
+                          </span>
+                        </div>
                       </div>
                       {theme === 'light' && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent text-white">
@@ -613,33 +618,38 @@ export const SettingsPage: React.FC = () => {
                     </div>
 
                     <p className="text-xs text-slate-600 mb-4">
-                      Luxury European private wealth aesthetic. Warm alabaster, gold accent trims, and high-legibility contrast.
+                      American Express-inspired premium banking aesthetic. Silver Mist enclosure, Pure White panels, and Apex Blue accents.
                     </p>
 
                     {/* Color Swatch Preview */}
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#FAF8F5] border border-slate-300" title="Warm Ivory Canvas" />
-                      <div className="w-6 h-6 rounded-lg bg-[#C8A86B]" title="Champagne Gold Accent" />
-                      <div className="w-6 h-6 rounded-lg bg-[#111827]" title="Deep Charcoal Typography" />
-                      <div className="w-6 h-6 rounded-lg bg-[#059669]" title="Emerald Ledger Positive" />
+                      <div className="w-6 h-6 rounded-lg bg-[#EDF1F7] border border-slate-300" title="Ice Grey Canvas" />
+                      <div className="w-6 h-6 rounded-lg bg-[#006FCF]" title="Apex Blue Accent" />
+                      <div className="w-6 h-6 rounded-lg bg-[#202B38]" title="Graphite Typography" />
+                      <div className="w-6 h-6 rounded-lg bg-[#168653]" title="Success Ledger Positive" />
                     </div>
                   </div>
 
-                  {/* Dark Theme: Industrial Navy */}
+                  {/* Dark Theme: Midnight Blue & Platinum */}
                   <div
                     onClick={() => setTheme('dark')}
                     className={`p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden select-none ${
                       theme === 'dark'
-                        ? 'border-accent bg-[#070A0F] shadow-md ring-2 ring-accent/30'
+                        ? 'border-accent bg-[#0D111A] shadow-md ring-2 ring-accent/30'
                         : 'border-border-subtle bg-surface hover:border-accent/40'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Moon className="w-4 h-4 text-cyan-400" />
-                        <span className="font-semibold text-sm text-white">
-                          Industrial Navy
-                        </span>
+                        <Moon className="w-4 h-4 text-accent" />
+                        <div>
+                          <span className="font-semibold text-sm text-white block">
+                            Midnight Blue & Platinum
+                          </span>
+                          <span className="text-[10px] text-tertiary block font-mono">
+                            Industrial Navy
+                          </span>
+                        </div>
                       </div>
                       {theme === 'dark' && (
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-accent text-slate-950">
@@ -649,15 +659,15 @@ export const SettingsPage: React.FC = () => {
                     </div>
 
                     <p className="text-xs text-slate-400 mb-4">
-                      Ultra-secure bank vault terminal aesthetic. Deepest navy canvas, brushed steel chassis, and emerald neon telemetry.
+                      Institutional night terminal aesthetic. Deepest midnight canvas, platinum silver chassis, and Apex Blue accents.
                     </p>
 
                     {/* Color Swatch Preview */}
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-lg bg-[#070A0F] border border-slate-700" title="Industrial Navy Canvas" />
-                      <div className="w-6 h-6 rounded-lg bg-[#C8A86B]" title="Champagne Accent" />
-                      <div className="w-6 h-6 rounded-lg bg-[#38BDF8]" title="Cyan Bezel Illumination" />
-                      <div className="w-6 h-6 rounded-lg bg-[#25D366]" title="Emerald Confirm LED" />
+                      <div className="w-6 h-6 rounded-lg bg-[#0D111A] border border-slate-700" title="Midnight Canvas" />
+                      <div className="w-6 h-6 rounded-lg bg-[#006FCF]" title="Apex Blue Accent" />
+                      <div className="w-6 h-6 rounded-lg bg-[#B8C5D3]" title="Platinum Silver" />
+                      <div className="w-6 h-6 rounded-lg bg-[#2FBD7E]" title="Success Confirm LED" />
                     </div>
                   </div>
                 </div>

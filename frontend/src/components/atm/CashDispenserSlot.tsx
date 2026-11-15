@@ -13,37 +13,37 @@ export const CashDispenserSlot: React.FC = () => {
     <div className="flex flex-col items-center w-full">
       {/* Label and Status */}
       <div className="flex items-center justify-between w-full max-w-[320px] mb-1.5 px-1">
-        <span className="text-[10px] font-mono tracking-wider text-tertiary uppercase flex items-center gap-1.5 font-medium">
+        <span className="text-[10px] font-semibold tracking-[0.14em] text-secondary uppercase flex items-center gap-1.5">
           <Banknote className="w-3.5 h-3.5 text-secondary" />
-          <span>Note Dispenser</span>
+          <span>Cash dispenser</span>
         </span>
         <div className="flex items-center gap-1.5">
           <div
             className={`w-2 h-2 rounded-full transition-colors duration-300 ${
               isDispensed
-                ? 'bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.9)]'
+                ? 'bg-warning'
                 : isDispensing
-                ? 'bg-amber-400 animate-pulse shadow-[0_0_10px_rgba(251,191,36,0.9)]'
-                : 'bg-zinc-600'
+                ? 'bg-warning animate-pulse'
+                : 'bg-success'
             }`}
           />
-          <span className="text-[9px] font-mono tracking-tight text-tertiary uppercase font-semibold">
+          <span className="text-[10px] font-medium text-secondary">
             {isDispensed
-              ? 'CASH READY'
+              ? 'Cash ready'
               : isDispensing
-              ? 'DISPENSING...'
-              : 'IDLE'}
+              ? 'Dispensing…'
+              : 'Ready'}
           </span>
         </div>
       </div>
 
       {/* Outer Dispenser Housing with Bezel Rim */}
-      <div className="relative w-full max-w-[320px] h-20 rounded-xl bg-surface-subdued border border-border-strong shadow-inner flex flex-col items-center justify-center p-2 overflow-hidden">
+      <div className="relative w-full max-w-[320px] h-20 rounded-lg flex flex-col items-center justify-center p-2 overflow-hidden" style={{ background: 'linear-gradient(180deg,#D8E0E8,#C8D4E0)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,.75), inset 0 -1px 0 rgba(23,43,69,.18)' }}>
         {/* Shutter Door */}
         <motion.div
           animate={{
             height: isDispensing || isDispensed ? 6 : 28,
-            backgroundColor: isDispensed ? '#059669' : '#1e293b',
+            backgroundColor: isDispensed ? '#006FCF' : '#172B45',
           }}
           transition={{ duration: 0.4, ease: 'easeInOut' }}
           className="w-full rounded-md shadow-md flex items-center justify-center border border-zinc-700/70 relative"
@@ -59,7 +59,7 @@ export const CashDispenserSlot: React.FC = () => {
             <motion.div
               animate={{ opacity: [0.3, 0.9, 0.3] }}
               transition={{ repeat: Infinity, duration: 1.2 }}
-              className="absolute inset-0 bg-emerald-500/35 blur-sm rounded-full"
+              className="absolute inset-0 bg-accent/30 rounded-full"
             />
           )}
 
@@ -79,32 +79,32 @@ export const CashDispenserSlot: React.FC = () => {
                 <div className="relative flex items-center justify-center">
                   {/* ₹500 Note (Stone Green) */}
                   {dispensedCash.breakdown[500] && dispensedCash.breakdown[500] > 0 && (
-                    <div className="w-38 h-12 rounded bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950 border border-emerald-400/70 shadow-xl flex items-center justify-between px-3 text-emerald-100 font-mono text-[11px] transform -rotate-1 select-none">
+                    <div className="w-38 h-12 rounded bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-950 border border-border-strong shadow-xl flex items-center justify-between px-3 text-success font-mono text-[11px] transform -rotate-1 select-none">
                       <div className="flex items-center gap-1.5">
                         <span className="font-bold text-xs tracking-wider">₹500</span>
-                        <div className="w-1.5 h-6 bg-emerald-400/40 rounded-xs" />
+                        <div className="w-1.5 h-6 bg-success/40 rounded-xs" />
                       </div>
-                      <div className="text-[10px] text-emerald-200 font-semibold px-1.5 py-0.2 rounded bg-emerald-950/60 border border-emerald-400/40">
+                      <div className="text-[10px] text-success font-semibold px-1.5 py-0.2 rounded bg-success-subtle border border-success/30">
                         × {dispensedCash.breakdown[500]}
                       </div>
-                      <div className="w-4 h-4 rounded-full border border-emerald-400/50 text-[8px] flex items-center justify-center font-bold">
-                        RBI
+                      <div className="w-4 h-4 rounded-full border border-border-strong text-[8px] flex items-center justify-center font-bold">
+                        SIM
                       </div>
                     </div>
                   )}
 
                   {/* ₹200 Note (Bright Ochre / Orange) */}
                   {dispensedCash.breakdown[200] && dispensedCash.breakdown[200] > 0 && (
-                    <div className="w-36 h-11 -mt-9 rounded bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-900 border border-amber-300/70 shadow-lg flex items-center justify-between px-3 text-amber-100 font-mono text-[11px] transform rotate-1 select-none">
+                    <div className="w-36 h-11 -mt-9 rounded bg-gradient-to-r from-amber-800 via-amber-700 to-yellow-900 border border-warning/40 shadow-lg flex items-center justify-between px-3 text-warning font-mono text-[11px] transform rotate-1 select-none">
                       <div className="flex items-center gap-1.5">
                         <span className="font-bold text-xs tracking-wider">₹200</span>
-                        <div className="w-1.5 h-5 bg-amber-300/40 rounded-xs" />
+                        <div className="w-1.5 h-5 bg-warning-subtle rounded-xs" />
                       </div>
-                      <div className="text-[10px] text-amber-200 font-semibold px-1.5 py-0.2 rounded bg-amber-950/60 border border-amber-400/40">
+                      <div className="text-[10px] text-warning font-semibold px-1.5 py-0.2 rounded bg-warning-subtle border border-warning/40">
                         × {dispensedCash.breakdown[200]}
                       </div>
-                      <div className="w-4 h-4 rounded-full border border-amber-400/50 text-[8px] flex items-center justify-center font-bold">
-                        RBI
+                      <div className="w-4 h-4 rounded-full border border-warning/40 text-[8px] flex items-center justify-center font-bold">
+                        SIM
                       </div>
                     </div>
                   )}
@@ -120,7 +120,7 @@ export const CashDispenserSlot: React.FC = () => {
                         × {dispensedCash.breakdown[100]}
                       </div>
                       <div className="w-4 h-4 rounded-full border border-indigo-400/50 text-[8px] flex items-center justify-center font-bold">
-                        RBI
+                        SIM
                       </div>
                     </div>
                   )}
@@ -130,7 +130,7 @@ export const CashDispenserSlot: React.FC = () => {
                 <motion.div
                   animate={{ y: [0, 3, 0] }}
                   transition={{ repeat: Infinity, duration: 1.2 }}
-                  className="mt-2.5 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] tracking-wide shadow-lg flex items-center gap-1.5 transition-transform group-hover:scale-105 border border-emerald-400/40"
+                  className="mt-2.5 px-3.5 py-1.5 rounded-full bg-accent text-on-accent font-semibold text-[11px] tracking-wide shadow-lg flex items-center gap-1.5 transition-transform group-hover:scale-105"
                 >
                   <Hand className="w-3.5 h-3.5 animate-bounce" />
                   <span>Take Cash (₹{dispensedCash.amount.toLocaleString('en-IN')})</span>

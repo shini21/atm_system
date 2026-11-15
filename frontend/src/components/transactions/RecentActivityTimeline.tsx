@@ -58,17 +58,17 @@ export const RecentActivityTimeline: React.FC<RecentActivityTimelineProps> = ({
   const getTransactionDetails = (tx: TransactionItem) => {
     const isCredit = tx.type === 'DEPOSIT' || tx.type === 'TRANSFER_IN';
 
-    let icon = <ArrowDownLeft className="w-4 h-4 text-emerald-500" />;
+    let icon = <ArrowDownLeft className="w-4 h-4 text-success" />;
     let label = 'Cash Deposit';
 
     if (tx.type === 'WITHDRAWAL') {
-      icon = <ArrowUpRight className="w-4 h-4 text-rose-500" />;
+      icon = <ArrowUpRight className="w-4 h-4 text-danger" />;
       label = 'Cash Withdrawal';
     } else if (tx.type === 'TRANSFER_OUT' || tx.type === 'TRANSFER' as any) {
-      icon = <ArrowLeftRight className="w-4 h-4 text-cyan" />;
+      icon = <ArrowLeftRight className="w-4 h-4 text-accent" />;
       label = 'Funds Transfer';
     } else if (tx.type === 'TRANSFER_IN') {
-      icon = <ArrowDownLeft className="w-4 h-4 text-emerald-500" />;
+      icon = <ArrowDownLeft className="w-4 h-4 text-success" />;
       label = 'Transfer Received';
     }
 
@@ -153,7 +153,7 @@ export const RecentActivityTimeline: React.FC<RecentActivityTimelineProps> = ({
                   <div
                     className={`font-semibold ${
                       isCredit
-                        ? 'text-emerald-600 dark:text-emerald-400'
+                        ? 'text-success '
                         : 'text-primary'
                     }`}
                   >

@@ -296,7 +296,7 @@ export const TransferPage: React.FC = () => {
               </div>
 
               {/* Thermal confirmation slip prompt */}
-              <div className="p-2.5 mb-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-medium flex items-center justify-center gap-2">
+              <div className="p-2.5 mb-5 rounded-control bg-success-subtle border border-success/30 text-success text-xs font-medium flex items-center justify-center gap-2">
                 <span>↓ Wire transfer confirmation slip ready below.</span>
               </div>
 
@@ -378,7 +378,7 @@ export const TransferPage: React.FC = () => {
                         }}
                         className={`w-full min-h-[44px] p-2.5 rounded-xl border text-left flex items-center justify-between text-xs transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           recipient.toUpperCase() === rec.acc
-                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
+                            ? 'bg-surface border-accent text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >
@@ -463,7 +463,7 @@ export const TransferPage: React.FC = () => {
                         }}
                         className={`min-h-[44px] py-2 px-2.5 rounded-xl border flex items-center justify-center font-mono text-xs font-medium transition-colors cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none ${
                           amountStr === amt.toString()
-                            ? 'bg-surface border-champagne text-champagne dark:border-accent dark:text-accent shadow-xs'
+                            ? 'bg-surface border-accent text-accent shadow-xs'
                             : 'bg-surface-subdued hover:bg-surface-hover border-border-subtle text-primary'
                         }`}
                       >

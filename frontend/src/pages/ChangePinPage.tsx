@@ -161,7 +161,7 @@ export const ChangePinPage: React.FC = () => {
               transition={{ duration: 0.15 }}
               className={`w-3.5 h-3.5 rounded-full transition-all ${
                 filled
-                  ? 'bg-champagne dark:bg-accent border border-champagne dark:border-accent shadow-[0_0_8px_rgba(185,148,91,0.5)] dark:shadow-[0_0_8px_rgba(6,182,212,0.5)]'
+                  ? 'bg-accent border border-accent shadow-[0_0_8px_rgba(0,111,207,0.4)]'
                   : isActive
                   ? 'bg-surface border-2 border-border-strong'
                   : 'bg-surface-subdued border border-border-subtle'
@@ -264,7 +264,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('CURRENT')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'CURRENT'
-                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
+                      ? 'bg-surface border-accent ring-1 ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -273,7 +273,7 @@ export const ChangePinPage: React.FC = () => {
                       Current 4-Digit PIN
                     </span>
                     {activeField === 'CURRENT' && (
-                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
                         Active
                       </span>
                     )}
@@ -291,7 +291,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('NEW')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'NEW'
-                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
+                      ? 'bg-surface border-accent ring-1 ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -300,7 +300,7 @@ export const ChangePinPage: React.FC = () => {
                       New 4-Digit PIN
                     </span>
                     {activeField === 'NEW' && (
-                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
                         Active
                       </span>
                     )}
@@ -318,7 +318,7 @@ export const ChangePinPage: React.FC = () => {
                   onClick={() => setActiveField('CONFIRM')}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer ${
                     activeField === 'CONFIRM'
-                      ? 'bg-surface border-champagne dark:border-accent ring-1 ring-champagne/40 dark:ring-accent/40 shadow-xs'
+                      ? 'bg-surface border-accent ring-1 ring-accent/40 shadow-xs'
                       : 'bg-surface-subdued border-border-subtle hover:bg-surface-hover'
                   }`}
                 >
@@ -327,7 +327,7 @@ export const ChangePinPage: React.FC = () => {
                       Confirm New PIN
                     </span>
                     {activeField === 'CONFIRM' && (
-                      <span className="text-[10px] uppercase font-semibold text-champagne dark:text-accent font-mono">
+                      <span className="text-[10px] uppercase font-semibold text-accent font-mono">
                         Active
                       </span>
                     )}

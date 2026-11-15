@@ -9,6 +9,10 @@ export default {
     extend: {
       colors: {
         canvas: "var(--canvas)",
+        screen: "var(--screen)",
+        gold: "var(--gold)",
+        platinum: "var(--platinum)",
+        "on-accent": "var(--on-accent)",
         chassis: {
           DEFAULT: "var(--chassis-bg)",
           bezel: "var(--chassis-bezel)",
@@ -27,9 +31,13 @@ export default {
         secondary: "var(--text-secondary)",
         tertiary: "var(--text-tertiary)",
         navy: {
-          DEFAULT: "var(--navy)",
-          deep: "var(--navy-deep)",
+          DEFAULT: 'var(--navy)',
+          deep: 'var(--navy-deep)',
         },
+        // New Apex Blue tokens
+        'apex-blue': 'var(--apex-blue)',
+        'atlantic': 'var(--atlantic)',
+        'midnight': 'var(--midnight)',
         accent: {
           DEFAULT: "var(--accent)",
           hover: "var(--accent-hover)",
@@ -62,20 +70,22 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['"IBM Plex Sans"', 'Inter', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        sans: ['"Inter"', '"Instrument Sans"', '"Helvetica Neue"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+        display: ['Georgia', '"Times New Roman"', 'serif'],
         mono: ['"IBM Plex Mono"', '"JetBrains Mono"', '"SF Mono"', 'ui-monospace', 'monospace'],
       },
       borderRadius: {
-        'card': '14px',
-        'control': '10px',
-        'dialog': '20px',
+        'card': '10px',
+        'control': '8px',
+        'dialog': '14px',
       },
       boxShadow: {
         'luxury': 'var(--card-shadow)',
         'pocket': 'var(--screen-pocket)',
         'elevated': '0 12px 32px -4px rgba(0, 0, 0, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.06)',
         'cyan-glow': '0 0 16px -2px rgba(54, 188, 232, 0.45)',
-        'emerald-glow': '0 0 16px -2px rgba(0, 159, 125, 0.45)',
+        'apex-glow': '0 0 20px -4px rgba(0,111,207,0.35)',
+        'blue-glow': '0 0 16px -2px rgba(0,111,207,0.40)',
       }
     },
   },

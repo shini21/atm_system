@@ -12,7 +12,6 @@ import {
   ArrowUpRight,
   ArrowDownLeft,
   ArrowLeftRight,
-  ShieldCheck,
   Settings,
 } from 'lucide-react';
 
@@ -75,11 +74,6 @@ export const AccountOverviewCard: React.FC<AccountOverviewCardProps> = ({
             >
               {isCopied ? <Check className="w-3.5 h-3.5 text-success" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
-            <span>•</span>
-            <span className="flex items-center gap-1 text-[11px] text-accent">
-              <ShieldCheck className="w-3 h-3 text-emerald-500" />
-              <span>PCI-PTS v6</span>
-            </span>
           </div>
         </div>
 
@@ -126,7 +120,7 @@ export const AccountOverviewCard: React.FC<AccountOverviewCardProps> = ({
               <NumberTicker value={account?.availableBalance ?? 0} />
             )}
           </div>
-          <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 block mt-0.5">
+          <span className="text-[10px] font-mono text-success block mt-0.5">
             Instant withdrawal & transfer limit
           </span>
         </div>

@@ -4,13 +4,17 @@ import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useHardware } from '../context/HardwareContext';
 import { Keypad } from '../components/ui/Keypad';
-import { DecryptedText } from '../components/ui/DecryptedText';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, AlertCircle, ArrowLeft, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { Lock, AlertCircle, ArrowLeft, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import { ApexCard } from '../components/cards/ApexCard';
+import { BrandLogo } from '../components/brand/BrandLogo';
+import { useTheme } from '../context/ThemeContext';
 
 export const PinPage: React.FC = () => {
   const [pin, setPin] = useState<string>('');
   const [isShaking, setIsShaking] = useState<boolean>(false);
+  const [showPin, setShowPin] = useState<boolean>(false);
+  const { theme } = useTheme();
   const { cardStatus, login, isLoading, error, clearCard, clearError } = useAuth();
   const { t } = useLanguage();
   const { registerKeypadListener, registerSideKeys } = useHardware();
@@ -111,145 +115,100 @@ export const PinPage: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-2 sm:py-4 w-full">
-      {/* Centered Glassmorphic Authentication Card per Style Guide §10.1 */}
-      <div className="w-full max-w-md mx-auto rounded-3xl bg-surface/90 dark:bg-surface/80 backdrop-blur-md border border-border-subtle p-5 sm:p-7 shadow-luxury transition-all">
-        {/* Card Identification & Encrypted Security Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between gap-2 px-3.5 py-1.5 rounded-full bg-surface-subdued border border-border-subtle mb-5 text-xs shadow-xs"
-        >
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="font-mono font-bold text-primary truncate">
-              <DecryptedText text={cardStatus.maskedCardNumber || cardStatus.cardNumber} />
-            </span>
-            <span className="w-1 h-1 rounded-full bg-border-strong flex-shrink-0" />
-            <span className="text-secondary font-medium truncate">
-              <DecryptedText text={cardStatus.cardHolderName} />
-            </span>
-          </div>
-          <div className="inline-flex items-center gap-1 text-[10px] text-tertiary flex-shrink-0 font-medium">
-            <ShieldCheck className="w-3 h-3 text-accent" />
-            <span>256-Bit</span>
-          </div>
-        </motion.div>
+    <div className="w-full grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 lg:gap-12 items-center max-w-4xl mx-auto py-1">
+      {/* LEFT — identity: official mark, selected card, cardholder */}
+      <section aria-label="Card identification" className="flex flex-col items-center md:items-start gap-4">
+        <BrandLogo variant="horizontal" surface={theme === 'dark' ? 'dark' : 'light'} className="w-40 h-[3.4rem]" />
+        <ApexCard
+          cardNumber={cardStatus.cardNumber}
+          cardHolderName={cardStatus.cardHolderName}
+          expiryDate={cardStatus.expiryDate}
+          accountType={cardStatus.accountType}
+          isBlocked={cardStatus.blocked}
+          isExpired={cardStatus.expired}
+          flippable={false}
+        />
+        <dl className="text-xs grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 w-full max-w-[420px]">
+          <dt className="text-tertiary">Cardholder</dt>
+          <dd className="font-medium text-primary truncate">{cardStatus.cardHolderName}</dd>
+          <dt className="text-tertiary">Card</dt>
+          <dd className="font-mono text-primary">{cardStatus.maskedCardNumber || cardStatus.cardNumber}</dd>
+        </dl>
+      </section>
 
-        {/* Screen Title */}
-        <div className="text-center mb-5">
-          <h1 className="text-2xl font-semibold tracking-tight text-primary">
-            {t('pin.title')}
-          </h1>
-          <p className="text-xs sm:text-sm text-secondary mt-1">
-            {t('pin.subtitle')}
-          </p>
+      {/* RIGHT — PIN entry */}
+      <section aria-labelledby="pin-heading" className="w-full max-w-sm mx-auto md:mx-0 rounded-card bg-surface border border-border-subtle p-5 sm:p-6 shadow-luxury">
+        <div className="text-center mb-4">
+          <h1 id="pin-heading" className="font-sans text-2xl sm:text-3xl font-semibold tracking-tight text-primary">{t('pin.title')}</h1>
+          <p className="text-xs sm:text-sm text-secondary mt-1">{t('pin.subtitle')}</p>
         </div>
 
-        {/* Error Alert Banner */}
         <AnimatePresence>
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.98 }}
-              className="w-full mb-4 p-3 rounded-2xl bg-danger-subtle border border-danger/30 text-danger text-xs flex items-start gap-2 shadow-xs"
-            >
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-semibold text-danger">Verification Failed</p>
-                <p className="opacity-95 mt-0.5">{error}</p>
-              </div>
+            <motion.div role="alert" initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+              className="w-full mb-4 p-3 rounded-control bg-danger-subtle border border-danger/30 text-danger text-xs flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden="true" />
+              <div><p className="font-semibold">Verification failed</p><p className="mt-0.5">{error}</p></div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* 4 Animated PIN Indicator Pips with Glowing Pop & Error Flash */}
+        {/* PIN field: four slots; digits are masked unless the user chooses to reveal them */}
         <motion.div
-          animate={
-            isShaking
-              ? {
-                  x: [-12, 12, -8, 8, -4, 4, 0],
-                  transition: { duration: 0.45, ease: 'easeInOut' },
-                }
-              : {}
-          }
-          className={`flex items-center justify-center gap-4 mb-5 py-3.5 px-6 rounded-2xl border transition-all duration-200 ${
-            isShaking
-              ? 'bg-danger-subtle border-danger shadow-[0_0_16px_rgba(239,68,68,0.3)]'
-              : 'bg-surface-subdued/80 border-border-subtle'
-          }`}
+          animate={isShaking ? { x: [-10, 10, -6, 6, -3, 3, 0], transition: { duration: 0.4 } } : {}}
+          className={`flex items-center justify-center gap-3 mb-2 py-3 px-4 rounded-control border ${isShaking ? 'bg-danger-subtle border-danger' : 'bg-surface-subdued border-border-subtle'}`}
+          role="group"
+          aria-label={`PIN, ${pin.length} of 4 digits entered`}
         >
           {[0, 1, 2, 3].map((index) => {
-            const isFilled = index < pin.length;
+            const filled = index < pin.length;
             return (
-              <motion.div
-                key={index}
-                initial={false}
-                animate={{
-                  scale: isFilled ? [1, 1.4, 1] : 1,
-                  backgroundColor: isShaking
-                    ? 'var(--danger)'
-                    : isFilled
-                    ? 'var(--text-primary)'
-                    : 'transparent',
-                  borderColor: isShaking
-                    ? 'var(--danger)'
-                    : isFilled
-                    ? 'var(--text-primary)'
-                    : 'var(--border-strong)',
-                }}
-                transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-                className={`w-4 h-4 rounded-full border-2 transition-all ${
-                  isFilled && !isShaking
-                    ? 'shadow-[0_0_8px_rgba(0,0,0,0.2)] dark:shadow-[0_0_8px_rgba(255,255,255,0.3)]'
-                    : ''
-                }`}
-              />
+              <div key={index} className={`w-11 h-12 rounded-md border-2 flex items-center justify-center font-mono text-2xl ${filled ? 'border-accent bg-accent/5 text-primary' : 'border-border-strong text-tertiary'}`}>
+                {filled ? (showPin ? pin[index] : '•') : ''}
+              </div>
             );
           })}
         </motion.div>
+        <div className="flex justify-center mb-4">
+          <button type="button" aria-pressed={showPin} onClick={() => setShowPin((v) => !v)}
+            className="inline-flex items-center gap-1.5 px-2.5 min-h-[36px] text-xs font-medium text-secondary hover:text-primary rounded-md cursor-pointer">
+            {showPin ? <EyeOff className="w-3.5 h-3.5" aria-hidden="true" /> : <Eye className="w-3.5 h-3.5" aria-hidden="true" />}
+            {showPin ? 'Hide PIN' : 'Show PIN'}
+          </button>
+        </div>
 
-        {/* Security Notice & Remaining Attempts Indicator */}
-        <div className="text-center mb-5 flex items-center justify-center">
+        <div className="text-center mb-4 flex items-center justify-center">
           {cardStatus.remainingAttempts < 3 ? (
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-subtle border border-warning/30 text-warning text-xs font-semibold animate-pulse">
-              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning-subtle border border-warning/30 text-warning text-xs font-semibold">
+              <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
               <span>{cardStatus.remainingAttempts} attempts remaining before card lockout</span>
             </div>
           ) : (
             <div className="inline-flex items-center gap-1.5 text-[11px] text-tertiary">
-              <Lock className="w-3 h-3 text-tertiary" />
-              <span>3 attempts remaining • Secure input</span>
+              <Lock className="w-3 h-3" aria-hidden="true" />
+              <span>3 attempts remaining • PIN entry is masked</span>
             </div>
           )}
         </div>
 
-        {/* Refined Tactile Numeric Touch Keypad */}
         <Keypad
           onKeyPress={handleKeyPress}
           onBackspace={handleBackspace}
           onClear={handleClear}
           onSubmit={() => handleSubmitPin(pin)}
-          submitLabel="Confirm PIN"
+          submitLabel="Continue"
           submitDisabled={pin.length !== 4}
           isLoading={isLoading}
         />
 
-        {/* Cancel & Return Card Action */}
-        <div className="mt-5 text-center">
-          <button
-            type="button"
-            onClick={() => {
-              clearCard();
-              navigate('/');
-            }}
-            className="inline-flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors cursor-pointer select-none"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
+        <div className="mt-4 text-center">
+          <button type="button" onClick={() => { clearCard(); navigate('/'); }}
+            className="inline-flex items-center gap-1.5 min-h-[40px] px-2 text-xs text-secondary hover:text-primary cursor-pointer">
+            <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Cancel and return card</span>
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 };

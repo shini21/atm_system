@@ -24,7 +24,7 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'relative inline-flex items-center justify-center font-medium rounded-control select-none outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none transition-all focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
+    'relative inline-flex items-center justify-center font-medium rounded-control select-none outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none transition-all focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface';
 
   const sizeStyles = {
     sm: 'px-3 py-1.5 text-xs gap-1.5 rounded-lg',
@@ -34,13 +34,13 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary:
-      'bg-accent text-white hover:bg-accent-hover shadow-sm active:opacity-95 shadow-emerald-glow/20',
+      'bg-accent text-on-accent hover:bg-accent-hover shadow-sm active:bg-accent-active',
     secondary:
       'bg-surface-subdued text-primary hover:bg-surface-hover border border-border-subtle active:bg-surface-hover shadow-xs',
     accent:
-      'bg-cyan text-white hover:opacity-90 shadow-sm active:opacity-100 shadow-cyan-glow/30',
+      'bg-accent text-on-accent hover:bg-accent-hover shadow-sm',
     champagne:
-      'bg-champagne text-white hover:opacity-90 shadow-sm active:opacity-100',
+      'bg-accent text-on-accent hover:bg-accent-hover shadow-sm active:bg-accent-active',
     ghost:
       'bg-transparent text-secondary hover:text-primary hover:bg-surface-subdued active:bg-surface-subdued',
     danger:
@@ -116,7 +116,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   const shapeClass = shape === 'circle' ? 'rounded-full' : 'rounded-lg';
 
   const variantClass = {
-    primary: 'bg-accent text-white hover:bg-accent-hover shadow-sm',
+    primary: 'bg-accent text-on-accent hover:bg-accent-hover shadow-sm',
     secondary: 'bg-surface-subdued text-primary hover:bg-surface-hover border border-border-subtle',
     ghost: 'bg-transparent text-secondary hover:text-primary hover:bg-surface-subdued',
     outline: 'bg-transparent text-primary border border-border-strong hover:bg-surface-subdued',
@@ -141,7 +141,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
       whileTap={{ scale: disabled ? 1 : 0.94 }}
       transition={{ type: 'spring', stiffness: 500, damping: 25 }}
       onClick={handleClick}
-      className={`inline-flex items-center justify-center cursor-pointer select-none outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${sizeClass} ${shapeClass} ${variantClass} ${className}`}
+      className={`inline-flex items-center justify-center cursor-pointer select-none outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${sizeClass} ${shapeClass} ${variantClass} ${className}`}
       {...(props as any)}
     >
       {icon}

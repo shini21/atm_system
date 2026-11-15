@@ -1,6 +1,6 @@
 /// <reference types="@testing-library/jest-dom/vitest" />
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Keypad } from '../components/ui/Keypad';
 import { sound } from '../utils/sound';
 
@@ -402,13 +402,14 @@ describe('Authentication, PIN & Session Security (Phase 5)', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('Welcome to Apex')).toBeInTheDocument();
-    expect(screen.getByText(/APEX Touch Banking/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Welcome to Apex Bank' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Card identifier')).toBeInTheDocument();
+    expect(screen.getByTestId('apex-card')).toBeInTheDocument();
     expect(screen.getByText('Classroom Demo Profiles')).toBeInTheDocument();
-    expect(screen.getByText('CARD1001')).toBeInTheDocument();
-    expect(screen.getByText('CARD1002')).toBeInTheDocument();
-    expect(screen.getByText('CARD1003')).toBeInTheDocument();
-    expect(screen.getByText('CARD1004')).toBeInTheDocument();
+    expect(within(screen.getByRole('group', { name: 'Demo profiles' })).getByText('CARD1001')).toBeInTheDocument();
+    expect(within(screen.getByRole('group', { name: 'Demo profiles' })).getByText('CARD1002')).toBeInTheDocument();
+    expect(within(screen.getByRole('group', { name: 'Demo profiles' })).getByText('CARD1003')).toBeInTheDocument();
+    expect(within(screen.getByRole('group', { name: 'Demo profiles' })).getByText('CARD1004')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /insert card/i })).toBeInTheDocument();
   });
 
@@ -422,7 +423,7 @@ describe('Authentication, PIN & Session Security (Phase 5)', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText(/256-Bit/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /show pin/i })).toBeInTheDocument();
     expect(screen.getByText(/3 attempts remaining/i)).toBeInTheDocument();
     expect(screen.getByText(/cancel and return card/i)).toBeInTheDocument();
   });
@@ -500,7 +501,7 @@ describe('ATM Hardware Simulation (Phase 7)', () => {
 
     render(<CardSlot />);
 
-    expect(screen.getByText('Card Reader')).toBeInTheDocument();
+    expect(screen.getByText('Card reader')).toBeInTheDocument();
   });
 
   it('renders CashDispenserSlot with note shutter and status indicators', async () => {
@@ -508,7 +509,7 @@ describe('ATM Hardware Simulation (Phase 7)', () => {
 
     render(<CashDispenserSlot />);
 
-    expect(screen.getByText('Note Dispenser')).toBeInTheDocument();
+    expect(screen.getByText('Cash dispenser')).toBeInTheDocument();
   });
 
   it('renders ReceiptPrinterSlot with paper slot and status', async () => {
@@ -516,7 +517,7 @@ describe('ATM Hardware Simulation (Phase 7)', () => {
 
     render(<ReceiptPrinterSlot />);
 
-    expect(screen.getByText('Receipt Printer')).toBeInTheDocument();
+    expect(screen.getByText('Receipt printer')).toBeInTheDocument();
   });
 
   it('renders PhysicalKeypad with tactile hardware buttons and function keys', async () => {
@@ -524,10 +525,10 @@ describe('ATM Hardware Simulation (Phase 7)', () => {
 
     render(<PhysicalKeypad />);
 
-    expect(screen.getByText('Hardware PIN Pad')).toBeInTheDocument();
-    expect(screen.getByText('ENTER')).toBeInTheDocument();
-    expect(screen.getByText('Cancel')).toBeInTheDocument();
-    expect(screen.getByText('Clear')).toBeInTheDocument();
+    expect(screen.getByText('PIN pad')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'PIN pad enter' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'PIN pad cancel' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'PIN pad clear' })).toBeInTheDocument();
   });
 });
 

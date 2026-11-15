@@ -277,7 +277,7 @@ export const DashboardPage: React.FC = () => {
         {/* Bottom Status Ticker Bar */}
         <div className="pt-3 border-t border-border-subtle flex flex-wrap items-center justify-between text-[11px] text-tertiary font-mono">
           <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
             <span>Terminal Ready • 24/7 Apex Network</span>
           </div>
           <div className="flex items-center gap-3">

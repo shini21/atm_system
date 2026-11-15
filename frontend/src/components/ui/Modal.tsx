@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { IconButton } from './Button';
@@ -28,6 +28,42 @@ export const Modal: React.FC<ModalProps> = ({
     lg: 'max-w-lg',
     xl: 'max-w-xl',
   }[maxWidth];
+
+  const uid = useId();
+  const titleId = `${uid}-title`;
+  const descId = `${uid}-desc`;
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Focus management: move focus into the dialog, trap Tab, restore focus on close
+  useEffect(() => {
+    if (!isOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const focusables = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
+    const raf = requestAnimationFrame(() => {
+      const first = focusables()[0];
+      (first ?? panelRef.current)?.focus();
+    });
+    const trap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+      const els = focusables();
+      if (els.length === 0) { e.preventDefault(); return; }
+      const first = els[0];
+      const last = els[els.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', trap);
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener('keydown', trap);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen]);
 
   // Close modal on Escape key press
   useEffect(() => {
@@ -61,8 +97,8 @@ export const Modal: React.FC<ModalProps> = ({
         <div
           role="dialog"
           aria-modal="true"
-          aria-labelledby={title ? 'modal-title' : undefined}
-          aria-describedby={description ? 'modal-desc' : undefined}
+          aria-labelledby={title ? titleId : undefined}
+          aria-describedby={description ? descId : undefined}
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
         >
           {/* Backdrop */}
@@ -72,7 +108,7 @@ export const Modal: React.FC<ModalProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/75 backdrop-blur-sm"
+            className="fixed inset-0 bg-midnight/70"
             aria-hidden="true"
           />
 
@@ -82,8 +118,10 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 12 }}
             transition={{ type: 'spring', damping: 28, stiffness: 380 }}
+            ref={panelRef}
+            tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
-            className={`relative w-full ${maxWidthClass} z-10 p-5 sm:p-6 rounded-dialog bg-surface border border-border-strong text-primary shadow-luxury overflow-hidden my-auto`}
+            className={`relative outline-none w-full ${maxWidthClass} z-10 p-5 sm:p-6 rounded-dialog bg-surface border border-border-strong text-primary shadow-luxury overflow-hidden my-auto`}
           >
             {/* Header */}
             {(title || showCloseButton) && (
@@ -91,14 +129,14 @@ export const Modal: React.FC<ModalProps> = ({
                 <div className="min-w-0">
                   {title && (
                     <h3
-                      id="modal-title"
-                      className="text-base sm:text-lg font-semibold tracking-tight text-primary truncate"
+                      id={titleId}
+                      className="font-sans text-xl sm:text-2xl font-semibold tracking-tight text-primary"
                     >
                       {title}
                     </h3>
                   )}
                   {description && (
-                    <p id="modal-desc" className="text-xs text-secondary mt-0.5">
+                    <p id={descId} className="text-xs text-secondary mt-0.5">
                       {description}
                     </p>
                   )}
