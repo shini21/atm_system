@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Apex Bank">
-<rect width="64" height="64" rx="14" fill="#111214"/>
-<g transform="translate(12.8 12.8) scale(.6)"><path fill="#FFFFFF" d="M30.5 6 4 59h11l15.5-31zM33.5 6 60 59H49L33.5 28z"/><path fill="#D7B979" d="M22.7 43h18.6l2.5 5H20.2z"/></g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="2 2 60 58" role="img"><title>Apex Bank</title><path fill="#006FCF" d="M32 3L61 32L61 45L32 16L3 45L3 32Z"/><path fill="#003B70" d="M32 21L54 43L54 54L32 32L10 54L10 43Z"/><path fill="#E71319" d="M32 37L45 50L45 59L32 46L19 59L19 50Z"/></svg>

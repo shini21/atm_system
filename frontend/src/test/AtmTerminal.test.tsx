@@ -402,7 +402,7 @@ describe('Authentication, PIN & Session Security (Phase 5)', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByRole('heading', { name: 'Welcome to Apex Bank' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Welcome to Apex Bank Limited' })).toBeInTheDocument();
     expect(screen.getByLabelText('Card identifier')).toBeInTheDocument();
     expect(screen.getByTestId('apex-card')).toBeInTheDocument();
     expect(screen.getByText('Classroom Demo Profiles')).toBeInTheDocument();

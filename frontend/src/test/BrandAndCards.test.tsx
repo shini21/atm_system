@@ -5,23 +5,52 @@ import { ApexCard } from '../components/cards/ApexCard';
 import { ReceiptDocument, maskAccount } from '../components/atm/ReceiptDocument';
 import { CARD_THEMES, formatExpiry, lastFour } from '../utils/cardThemes';
 
-describe('Official Apex brand identity', () => {
-  it('renders the original lockup SVG inline with live brand text and untouched geometry', () => {
+describe('Official Apex brand identity (Round 5 Wordmark + Round 6 Refinement 1 Variant B)', () => {
+  it('renders the approved horizontal lockup with nested chevron emblem and outlined wordmark', () => {
     const { container } = render(<BrandLogo variant="horizontal" surface="light" />);
     const svg = container.querySelector('svg')!;
-    expect(svg.getAttribute('viewBox')).toBe('-20 -10 320 120');
-    expect(container.innerHTML).toContain('M30.5 6 4 59h11l15.5-31zM33.5 6 60 59H49L33.5 28z'); // official A
-    expect(container.innerHTML).toContain('M22.7 43h18.6l2.5 5H20.2z'); // official gold crossbar
-    expect(container.textContent).toContain('APEX');
-    expect(container.innerHTML).toContain('Cormorant Garamond');
-    expect(container.innerHTML).toContain('Instrument Sans');
+    // New approved horizontal lockup viewBox
+    expect(svg.getAttribute('viewBox')).toBe('0 0 438.2 51.8');
+    // Emblem: three nested chevron paths with correct colors
+    expect(container.innerHTML).toContain('M32 3L61 32L61 45L32 16L3 45L3 32Z'); // outer chevron
+    expect(container.innerHTML).toContain('M32 21L54 43L54 54L32 32L10 54L10 43Z'); // middle chevron
+    expect(container.innerHTML).toContain('M32 37L45 50L45 59L32 46L19 59L19 50Z'); // inner chevron
+    // Approved emblem colors: #006FCF, #003B70, #E71319
+    expect(container.innerHTML).toContain('#006FCF');
+    expect(container.innerHTML).toContain('#003B70');
+    expect(container.innerHTML).toContain('#E71319');
+    // Wordmark: outlined italic APEX BANK (no font dependency)
+    expect(container.innerHTML).toContain('fill-rule="evenodd"');
+    // No Cormorant Garamond or Instrument Sans font references in new outlined artwork
+    expect(container.innerHTML).not.toContain('Cormorant Garamond');
+    expect(container.innerHTML).not.toContain('Instrument Sans');
   });
 
-  it('drops only the opaque background plate unless asked to keep it', () => {
+  it('renders the standalone emblem (monogram) correctly for dark surfaces', () => {
+    const { container } = render(<BrandLogo variant="monogram" surface="dark" />);
+    const svg = container.querySelector('svg')!;
+    // Emblem viewBox
+    expect(svg.getAttribute('viewBox')).toBe('2 2 60 58');
+    // White chevrons with red inner accent for dark surface
+    expect(container.innerHTML).toContain('#FFFFFF');
+    expect(container.innerHTML).toContain('#E71319');
+  });
+
+  it('drops the background plate (not used in new outlined artwork)', () => {
     const bare = render(<BrandLogo variant="monogram" surface="dark" />).container.innerHTML;
     const plated = render(<BrandLogo variant="monogram" surface="dark" plate />).container.innerHTML;
+    // New artwork has no opaque background rect
     expect(bare).not.toContain('<rect');
-    expect(plated).toContain('<rect');
+    expect(plated).not.toContain('<rect');
+  });
+
+  it('renders stacked variant with emblem above wordmark', () => {
+    const { container } = render(<BrandLogo variant="vertical" surface="light" />);
+    const svg = container.querySelector('svg')!;
+    expect(svg.getAttribute('viewBox')).toBe('0 0 367 190');
+    // Contains both emblem and wordmark
+    expect(container.innerHTML).toContain('M32 3L61 32L61 45L32 16L3 45L3 32Z');
+    expect(container.innerHTML).toContain('fill-rule="evenodd"');
   });
 });
 
@@ -46,7 +75,7 @@ describe('Apex card system', () => {
 
   it('never fabricates a payment network: shows a labelled placeholder when the model has none', () => {
     render(<ApexCard cardNumber="CARD1001" />);
-    expect(screen.getByTestId('card-network').textContent).toMatch(/NETWORK/);
+    expect(screen.getByTestId('card-network').textContent).toMatch(/N\/A/);
   });
 
   it('flips with an aria-pressed control and the back shows no CVV or full number', () => {
@@ -80,7 +109,9 @@ describe('Receipt document', () => {
     expect(screen.queryByText('ACC1001')).toBeNull();
     expect(screen.getByText('TXN-1001')).toBeInTheDocument();
     expect(screen.getByText('✓ Completed')).toBeInTheDocument();
-    expect(screen.getByTestId('apex-brand-logo')).toBeInTheDocument();
+    // New BrandLogo renders as SVG with role="img" but doesn't use data-testid
+    // Check for the logo via its aria-label instead
+    expect(screen.getByRole('img', { name: 'Apex Bank' })).toBeInTheDocument();
     expect(screen.getByText(/No real funds or card data/)).toBeInTheDocument();
   });
 });

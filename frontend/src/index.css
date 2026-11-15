@@ -8,9 +8,10 @@
 @layer base {
   :root {
     /* -------------------------------------------------------------------------
-     * APEX BANK — Brand tokens v2 (Amex-inspired blue-and-white identity)
+     * APEX BANK — Brand tokens v3 (Approved Round 5 Wordmark + Round 6 Refinement 1 Variant B)
      * Brand: Apex Blue #006FCF · Atlantic #003B70 · Midnight #172B45
      *        Platinum Silver #B8C5D3 · Ice Grey #F3F6FA · Silver Mist #E6EBF1
+     *        Graphite #202B38 · Success #059669 · Error #DC5252 · Warning #D49A42
      * ------------------------------------------------------------------------- */
     --canvas: #EDF1F7;             /* Cool blue-tinted page background */
     --surface: #FFFFFF;            /* Cards, forms, primary content */
@@ -39,7 +40,7 @@
     /* Accent mapping */
     --navy: #172B45;               /* Keep --navy for backwards compat (now Midnight Blue) */
     --navy-deep: #003B70;          /* Atlantic Blue */
-    --accent: #006FCF;             /* PRIMARY: Apex Blue (was navy #17243B — now blue) */
+    --accent: #006FCF;             /* PRIMARY: Apex Blue */
     --accent-hover: #005BB5;
     --accent-active: #004A96;
     --accent-subtle: rgba(0,111,207,0.08);
@@ -48,7 +49,7 @@
     /* Keep gold/platinum as card/detail tokens, NOT primary UI */
     --gold: #D7B979;               /* Card chip only */
     --platinum: #B8C5D3;           /* Platinum Silver */
-    --cyan: #006FCF;               /* Was #2B4C7E — now matches Apex Blue */
+    --cyan: #006FCF;               /* Matches Apex Blue */
     --cyan-subtle: rgba(0,111,207,0.12);
     /* Deprecate champagne from active UI */
     --champagne: #697586;          /* Remapped to secondary text */
@@ -56,12 +57,12 @@
     --accent-brass: #006FCF;       /* Remapped to Apex Blue */
     --accent-brass-subtle: rgba(0,111,207,0.08);
 
-    --success: #168653;
-    --success-subtle: rgba(22,134,83,0.10);
-    --warning: #B7791F;
-    --warning-subtle: rgba(183,121,31,0.12);
-    --danger: #C62828;
-    --danger-subtle: rgba(198,40,40,0.08);
+    --success: #059669;            /* Approved Success */
+    --success-subtle: rgba(5,150,105,0.10);
+    --warning: #D49A42;            /* Approved Warning */
+    --warning-subtle: rgba(212,154,66,0.12);
+    --danger: #DC5252;             /* Approved Error */
+    --danger-subtle: rgba(220,82,82,0.08);
     --info: #1674B8;
     --info-subtle: rgba(22,116,184,0.10);
 
@@ -107,12 +108,12 @@
     --accent-brass-subtle: rgba(215, 185, 121, 0.16);
     --platinum: #C5CAD2;
 
-    --success: #2FBD7E;
-    --success-subtle: rgba(47,189,126,0.16);
-    --warning: #E5AE5C;
-    --warning-subtle: rgba(229,174,92,0.16);
-    --danger: #F07070;
-    --danger-subtle: rgba(240,112,112,0.14);
+    --success: #059669;            /* Approved Success */
+    --success-subtle: rgba(5,150,105,0.16);
+    --warning: #D49A42;            /* Approved Warning */
+    --warning-subtle: rgba(212,154,66,0.16);
+    --danger: #DC5252;             /* Approved Error */
+    --danger-subtle: rgba(220,82,82,0.14);
     --info: #60AFDE;
     --info-subtle: rgba(96,175,222,0.14);
 
@@ -183,19 +184,20 @@
 }
 
 
-/* Terminal enclosure: blue-tinted anodised shell with a thin edge highlight and subtle grain */
+/* Terminal enclosure: Brushed silver aluminium appearance with premium institutional feel */
 .apex-chassis {
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.40), rgba(255,255,255,0) 30%),
-    repeating-linear-gradient(90deg, rgba(23,43,69,0.014) 0 1px, transparent 1px 4px),
+    linear-gradient(180deg, rgba(255,255,255,0.50), rgba(255,255,255,0) 25%),
+    repeating-linear-gradient(90deg, rgba(23,43,69,0.012) 0 1px, transparent 1px 3px),
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.35) 0%, transparent 60%),
     var(--chassis-bg);
   border: 1px solid var(--chassis-bezel);
   box-shadow:
     inset 0 1px 0 var(--chassis-hi),
     inset 0 -1px 0 var(--chassis-lo),
     0 1px 0 var(--chassis-hi),
-    0 32px 64px -24px rgba(23,43,69,0.30),
-    0 8px 20px -10px rgba(23,43,69,0.18);
+    0 40px 80px -32px rgba(23,43,69,0.35),
+    0 12px 28px -12px rgba(23,43,69,0.22);
 }
 
 @media (prefers-reduced-motion: reduce) {

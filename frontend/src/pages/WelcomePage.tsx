@@ -134,7 +134,7 @@ export const WelcomePage: React.FC = () => {
             Terminal X-9000 · {t('app.location')} · Simulated
           </p>
           <h1 id="welcome-heading" className="mt-2 font-sans text-3xl sm:text-4xl font-semibold tracking-tight text-primary leading-[1.1]">
-            Welcome to Apex Bank
+            Welcome to Apex Bank Limited
           </h1>
           <p className="mt-3 text-sm sm:text-base text-secondary max-w-md">
             Insert your debit card or choose a demo profile to begin. Every account and card here is fictional.
@@ -165,9 +165,8 @@ export const WelcomePage: React.FC = () => {
                     type="button"
                     aria-pressed={cardTheme === th.id}
                     onClick={() => setCardTheme(th.id)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 min-h-[32px] rounded-full text-[11px] font-medium border transition-colors cursor-pointer ${
-                      cardTheme === th.id ? 'bg-accent text-on-accent border-accent' : 'bg-surface text-secondary border-border-subtle hover:bg-surface-hover'
-                    }`}
+                    className={`inline-flex items-center gap-1.5 px-2.5 min-h-[32px] rounded-full text-[11px] font-medium border transition-colors cursor-pointer ${cardTheme === th.id ? 'bg-accent text-on-accent border-accent' : 'bg-surface text-secondary border-border-subtle hover:bg-surface-hover'
+                      }`}
                   >
                     <span aria-hidden="true" className="w-3 h-3 rounded-full border border-black/20" style={{ background: th.face }} />
                     {th.label}
@@ -186,9 +185,8 @@ export const WelcomePage: React.FC = () => {
                     type="button"
                     aria-pressed={cardTier === tr.id}
                     onClick={() => setCardTier(tr.id as CardTier | undefined)}
-                    className={`px-2.5 min-h-[32px] rounded-full text-[11px] font-medium border transition-colors cursor-pointer ${
-                      cardTier === tr.id ? 'bg-accent text-on-accent border-accent' : 'bg-surface text-secondary border-border-subtle hover:bg-surface-hover'
-                    }`}
+                    className={`px-2.5 min-h-[32px] rounded-full text-[11px] font-medium border transition-colors cursor-pointer ${cardTier === tr.id ? 'bg-accent text-on-accent border-accent' : 'bg-surface text-secondary border-border-subtle hover:bg-surface-hover'
+                      }`}
                   >
                     {tr.label}
                   </button>
@@ -255,9 +253,8 @@ export const WelcomePage: React.FC = () => {
                 aria-pressed={isSelected}
                 disabled={isInserting || isLoading}
                 onClick={() => handleSelectDemo(card.cardNumber)}
-                className={`relative p-3 rounded-card border text-left transition-all cursor-pointer disabled:opacity-60 ${
-                  isSelected ? 'bg-surface border-accent shadow-md ring-2 ring-accent/25' : 'bg-surface hover:bg-surface-hover border-border-subtle'
-                }`}
+                className={`relative p-3 rounded-card border text-left transition-all cursor-pointer disabled:opacity-60 ${isSelected ? 'bg-surface border-accent shadow-md ring-2 ring-accent/25' : 'bg-surface hover:bg-surface-hover border-border-subtle'
+                  }`}
               >
                 {isSelected && <span aria-hidden="true" className="absolute left-0 top-3 bottom-3 w-[3px] rounded-r bg-accent" />}
                 <div className="flex items-center justify-between mb-1.5 gap-2">

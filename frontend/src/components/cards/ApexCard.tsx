@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldAlert, ShieldCheck, Clock, RotateCw } from 'lucide-react';
 import { BrandLogo } from '../brand/BrandLogo';
+import { NetworkLogo, normalizeNetwork } from '../brand/NetworkLogo';
 import {
   CARD_TIERS,
   type CardThemeId,
@@ -166,12 +167,23 @@ export const ApexCard: React.FC<ApexCardProps> = ({
                     data-testid="card-network"
                     title={network ? undefined : 'Payment network is not part of the card model yet'}
                     style={{
-                      flexShrink: 0, fontSize: '2.4cqw', fontWeight: 700, letterSpacing: '0.3cqw', textAlign: 'center',
-                      padding: '1cqw 1.8cqw', borderRadius: '1cqw', color: t.inkMuted,
-                      border: network ? 'none' : `0.3cqw dashed ${t.inkMuted}`,
+                      flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '32cqw', height: '16cqw', borderRadius: '1.5cqw',
+                      background: network ? 'transparent' : `repeating-linear-gradient(45deg, ${t.inkMuted} 0 0.5cqw, transparent 0.5cqw 2cqw)`,
                     }}
                   >
-                    {network ? network.toUpperCase() : <>DEBIT<br />NETWORK&nbsp;N/A</>}
+                    {network ? (
+                      <NetworkLogo
+                        network={normalizeNetwork(network) || 'visa'}
+                        variant={t.light ? 'color' : 'white'}
+                        size={28}
+                      />
+                    ) : (
+                      <>
+                        <span style={{ fontSize: '1.6cqw', fontWeight: 600, color: t.inkMuted, letterSpacing: '0.2cqw' }}>DEBIT</span>
+                        <span style={{ fontSize: '1.4cqw', color: t.inkMuted, marginLeft: '1cqw' }}>N/A</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
