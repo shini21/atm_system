@@ -75,6 +75,7 @@ export const ApexCard: React.FC<ApexCardProps> = ({
   const t = getCardTheme(theme);
   const [flipped, setFlipped] = useState(false);
   const last4 = lastFour(cardNumber);
+  const paymentNetwork = network ? normalizeNetwork(network) : null;
   const tierLabel = tier ? CARD_TIERS.find((x) => x.id === tier)?.label : undefined;
   const status = isBlocked ? 'Blocked' : isExpired ? 'Expired' : 'Active';
   const StatusIcon = isBlocked ? ShieldAlert : isExpired ? Clock : ShieldCheck;
@@ -165,18 +166,20 @@ export const ApexCard: React.FC<ApexCardProps> = ({
                   </div>
                   <div
                     data-testid="card-network"
-                    title={network ? undefined : 'Payment network is not part of the card model yet'}
+                    title={paymentNetwork ? undefined : 'Payment network unavailable'}
                     style={{
                       flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      width: '32cqw', height: '16cqw', borderRadius: '1.5cqw',
-                      background: network ? 'transparent' : `repeating-linear-gradient(45deg, ${t.inkMuted} 0 0.5cqw, transparent 0.5cqw 2cqw)`,
+                      width: '22cqw', height: '12cqw', borderRadius: '1.5cqw',
+                      padding: paymentNetwork === 'visa' ? '2cqw' : undefined,
+                      background: paymentNetwork ? (paymentNetwork === 'visa' || paymentNetwork === 'rupay' ? '#FFFFFF' : 'transparent') : `repeating-linear-gradient(45deg, ${t.inkMuted} 0 0.5cqw, transparent 0.5cqw 2cqw)`,
                     }}
                   >
-                    {network ? (
+                    {paymentNetwork ? (
                       <NetworkLogo
-                        network={normalizeNetwork(network) || 'visa'}
-                        variant={t.light ? 'color' : 'white'}
-                        size={28}
+                        network={paymentNetwork}
+                        variant="color"
+                        size={80}
+                        className="w-full h-full"
                       />
                     ) : (
                       <>

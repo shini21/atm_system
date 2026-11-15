@@ -8,7 +8,7 @@
  * NOTE: the current backend card model (CardStatus) carries no tier or payment-network field.
  * Tier is therefore an optional prop that defaults to "none" and renders nothing; it is never
  * inferred from account type or balance. Likewise the network slot shows an explicit placeholder
- * instead of a fabricated Visa / Mastercard / RuPay mark.
+ * for unknown cards. Demo profiles provide an explicit fictional network for their artwork.
  */
 export type CardTier = 'signature' | 'elite' | 'privilege' | 'platinum';
 export type CardThemeId =

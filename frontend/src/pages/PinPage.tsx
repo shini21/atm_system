@@ -1,3 +1,4 @@
+import { DEMO_CARDS } from '../utils/demoCards';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -121,6 +122,7 @@ export const PinPage: React.FC = () => {
         <BrandLogo variant="horizontal" surface={theme === 'dark' ? 'dark' : 'light'} className="w-40 h-[3.4rem]" />
         <ApexCard
           cardNumber={cardStatus.cardNumber}
+              network={DEMO_CARDS.find((card) => card.cardNumber === cardStatus.cardNumber)?.network}
           cardHolderName={cardStatus.cardHolderName}
           expiryDate={cardStatus.expiryDate}
           accountType={cardStatus.accountType}

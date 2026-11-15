@@ -52,6 +52,7 @@ export const WelcomePage: React.FC = () => {
   const currentDemo = DEMO_CARDS.find((c) => c.cardNumber === selectedCardId) || {
     cardNumber: manualCardNumber || 'CARD1001',
     holder: 'Card not yet read',
+    network: undefined,
     accountType: undefined as string | undefined,
     expiry: undefined as string | undefined,
     status: 'active' as const,
@@ -144,6 +145,7 @@ export const WelcomePage: React.FC = () => {
         <div className="mt-6 w-full flex flex-col items-center lg:items-start">
           <ApexCard
             cardNumber={currentDemo.cardNumber}
+            network={currentDemo.network}
             cardHolderName={currentDemo.holder}
             expiryDate={currentDemo.expiry}
             accountType={currentDemo.accountType}

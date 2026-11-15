@@ -1,6 +1,10 @@
 import React from 'react';
+import visaLogo from '../../assets/brand/networks/visa.svg';
+import mastercardLogo from '../../assets/brand/networks/mastercard.svg';
+import amexLogo from '../../assets/brand/networks/amex.svg';
+import rupayLogo from '../../assets/brand/networks/rupay.png';
 
-type NetworkType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'discover' | 'unionpay' | 'jcb' | 'diners';
+export type NetworkType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'discover' | 'unionpay' | 'jcb' | 'diners';
 
 interface NetworkLogoProps {
   network: NetworkType;
@@ -9,190 +13,7 @@ interface NetworkLogoProps {
   className?: string;
 }
 
-const NETWORK_SVGS: Record<NetworkType, React.FC<{ variant?: 'color' | 'white' | 'mono'; className?: string; width?: number; height?: number }>> = {
-  visa: ({ variant = 'color', className = '', width, height }) => {
-    const isWhite = variant === 'white';
-    const isMono = variant === 'mono';
-    return (
-      <svg viewBox="0 0 160 96" role="img" aria-label="Visa" className={className} preserveAspectRatio="xMidYMid meet" width={width} height={height}>
-        <defs>
-          <linearGradient id="visaBlue" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#1A1F71" />
-            <stop offset="100%" stopColor="#00319C" />
-          </linearGradient>
-          <linearGradient id="visaGold" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#F7B500" />
-            <stop offset="100%" stopColor="#E6A400" />
-          </linearGradient>
-        </defs>
-        {isWhite ? (
-          <>
-            <rect x="0" y="0" width="160" height="48" fill="#FFFFFF" />
-            <rect x="0" y="48" width="160" height="48" fill="#F7F7F7" />
-          </>
-        ) : (
-          <>
-            <rect x="0" y="0" width="160" height="48" fill="url(#visaBlue)" />
-            <rect x="0" y="48" width="160" height="48" fill="url(#visaGold)" />
-          </>
-        )}
-        <text
-          x="80"
-          y="66"
-          fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-          fontWeight="900"
-          fontSize="42"
-          fill={isWhite ? "#1A1F71" : "#FFFFFF"}
-          textAnchor="middle"
-          letterSpacing="8"
-        >
-          VISA
-        </text>
-        {isMono && (
-          <text
-            x="80"
-            y="66"
-            fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-            fontWeight="900"
-            fontSize="42"
-            fill="currentColor"
-            textAnchor="middle"
-            letterSpacing="8"
-          >
-            VISA
-          </text>
-        )}
-      </svg>
-    );
-  },
-
-  mastercard: ({ variant = 'color', className = '', width, height }) => {
-    const isWhite = variant === 'white';
-    const isMono = variant === 'mono';
-    const red = isWhite || isMono ? 'currentColor' : '#EB001B';
-    const orange = isWhite || isMono ? 'currentColor' : '#F79E1B';
-    const overlap = isWhite || isMono ? 'currentColor' : '#FF5F00';
-    return (
-      <svg viewBox="0 0 160 96" role="img" aria-label="Mastercard" className={className} preserveAspectRatio="xMidYMid meet" width={width} height={height}>
-        <circle cx="64" cy="48" r="44" fill={red} opacity={isWhite || isMono ? 1 : 0.9} />
-        <circle cx="96" cy="48" r="44" fill={orange} opacity={isWhite || isMono ? 1 : 0.9} />
-        <ellipse cx="80" cy="48" rx="28" ry="44" fill={overlap} opacity={isWhite || isMono ? 1 : 0.7} />
-        <text
-          x="80"
-          y="78"
-          fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-          fontWeight="400"
-          fontSize="22"
-          fill={isWhite ? "#000000" : "#FFFFFF"}
-          textAnchor="middle"
-          letterSpacing="1.5"
-        >
-          mastercard
-        </text>
-        {isMono && (
-          <text
-            x="80"
-            y="78"
-            fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-            fontWeight="400"
-            fontSize="22"
-            fill="currentColor"
-            textAnchor="middle"
-            letterSpacing="1.5"
-          >
-            mastercard
-          </text>
-        )}
-      </svg>
-    );
-  },
-
-  amex: ({ variant = 'color', className = '', width, height }) => {
-    const isWhite = variant === 'white';
-    const isMono = variant === 'mono';
-    const blue = isWhite || isMono ? 'currentColor' : '#006FCF';
-    const textColor = isWhite ? '#006FCF' : '#FFFFFF';
-    return (
-      <svg viewBox="0 0 160 96" role="img" aria-label="American Express" className={className} preserveAspectRatio="xMidYMid meet" width={width} height={height}>
-        <rect x="0" y="0" width="160" height="96" rx="8" fill={blue} />
-        <text
-          x="80"
-          y="62"
-          fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-          fontWeight="700"
-          fontSize="32"
-          fill={textColor}
-          textAnchor="middle"
-          letterSpacing="2"
-        >
-          AMEX
-        </text>
-        {isMono && (
-          <text
-            x="80"
-            y="62"
-            fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-            fontWeight="700"
-            fontSize="32"
-            fill="currentColor"
-            textAnchor="middle"
-            letterSpacing="2"
-          >
-            AMEX
-          </text>
-        )}
-      </svg>
-    );
-  },
-
-  rupay: ({ variant = 'color', className = '', width, height }) => {
-    const isWhite = variant === 'white';
-    const isMono = variant === 'mono';
-    const navy = isWhite || isMono ? 'currentColor' : '#002B5C';
-    const red = isWhite || isMono ? 'currentColor' : '#D32F2F';
-    const gold = isWhite || isMono ? 'currentColor' : '#FFB300';
-    const textColor = isWhite ? '#002B5C' : '#FFFFFF';
-    return (
-      <svg viewBox="0 0 160 96" role="img" aria-label="RuPay" className={className} preserveAspectRatio="xMidYMid meet" width={width} height={height}>
-        <defs>
-          <linearGradient id="rupayBg" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={navy} />
-            <stop offset="100%" stopColor="#001a3a" />
-          </linearGradient>
-        </defs>
-        <rect x="0" y="0" width="160" height="96" rx="8" fill="url(#rupayBg)" />
-        <ellipse cx="80" cy="40" rx="36" ry="28" fill="none" stroke={gold} strokeWidth="2.5" opacity="0.9" />
-        <path
-          d="M44 40 Q80 12 116 40"
-          fill="none"
-          stroke={red}
-          strokeWidth="4"
-          strokeLinecap="round"
-          opacity="0.9"
-        />
-        <text
-          x="80"
-          y="78"
-          fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif"
-          fontWeight="700"
-          fontSize="24"
-          fill={textColor}
-          textAnchor="middle"
-          letterSpacing="3"
-        >
-          RuPay
-        </text>
-        {isMono && (
-          <>
-            <ellipse cx="80" cy="40" rx="36" ry="28" fill="none" stroke="currentColor" strokeWidth="2.5" opacity="0.9" />
-            <path d="M44 40 Q80 12 116 40" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" opacity="0.9" />
-            <text x="80" y="78" fontFamily="Helvetica Neue, Helvetica, Arial, sans-serif" fontWeight="700" fontSize="24" fill="currentColor" textAnchor="middle" letterSpacing="3">RuPay</text>
-          </>
-        )}
-      </svg>
-    );
-  },
-
+const NETWORK_SVGS: Record<Exclude<NetworkType, 'visa' | 'mastercard' | 'amex' | 'rupay'>, React.FC<{ variant?: 'color' | 'white' | 'mono'; className?: string; width?: number; height?: number }>> = {
   discover: ({ variant = 'color', className = '', width, height }) => {
     const isWhite = variant === 'white';
     const isMono = variant === 'mono';
@@ -307,13 +128,25 @@ const NETWORK_SVGS: Record<NetworkType, React.FC<{ variant?: 'color' | 'white' |
   },
 };
 
+const NETWORK_ASSETS = {
+  visa: { src: visaLogo, label: 'Visa' },
+  mastercard: { src: mastercardLogo, label: 'Mastercard' },
+  amex: { src: amexLogo, label: 'American Express' },
+  rupay: { src: rupayLogo, label: 'RuPay' },
+};
+
 export const NetworkLogo: React.FC<NetworkLogoProps> = ({
   network,
   variant = 'color',
   size = 48,
   className = '',
 }) => {
-  const Component = NETWORK_SVGS[network];
+  if (network in NETWORK_ASSETS) {
+    const asset = NETWORK_ASSETS[network as keyof typeof NETWORK_ASSETS];
+    return <img src={asset.src} alt={asset.label} width={size} height={size} className={`object-contain ${className}`} />;
+  }
+
+  const Component = NETWORK_SVGS[network as keyof typeof NETWORK_SVGS];
   if (!Component) return null;
 
   return (
@@ -327,10 +160,8 @@ export const NetworkLogo: React.FC<NetworkLogoProps> = ({
 };
 
 export function getNetworkLogo(network: string): React.ReactElement | null {
-  const normalized = network.toLowerCase().replace(/[\s\-_]/g, '') as NetworkType;
-  const Component = NETWORK_SVGS[normalized];
-  if (!Component) return null;
-  return <Component variant="color" />;
+  const normalized = normalizeNetwork(network);
+  return normalized ? <NetworkLogo network={normalized} /> : null;
 }
 
 export function normalizeNetwork(network: string): NetworkType | null {

@@ -65,6 +65,8 @@ export interface AuthSession {
 }
 
 export interface DemoCard {
+  /** Fictional payment network used for the demo card artwork. */
+  network: 'visa' | 'mastercard' | 'amex' | 'rupay';
   cardNumber: string;
   pin: string;
   holder: string;

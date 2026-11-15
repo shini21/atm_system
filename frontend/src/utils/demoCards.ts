@@ -3,6 +3,7 @@ import type { DemoCard } from '../types';
 export const DEMO_CARDS: DemoCard[] = [
   {
     cardNumber: 'CARD1001',
+    network: 'visa',
     pin: '1234',
     holder: 'Aarav Sharma',
     accountNumber: 'ACC1001',
@@ -14,6 +15,7 @@ export const DEMO_CARDS: DemoCard[] = [
   },
   {
     cardNumber: 'CARD1002',
+    network: 'mastercard',
     pin: '5678',
     holder: 'Priya Patel',
     accountNumber: 'ACC1002',
@@ -25,6 +27,7 @@ export const DEMO_CARDS: DemoCard[] = [
   },
   {
     cardNumber: 'CARD1003',
+    network: 'rupay',
     pin: '4321',
     holder: 'Rahul Verma',
     accountNumber: 'ACC1003',
@@ -36,6 +39,7 @@ export const DEMO_CARDS: DemoCard[] = [
   },
   {
     cardNumber: 'CARD1004',
+    network: 'amex',
     pin: '9999',
     holder: 'Neha Iyer',
     accountNumber: 'ACC1004',

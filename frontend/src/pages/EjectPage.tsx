@@ -1,3 +1,4 @@
+import { DEMO_CARDS } from '../utils/demoCards';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -63,6 +64,7 @@ export const EjectPage: React.FC = () => {
           >
             <ApexCard
               cardNumber={cardNumber}
+              network={DEMO_CARDS.find((card) => card.cardNumber === cardNumber)?.network}
               cardHolderName={customerName}
               accountType={accountType}
               expiryDate={cardStatus?.expiryDate || session?.expiryDate}
