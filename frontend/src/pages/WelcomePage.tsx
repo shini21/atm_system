@@ -135,7 +135,7 @@ export const WelcomePage: React.FC = () => {
             Terminal X-9000 · {t('app.location')} · Simulated
           </p>
           <h1 id="welcome-heading" className="mt-2 font-sans text-3xl sm:text-4xl font-semibold tracking-tight text-primary leading-[1.1]">
-            Welcome to Apex Bank Limited
+            Welcome to Apex Global Bank
           </h1>
           <p className="mt-3 text-sm sm:text-base text-secondary max-w-md">
             Insert your debit card or choose a demo profile to begin. Every account and card here is fictional.

@@ -38,8 +38,8 @@ vi.mock('../context/HardwareContext', () => ({
     isMuted: false,
     toggleSound: vi.fn(),
     setCardSlotState: vi.fn(),
-    registerKeypadListener: () => () => {},
-    registerSideKeys: () => () => {},
+    registerKeypadListener: () => () => { },
+    registerSideKeys: () => () => { },
     inactivitySeconds: 15,
     isExpiringSoon: true,
     resetInactivity: vi.fn(),
@@ -402,7 +402,7 @@ describe('Authentication, PIN & Session Security (Phase 5)', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByRole('heading', { name: 'Welcome to Apex Bank Limited' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Welcome to Apex Global Bank' })).toBeInTheDocument();
     expect(screen.getByLabelText('Card identifier')).toBeInTheDocument();
     expect(screen.getByTestId('apex-card')).toBeInTheDocument();
     expect(screen.getByText('Classroom Demo Profiles')).toBeInTheDocument();
@@ -598,7 +598,7 @@ describe('Responsive Design & Accessibility (Phase 9)', () => {
 
     render(
       <BrowserRouter>
-        <Header activeScreenTitle="Dashboard" onToggleMobileMenu={() => {}} />
+        <Header activeScreenTitle="Dashboard" onToggleMobileMenu={() => { }} />
       </BrowserRouter>
     );
 
@@ -614,9 +614,9 @@ describe('Responsive Design & Accessibility (Phase 9)', () => {
 
     render(
       <Keypad
-        onKeyPress={() => {}}
-        onBackspace={() => {}}
-        onClear={() => {}}
+        onKeyPress={() => { }}
+        onBackspace={() => { }}
+        onClear={() => { }}
       />
     );
 
